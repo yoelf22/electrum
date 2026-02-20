@@ -65,6 +65,8 @@ PRD (formal requirements — split into HW, FW, SW, and integration tracks)
 - Key interfaces with protocols
 - 3-6 hard constraints that eliminate design options
 - The 3 hardest problems
+- Fundamental hardware problems — the physics, geometry, or environment problems that must be solvable for the product to exist. These are distinct from the "hardest problems" (which include software and integration). If a fundamental hardware problem is unsolvable, the product is dead regardless of how good the software is.
+- Component choice architecture — for each major component (MCU, sensors, actuators, power source), identify which tradeoff axis dominates (physical constraint, performance, availability, cost, or firmware complexity) and where axes conflict. You're not picking part numbers yet — you're surfacing the tradeoffs that will drive selection in Phase 3.
 - 2-4 open decisions that block detailed design
 
 **Why this step matters:**

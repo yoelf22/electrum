@@ -109,6 +109,51 @@ List 3-6 constraints. Only include constraints that eliminate design options.
 
 These are the problems that will dominate the detailed system description. If you solve these, the rest is execution.
 
+#### Fundamental Hardware Problems
+
+What physical problems must this device solve to exist? These aren't feature requests — they're physics, geometry, and environment problems that constrain every other decision.
+
+List 2-4 problems. For each, state the problem in one sentence and why it's fundamental (not just hard).
+
+| Problem | Why It's Fundamental |
+|---------|---------------------|
+| _e.g., Rejecting 20°C mains water down to 4°C in a countertop form factor_ | _Defines the thermal system — tank size, PCM mass, compressor power. Everything else fits around this._ |
+| _e.g., Sensing tilt angle while mounted to a vibrating surface_ | _If the sensor can't distinguish real tilt from noise, the product doesn't work at all._ |
+
+These are the problems that, if unsolvable, kill the product. The "Three Hardest Problems" section above may overlap — but that section includes software and integration challenges too. This section is strictly about the physics.
+
+#### Component Choice Architecture
+
+Hardware component selection is a multi-axis tradeoff. At the high-level stage, you don't need to pick specific part numbers — but you need to identify which axes matter most for your product and where they conflict.
+
+**The five axes:**
+
+| Axis | What It Means | Example Tension |
+|------|--------------|-----------------|
+| **Physical constraint** | Size, weight, thermal envelope, mounting geometry | A better sensor exists but it's 3x the footprint and won't fit the enclosure |
+| **Performance** | Accuracy, speed, resolution, power efficiency | A higher-resolution ADC improves measurement but doubles current draw |
+| **Availability** | Lead times, number of suppliers, end-of-life risk | The ideal MCU is single-sourced with 26-week lead times |
+| **Cost** | Per-unit BOM cost at target volume | An integrated module saves board space but costs $4 more than discrete components |
+| **Firmware complexity** | How much software effort a component demands | A raw sensor with no built-in processing needs custom firmware DSP; an integrated module with on-chip processing needs only I2C reads |
+
+**How to use this at the high-level stage:**
+
+For each major component (MCU, sensors, actuators, power source, connectivity module), ask:
+
+1. **Which axis dominates?** For a coin-cell device, power efficiency probably wins every tradeoff. For a novelty product at $20 retail, cost dominates. For a medical device, performance and availability dominate.
+2. **Where do axes conflict?** Flag these — they're your real decisions. "The cheapest accelerometer has no built-in filtering, so firmware must compensate" is a cost-vs-firmware-complexity tradeoff worth noting.
+3. **What's non-negotiable vs. flexible?** A size constraint from the enclosure is physics — you can't negotiate with it. A cost target is a business decision — you can revisit it if the product requires it.
+
+Fill in one row per major component:
+
+| Component | Dominant Axis | Key Tension | Resolution Direction |
+|-----------|--------------|-------------|---------------------|
+| _e.g., MCU_ | _Cost_ | _Cheapest option (ATtiny) has no BLE; adding BLE later means a board respin_ | _Pick ATtiny for V1, accept no wireless. Revisit for V2._ |
+| _e.g., Accelerometer_ | _Firmware complexity_ | _Cheapest part needs custom filtering in FW; $0.50 more gets on-chip motion detection_ | _Spend the $0.50 — saves weeks of firmware tuning._ |
+| _e.g., Speaker_ | _Physical constraint_ | _Dynamic speaker is louder but 4mm tall; piezo is 2.5mm but tinny at low frequencies_ | _Piezo — 1.5mm height saving lets us hit 10mm enclosure target._ |
+
+Don't over-analyze. One row, one sentence per field. The goal is to surface tradeoffs, not resolve them — resolution comes in the full system description.
+
 #### Open Calls (decisions that block detailed design)
 
 | Decision | Options | Deadline |

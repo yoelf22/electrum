@@ -5,7 +5,7 @@ A structured approach to writing architecture-level system descriptions for hard
 ## What This Is
 
 Templates and guidance for the documents that sit between a product concept and a formal PRD. The toolkit produces two artifacts:
-1. A **single-page high-level system design** — enough for executive alignment or partner discussions
+1. A **single-page high-level system design** — blocks, interfaces, constraints, fundamental hardware problems, and component tradeoff analysis. Enough for executive alignment or partner discussions.
 2. A **detailed system description** — subsystem specs, interface contracts, power architecture, and connectivity design
 
 ## Quick Start
@@ -21,11 +21,13 @@ Templates and guidance for the documents that sit between a product concept and 
 | File | Purpose |
 |------|---------|
 | `hw_sw_product_initiation.md` | Process guide: idea → high-level design → system description → PRD |
-| `hw_sw_high_level.md` | Single-page high-level system design — template and process |
+| `hw_sw_high_level.md` | Single-page high-level system design — template and process, includes fundamental hardware problems and component choice architecture |
 | `skills_map.md` | 16 competency areas for SW-augmented HW system description writing |
 | `templates/system_description_template.md` | Guided template with sections, prompts, and diagram placeholders |
 | `checklist.md` | Completeness checklist — run before converting to PRD |
 | `examples/smart_sensor_hub.md` | Partially worked example |
+| `chillstream/` | Worked example: plumbed-in water dispenser with PCM thermal battery |
+| `chair_balancing_act/` | Worked example: tilt-sensing audio feedback clip-on for fixed-leg chairs |
 
 ## Target Audience
 

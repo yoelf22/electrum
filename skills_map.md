@@ -47,14 +47,16 @@ Breaking a product into subsystems, defining boundaries, and identifying interfa
 - Interface identification between blocks — with special attention to interfaces that cross the HW/SW boundary (sensor→firmware, firmware→app, app→cloud)
 - Data flow and control flow mapping end-to-end: physical event → sensor → firmware processing → wireless transmission → app display → user action → command → firmware → actuator
 - Deciding what processing runs on-device vs. in the cloud vs. in the app, and why
+- Identifying fundamental hardware problems — the physics, geometry, or environment problems that must be solvable for the product to exist. These are not feature requests or nice-to-haves; they're the problems that kill the product if unsolvable (e.g., "can we reject 20°C water to 4°C in a countertop form factor?" or "can an accelerometer distinguish chair tilt from fidgeting?")
 
 **Why it matters for system descriptions:**
-This IS the core skill. For software-augmented hardware, the architecture challenge is that hardware and software must be specified together but built by different teams on different timelines. The system description is the shared contract. Every section maps to an architectural element — and every interface between hardware and software needs enough detail for both teams to work independently.
+This IS the core skill. For software-augmented hardware, the architecture challenge is that hardware and software must be specified together but built by different teams on different timelines. The system description is the shared contract. Every section maps to an architectural element — and every interface between hardware and software needs enough detail for both teams to work independently. Identifying fundamental hardware problems early prevents investing months in detailed design around a physics problem that turns out to be unsolvable.
 
 **Self-assessment:**
 - Can you draw a block diagram that shows hardware, firmware, app, and cloud as distinct layers with explicit interfaces between them?
 - Can you explain why a particular function belongs in firmware rather than in the companion app (or vice versa)?
 - Can you identify which HW↔SW interfaces carry the most technical risk?
+- Can you name the 2-3 physical problems that must be solvable for your product to exist — and distinguish them from problems that are merely hard?
 
 ### 2. Requirements Thinking
 
@@ -94,13 +96,15 @@ MCU/SoC selection, sensor interfacing, power supply design, and PCB-level consid
 - Antenna integration (chip, PCB trace, external)
 - Debug and programming interfaces (JTAG/SWD, UART console) — firmware development depends on these
 - Test points and factory programming headers — needed for manufacturing provisioning
+- Component choice as multi-axis tradeoff — every major component involves tensions between physical constraint (size, weight, thermal), performance (accuracy, speed), availability (lead times, second sources), cost (BOM at target volume), and firmware complexity (how much software effort the part demands). The skill is recognizing which axis dominates for your product and where axes conflict.
 
 **Why it matters for system descriptions:**
-Hardware defines the physical capabilities and constraints that all software must operate within. The system description must specify hardware subsystems at block level — what components, what buses, what voltage domains. Every hardware choice either enables or constrains firmware: MCU flash size limits firmware complexity, available peripherals determine which sensors can connect, and debug interfaces determine how firmware is developed and tested.
+Hardware defines the physical capabilities and constraints that all software must operate within. The system description must specify hardware subsystems at block level — what components, what buses, what voltage domains. Every hardware choice either enables or constrains firmware: MCU flash size limits firmware complexity, available peripherals determine which sensors can connect, and debug interfaces determine how firmware is developed and tested. Stating the dominant tradeoff axis per component makes the rationale explicit and reviewable — instead of "we picked part X," you say "we picked part X because cost dominates for this product, and the firmware complexity penalty is acceptable."
 
 **Self-assessment:**
 - Can you explain why you'd pick an nRF52 over an ESP32 for a specific product — considering both hardware specs and the firmware/SDK ecosystem?
 - Do you know the difference between I2C and SPI and when firmware complexity favors one over the other?
+- For a given component, can you name which tradeoff axis dominates and where it conflicts with another axis?
 - Can you specify hardware requirements that give firmware enough headroom for planned features plus OTA updates?
 
 ### 4. Mechanical and Industrial Design

@@ -30,11 +30,15 @@ This checklist is for products where physical hardware and software (firmware, c
 - [ ] Trust/security boundaries are marked — especially the boundary between device and cloud
 - [ ] Architecture narrative explains the "why" of the structure
 - [ ] **[HW↔SW]** The diagram makes clear where processing happens (on-device vs. on-phone vs. in-cloud) for each major feature
+- [ ] Fundamental hardware problems are identified — the physics, geometry, or environment problems that must be solvable for the product to exist
+- [ ] Each fundamental hardware problem has a stated resolution path or is flagged as requiring prototyping
 
 ## Subsystem Descriptions
 
 ### Hardware
 - [ ] MCU/SoC selected with rationale — processing headroom for current firmware plus planned features
+- [ ] For each major component, the dominant tradeoff axis is identified (physical constraint, performance, availability, cost, or firmware complexity)
+- [ ] Component tradeoff conflicts are surfaced — where two axes pull in opposite directions, the chosen resolution is stated
 - [ ] All sensors listed with interface, sample rate, and key specs
 - [ ] Actuators and physical UI elements listed (LEDs, buttons, haptics, displays)
 - [ ] PCB strategy described (single board, flex, modular)
