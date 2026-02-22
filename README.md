@@ -42,7 +42,13 @@ Each project folder contains a high-level design and system description. The Cha
 
 ## How to Use
 
-This toolkit is a set of markdown templates and checklists — there is no code to install or run. To apply it to your product:
+The core toolkit is markdown templates and checklists — no installation required. The worked examples also include Python scripts for generating presentation decks and diagrams. To run those:
+
+```
+pip install -r requirements.txt
+```
+
+To apply the toolkit to your product:
 
 1. **Understand the process** — Read [`hw_sw_product_initiation.md`](hw_sw_product_initiation.md) to see how the four phases fit together. Skim a worked example in `examples/` to see what finished output looks like.
 2. **Assess your gaps** — Review [`skills_map.md`](skills_map.md) to figure out where you (or your team) need help.
