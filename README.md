@@ -58,28 +58,51 @@ claude
 > /electrum smart posture-correcting office chair
 ```
 
+## Repository Structure
+
+```
+electrum/
+├── scripts/          # Python reference implementations (image gen, carousel, deck builders)
+├── templates/        # Directive markdown files (workflow, checklists, templates)
+└── examples/         # Worked examples (markdown only, no scripts)
+    ├── chair_balancing_act/
+    ├── metronome/
+    └── smart_sensor_hub/
+```
+
 ## What's in the Box
 
 ### Templates and Checklists
 
 | File | What it does |
 |------|-------------|
-| `hw_sw_product_initiation.md` | 7-phase workflow from concept to presentation |
-| `hw_sw_high_level.md` | Single-page system overview template |
-| `templates/system_description_template.md` | Full system description template with HW↔SW boundary items |
-| `checklist.md` | Gate checklist — 90 items, each tagged if it targets the HW/SW boundary |
-| `skills_map.md` | 16 competency areas a PM should understand or staff for |
+| `electrum/templates/hw_sw_product_initiation.md` | 7-phase workflow from concept to presentation |
+| `electrum/templates/hw_sw_high_level.md` | Single-page system overview template |
+| `electrum/templates/system_description_template.md` | Full system description template with HW↔SW boundary items |
+| `electrum/templates/checklist.md` | Gate checklist — 90 items, each tagged if it targets the HW/SW boundary |
+| `electrum/templates/skills_map.md` | 16 competency areas a PM should understand or staff for |
 | `.claude/skills/electrum/SKILL.md` | Claude Code skill definition (drives the 7-phase workflow) |
+
+### Reference Scripts
+
+| File | What it does |
+|------|-------------|
+| `electrum/scripts/generate_illustration.py` | DALL-E image generation via Playwright browser automation |
+| `electrum/scripts/build_carousel.py` | PPTX + PDF carousel builder (LinkedIn-format, 4:5 portrait) |
+| `electrum/scripts/build_deck.py` | Executive product overview deck builder |
+| `electrum/scripts/build_high_level_deck.py` | High-level design deck builder |
+| `electrum/scripts/visualize.py` | Visualization utilities |
+| `electrum/scripts/block_diagram.py` | Block diagram generator |
 
 ### Worked Examples
 
 | Project | What it is | Phases covered |
 |---------|-----------|----------------|
-| `examples/chair_balancing_act/` | Clip-on tilt sensor that plays an escalating tone when a chair leaves static balance | HLD, system description, gate checklist |
-| `examples/smart_sensor_hub/` | Wireless indoor environment monitor (CO2, temp, humidity, PM) with BLE nodes and cloud dashboard | HLD, system description |
-| `examples/metronome/` | Wrist-worn haptic metronome bracelet for musicians — silent, precise beat pulses | All 7 phases (full example with illustrations and carousel) |
+| `electrum/examples/chair_balancing_act/` | Clip-on tilt sensor that plays an escalating tone when a chair leaves static balance | HLD, system description, gate checklist |
+| `electrum/examples/smart_sensor_hub/` | Wireless indoor environment monitor (CO2, temp, humidity, PM) with BLE nodes and cloud dashboard | HLD, system description |
+| `electrum/examples/metronome/` | Wrist-worn haptic metronome bracelet for musicians — silent, precise beat pulses | All 7 phases (full example with illustrations and carousel) |
 
-The metronome example is the most complete — it includes `generate_illustration.py` and `build_carousel.py` as reference implementations for Phases 5-7.
+The metronome example is the most complete — its `generate_illustration.py` and `build_carousel.py` are now the reference implementations in `electrum/scripts/`.
 
 ## How to Use
 
@@ -96,13 +119,13 @@ The metronome example is the most complete — it includes `generate_illustratio
 
 The core toolkit is markdown templates and checklists — no AI required:
 
-1. **Understand the process** — Read `hw_sw_product_initiation.md` for the workflow overview
-2. **Assess your gaps** — Review `skills_map.md` for team competency planning
-3. **Create the high-level design** — Copy `hw_sw_high_level.md` into your project folder and fill it in
-4. **Write the system description** — Copy `templates/system_description_template.md` and work through each section
-5. **Validate** — Run through `checklist.md` to confirm nothing was missed
+1. **Understand the process** — Read `electrum/templates/hw_sw_product_initiation.md` for the workflow overview
+2. **Assess your gaps** — Review `electrum/templates/skills_map.md` for team competency planning
+3. **Create the high-level design** — Copy `electrum/templates/hw_sw_high_level.md` into your project folder and fill it in
+4. **Write the system description** — Copy `electrum/templates/system_description_template.md` and work through each section
+5. **Validate** — Run through `electrum/templates/checklist.md` to confirm nothing was missed
 
-For image generation and carousel building, adapt the scripts in `examples/metronome/` to your product.
+For image generation and carousel building, adapt the scripts in `electrum/scripts/` to your product.
 
 ## Who This is For
 

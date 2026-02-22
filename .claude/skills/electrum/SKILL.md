@@ -21,7 +21,7 @@ You are an expert product-definition consultant for software-augmented hardware 
 **Goal:** Explore the product idea — identify the HW/SW boundary, map relevant skill areas, surface unknowns.
 
 **Instructions:**
-1. Read the skills map: `skills_map.md`
+1. Read the skills map: `electrum/templates/skills_map.md`
 2. Generate a markdown document titled `# Exploration Notes` with these sections:
    - **Product Summary** (2-3 sentences)
    - **HW/SW Boundary Analysis** — what must be physical hardware vs. what is firmware/app/cloud
@@ -38,8 +38,8 @@ You are an expert product-definition consultant for software-augmented hardware 
 **Goal:** Produce a one-page high-level system overview with block diagram, subsystems, constraints, and hardest problems.
 
 **Instructions:**
-1. Read the template: `hw_sw_high_level.md`
-2. Read the worked example: `examples/chair_balancing_act/hw_sw_high_level_chair_balancing_act.md`
+1. Read the template: `electrum/templates/hw_sw_high_level.md`
+2. Read the worked example: `electrum/examples/chair_balancing_act/hw_sw_high_level_chair_balancing_act.md`
 3. Using the exploration notes from Phase 1 as input, generate a high-level design document following the template structure exactly. Be specific — no placeholders or TODOs.
 4. Write the output to `output/<slug>/high_level_design.md`
 5. Present a summary to the user and ask: **"Ready to proceed to Phase 3 (System Description), or would you like to adjust anything?"**
@@ -50,8 +50,8 @@ You are an expert product-definition consultant for software-augmented hardware 
 **Goal:** Produce a full, engineering-grade system description covering all 10 template sections.
 
 **Instructions:**
-1. Read the template: `templates/system_description_template.md`
-2. Read the worked example: `examples/chair_balancing_act/system_description_chair_balancing_act.md`
+1. Read the template: `electrum/templates/system_description_template.md`
+2. Read the worked example: `electrum/examples/chair_balancing_act/system_description_chair_balancing_act.md`
 3. Using the exploration notes AND high-level design as input, generate a complete system description following the template exactly. Include:
    - Real component suggestions (specific MCUs, sensors, etc.)
    - Power budgets with actual numbers
@@ -67,8 +67,8 @@ You are an expert product-definition consultant for software-augmented hardware 
 **Goal:** Evaluate the system description against the completeness checklist. Report PASS/FAIL/N/A for every item.
 
 **Instructions:**
-1. Read the checklist: `checklist.md`
-2. Read the worked example: `examples/chair_balancing_act/gate_checklist_chair_balancing_act.md`
+1. Read the checklist: `electrum/templates/checklist.md`
+2. Read the worked example: `electrum/examples/chair_balancing_act/gate_checklist_chair_balancing_act.md`
 3. Evaluate the system description (from Phase 3) against every checklist item. For each item, mark it:
    - **PASS** — the system description adequately addresses this item
    - **FAIL** — the system description is missing or insufficient on this item
@@ -88,7 +88,7 @@ You are an expert product-definition consultant for software-augmented hardware 
 **Goal:** Generate product illustration(s) using ChatGPT's DALL-E via Playwright browser automation. The user authenticates manually on first run; the session persists for subsequent runs.
 
 **Instructions:**
-1. Read the reference script: `examples/metronome/generate_illustration.py`
+1. Read the reference script: `electrum/scripts/generate_illustration.py`
 2. Create a `generate_illustration.py` in `output/<slug>/` adapted for this product:
    - Set `DESIGN_FILE` to the `high_level_design.md` from Phase 2
    - Set `PROMPT_PREFIX` to request a longitudinal cross section illustration and an isometric artist concept of this product
@@ -112,7 +112,7 @@ You are an expert product-definition consultant for software-augmented hardware 
 **Goal:** Build a LinkedIn-format carousel PPTX (4:5 portrait, 1080x1350 px equivalent) presenting the product definition as a polished slide deck with the generated illustration.
 
 **Instructions:**
-1. Read the reference script: `examples/metronome/build_carousel.py`
+1. Read the reference script: `electrum/scripts/build_carousel.py`
 2. Create a `build_carousel.py` in `output/<slug>/` that generates both PPTX and PDF (Phase 7 uses the same script). Adapt all content to this product using the outputs from Phases 1-4:
    - **Page 1: Title** — product name, tagline, cross-section illustration from Phase 5
    - **Page 2: The Problem** — 3 key problems from explore_notes.md, target users
