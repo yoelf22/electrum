@@ -57,4 +57,4 @@ Hardware product managers and technical leads building products where physical h
 - Your product has firmware, and maybe a companion app or cloud backend
 - Your team spans EE/ME and software disciplines
 - You need documents that both an executive and an engineer can use
-- You've been burned before by HW/SW integration surprises at EVT
+- You've been burned before by HW/SW integration surprises at EVT (Engineering Validation Test)
