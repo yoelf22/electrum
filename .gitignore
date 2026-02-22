@@ -11,8 +11,8 @@
 # Private projects (local only)
 chillstream/
 
-# Claude Code local config
-.claude/
+# Claude Code local config (keep skills tracked)
+.claude/settings.local.json
 
 # Office temp files
 ~$*
