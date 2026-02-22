@@ -40,13 +40,15 @@ Two products, same process, very different complexity:
 
 Each project folder contains a high-level design and system description. The Chair Balancing Act example also includes a gate checklist, PRD, and generated presentation deck.
 
-## Quick Start
+## How to Use
 
-1. Read `hw_sw_product_initiation.md` for the full process
-2. Review `skills_map.md` to identify your knowledge gaps
-3. Fill in `hw_sw_high_level.md` to produce the single-page system overview
-4. Copy `templates/system_description_template.md` to your project folder and write the full description
-5. Validate with `checklist.md`
+This toolkit is a set of markdown templates and checklists — there is no code to install or run. To apply it to your product:
+
+1. **Understand the process** — Read [`hw_sw_product_initiation.md`](hw_sw_product_initiation.md) to see how the four phases fit together. Skim a worked example in `examples/` to see what finished output looks like.
+2. **Assess your gaps** — Review [`skills_map.md`](skills_map.md) to figure out where you (or your team) need help.
+3. **Create the high-level design** — Copy [`hw_sw_high_level.md`](hw_sw_high_level.md) into your project folder and fill it in. This produces the single-page system overview.
+4. **Write the full system description** — Copy [`templates/system_description_template.md`](templates/system_description_template.md) into your project folder and work through each section.
+5. **Validate** — Run through [`checklist.md`](checklist.md) to confirm nothing was missed, especially at the HW↔SW boundary.
 
 ## Who This is For
 
