@@ -1,82 +1,84 @@
-# Exploration Notes: Minimal Metronome
+# Exploration Notes: Haptic Metronome Bracelet
 
 ## Product Summary
 
-A stripped-down, physical metronome device that produces an audible (and optionally haptic) beat at a user-set tempo. The device pairs with a companion app for advanced configuration — time signatures, accent patterns, tempo presets, and practice session tracking — while the hardware itself stays deliberately simple: a knob or buttons, a speaker/buzzer, and a visual beat indicator.
+A wrist-worn vibrotactile metronome that delivers precise beat pulses through a haptic motor against the skin. Musicians set BPM and time signature from a companion app, then tap the bracelet to start and double-tap to stop. No audible output — the beat is felt, not heard. A single LED provides a brief visual sanity check during the first few bars, then goes dark.
 
 ## HW/SW Boundary Analysis
 
 ### Must be physical hardware
-- **Audio output** — a speaker, piezo buzzer, or similar transducer to produce the click/beat. Audio latency and jitter must be sub-millisecond; this is the core product promise.
-- **Tempo control** — a rotary encoder or physical buttons for hands-free BPM adjustment during practice.
-- **Visual beat indicator** — one or more LEDs (or a small display) showing the current beat position within the measure.
-- **Power supply** — rechargeable LiPo or USB-C powered, depending on portability goals.
-- **Enclosure** — compact, stable on a music stand or tabletop.
+- **Haptic motor (LRA or ERM)** — the primary beat output. Must deliver a crisp, distinct tap percievable on the wrist at tempo, with enough sharpness to distinguish accented beats from normal beats.
+- **Accelerometer** — detects tap (start) and double-tap (stop) gestures on the bracelet. Also enables potential future features (conducting gestures, tap-tempo).
+- **Battery** — small LiPo in a wristband form factor. Target: 8+ hours of continuous haptic pulses on a single charge.
+- **Single LED** — sanity-check indicator. Flashes on beat for the first 4–8 bars after starting, then turns off to avoid visual distraction.
+- **Wristband / enclosure** — comfortable for long practice sessions, secure enough not to shift during playing. The haptic motor must be in firm skin contact for the vibration to be felt clearly.
 
 ### Firmware responsibilities
-- **Precision timing engine** — hardware timer–driven beat generation. This is the single most important firmware function. Jitter must stay under ~100 µs to be imperceptible to trained musicians.
-- **Audio synthesis / playback** — driving a DAC or PWM output to produce click sounds with accent differentiation.
-- **Input handling** — debouncing rotary encoder or buttons, mapping to BPM changes.
-- **LED/display driver** — beat position visualization.
-- **BLE communication** — exposing tempo, time signature, accent pattern, and playback state to the companion app.
-- **Power management** — sleep on inactivity, wake on input.
+- **Precision timing engine** — hardware timer–driven beat generation with < 100 µs jitter. Identical requirement to an audible metronome.
+- **Haptic driver control** — driving the LRA/ERM with shaped pulses. Accented beats get a stronger/longer pulse; normal beats get a lighter tap. Subdivisions could use a different vibration pattern.
+- **Accelerometer gesture detection** — tap detection (start) and double-tap detection (stop). Must reject normal playing motion (bowing, guitar strumming, piano arm movement) while reliably detecting deliberate wrist taps.
+- **LED control** — flash on beat for first N bars, then off.
+- **BLE communication** — receive BPM, time signature, accent pattern, and presets from the app. Send playback state and battery level back.
+- **Power management** — sleep when stopped, wake on tap gesture or BLE command.
 
-### Companion app responsibilities
-- **Advanced configuration** — time signatures (3/4, 5/8, 7/8…), accent patterns, subdivision modes, tempo presets per song.
-- **Practice session tracking** — log tempo, duration, and patterns over time.
-- **Setlist / preset management** — ordered list of songs with tempo and time-signature presets that can be pushed to the device.
-- **Visual display** — large BPM readout, beat visualization, optional notation-style display.
-- **OTA firmware updates** — delivering new features (new click sounds, expanded time signatures).
+### Companion app responsibilities (primary control interface)
+- **All configuration** — BPM setting, time signature, accent patterns, subdivision modes. The bracelet has no physical controls for these.
+- **Start/stop** — redundant to tap/double-tap; also controllable from the app.
+- **Preset / setlist management** — songs with tempo and time-signature presets, pushed to device.
+- **Visual beat display** — real-time beat indicator on screen, BPM readout, time signature display.
+- **Practice session tracking** — log tempo, duration, patterns.
+- **OTA firmware updates.**
 
 ### Cloud (minimal / optional)
 - Firmware image hosting for OTA.
-- Optional cloud backup of practice logs and presets (could also be app-local only for V1).
+- Optional practice log backup.
 
 ## Relevant Skill Areas
 
 | # | Skill Area | Relevance | Why |
 |---|-----------|-----------|-----|
-| 1 | Systems Architecture | **High** | Defining the split between on-device timing engine and app-side configuration is the core architectural decision. |
-| 5 | Embedded Software & Firmware | **High** | Sub-millisecond timing precision is the hardest firmware problem. RTOS or bare-metal timer ISR design is key. |
-| 9 | Power Management | **High** | Battery-powered portable device; audio output and BLE are the main power consumers. |
-| 10 | Sensors & Actuators | **High** | Speaker/buzzer selection, optional haptic motor — these define the product's primary output. |
-| 3 | Electrical & Electronic HW | **High** | MCU selection (timer resolution, DAC/PWM quality), audio amplifier, power supply. |
-| 6 | Connectivity & Protocols | **Medium** | BLE for app pairing. Simple GATT profile — not a complex networking problem. |
-| 7 | Companion App Architecture | **Medium** | Straightforward app: BLE connection, config UI, practice logs. No real-time streaming. |
-| 13 | User Interaction (Physical + Digital) | **Medium** | Physical controls must be intuitive for musicians mid-practice. LED beat pattern must be instantly readable. |
-| 4 | Mechanical & Industrial Design | **Medium** | Small enclosure, stable base, speaker port acoustics, button/knob ergonomics. |
-| 12 | Regulatory & Compliance | **Low-Med** | FCC/CE for BLE radio. No special safety concerns. |
-| 15 | Cost & BOM Awareness | **Low-Med** | Simple BOM — MCU, speaker, LEDs, battery, encoder, BLE. Target < $15 BOM at volume. |
-| 8 | Cloud & Backend | **Low** | Minimal cloud needs. OTA hosting and optional practice-log backup. |
-| 11 | Security | **Low** | Low-value target. Signed OTA is the main security need. |
-| 14 | Manufacturing & Provisioning | **Low** | Simple assembly. Flash firmware + basic HW test at factory. |
-| 16 | Testing & Validation | **Medium** | Timing accuracy validation is critical. Need to measure actual jitter with an oscilloscope or audio capture. |
-| 2 | Requirements Thinking | **High** | "Minimal" is itself a design constraint — every feature must justify its inclusion. |
+| 1 | Systems Architecture | **High** | The bracelet is a thin actuator; the app is the brain. Defining this split cleanly is key. |
+| 5 | Embedded Software & Firmware | **High** | Timing precision, haptic waveform shaping, and accelerometer gesture detection are all firmware problems. |
+| 10 | Sensors & Actuators | **High** | Haptic motor selection (LRA vs. ERM), accelerometer for tap detection — these ARE the product. |
+| 9 | Power Management | **High** | Small battery in a wristband; haptic motor is the primary power consumer. Every milliamp matters. |
+| 4 | Mechanical & Industrial Design | **High** | Wristband comfort, motor placement for skin contact, waterproofing for sweat, clasp design. This is now a wearable — mechanicals are harder than a box on a shelf. |
+| 3 | Electrical & Electronic HW | **High** | MCU selection, haptic driver IC, accelerometer, tiny PCB in a wristband form factor. |
+| 6 | Connectivity & Protocols | **Medium** | BLE for app pairing. The app is now the primary UI, so BLE reliability matters more than in the tabletop version. |
+| 7 | Companion App Architecture | **High** | The app IS the control interface. It must be responsive, reliable, and handle the full configuration surface. Elevated from medium. |
+| 13 | User Interaction (Physical + Digital) | **High** | Tap/double-tap gesture is the only physical interaction. Must be reliable. App UX for real-time tempo changes during performance matters. |
+| 12 | Regulatory & Compliance | **Medium** | FCC/CE for BLE. Skin contact raises material safety questions (nickel, allergens). |
+| 15 | Cost & BOM Awareness | **Medium** | Wearable BOM is tighter — small battery, flex PCB, band material all add cost. |
+| 2 | Requirements Thinking | **High** | The wearable form factor introduces new constraints: comfort, sweat resistance, gesture reliability during playing. |
+| 16 | Testing & Validation | **High** | Must validate that haptic pulses are perceptible at tempo across wrist sizes, playing styles, and motor types. |
+| 8 | Cloud & Backend | **Low** | Same as before — OTA hosting only. |
+| 11 | Security | **Low** | Same — signed OTA, BLE bonding. |
+| 14 | Manufacturing & Provisioning | **Medium** | Wearable assembly is more complex than a box (band attachment, flex PCB, small enclosure). |
 
 ## Key Unknowns and Questions
 
-1. **Audio output type** — Piezo buzzer (cheap, loud, harsh) vs. small speaker with DAC (richer tone, higher power, more complex)? This drives MCU selection (DAC needed?), amplifier circuit, and power budget.
-2. **Haptic feedback** — Is a vibration motor included for silent practice? Adds BOM cost (~$0.50–1.00) and power draw but enables a major use case (practicing without disturbing others).
-3. **Display** — LEDs only, or a small OLED/segment display showing BPM? A display adds cost and power but reduces app dependency.
-4. **Portability requirements** — Must it run on battery, or is USB-C–powered acceptable? Battery adds charging circuit, enclosure volume, and weight.
-5. **Tempo range** — Standard 20–300 BPM, or wider for niche use cases?
-6. **Target price point** — Under $30 retail suggests < $10 BOM. Under $50 retail opens up better audio and display options.
-7. **"Minimal" scope** — Does minimal mean minimal features (just a click) or minimal physical size (pocket-sized)?
+1. **Haptic motor type** — LRA (Linear Resonant Actuator) gives crisper taps with faster rise time (~5 ms) but needs a tuned driver (DRV2605 or similar). ERM (Eccentric Rotating Mass) is cheaper but has slower rise/stop time (~20–50 ms), making beats feel mushy at high tempos. LRA is almost certainly the right choice, but needs validation at 200+ BPM.
+2. **Haptic perceptibility during playing** — When a guitarist is strumming, a violinist is bowing, or a pianist is playing expressively, arm motion is significant. Can the wrist-worn haptic pulse still be felt? This is the fundamental product risk.
+3. **Tap/double-tap reliability** — The accelerometer must distinguish a deliberate tap on the bracelet from playing motions. A strumming guitarist's wrist experiences repeated moderate-g transients. False starts and missed stops would be infuriating.
+4. **Wristband design** — Rigid pod on a flexible band (like a fitness tracker)? Fully flexible (like a fabric strap with embedded electronics)? The motor needs firm skin contact, which argues for a rigid pod with a sprung or contoured contact surface.
+5. **Downbeat differentiation via haptics** — Can musicians reliably distinguish beat 1 from other beats purely through vibration? Amplitude alone is hard to distinguish on a vibrating limb. Proposed approach: a **dual-pulse** pattern for beat 1 (two short taps ~40 ms apart — a "da-dum") vs. a single pulse for other beats. Pattern-based distinction is more perceptible than intensity-based. Needs user testing at tempo.
+6. **Battery life in wristband form factor** — A wristband can fit ~100–200 mAh. An LRA draws ~50–100 mA per pulse. At 120 BPM (2 pulses/s, ~20 ms each), average current is ~2 mA from the motor alone. 200 mAh / ~5 mA total ≈ 40 hours. Likely fine, but needs validation.
+7. **Sweat and water resistance** — Musicians sweat during performance. IP rating? At minimum, sweat-resistant (IPX4 splash-proof).
 
 ## Initial Risk Areas
 
 | Risk | Severity | Notes |
 |------|----------|-------|
-| **Timing jitter** | High | The fundamental hardware problem. If beats drift or jitter by >0.5 ms, trained musicians will notice. MCU timer resolution, ISR latency, and audio output path all contribute. Must be validated early with a prototype. |
-| **Audio quality** | Medium | Cheap piezo buzzers sound bad. Musicians are discerning listeners. The click tone must be clean, sharp, and non-fatiguing over long practice sessions. |
-| **BLE latency for tempo changes** | Low | App-initiated tempo changes will have ~20–50 ms BLE latency. This is fine for configuration but means the app cannot be in the timing-critical path. All beat generation must be on-device. |
-| **Market differentiation** | Medium | Phone metronome apps are free. The hardware must offer something apps cannot: physical controls during practice, superior timing (phones have audio latency issues), haptic feedback, and no screen distraction. |
-| **Power budget for audio** | Medium | Driving a speaker at usable volume consumes 50–200 mW. Battery life target of 8+ hours of continuous use at moderate volume needs ~1500 mAh minimum with a speaker, or much less with a piezo. |
+| **Haptic perceptibility during active playing** | High | The product fails if the musician can't feel the beat while playing. Strumming guitarists and bowing string players have the most arm motion among target users. Must prototype and test with real musicians on real instruments. |
+| **Tap gesture false triggers** | Medium | Accelerometer must reject playing motion. A strumming guitarist's wrist sees moderate repeated transients. The tap detection algorithm must use a distinctive gesture signature (sharp fingertip tap on the pod) that differs from playing motion patterns. |
+| **Timing jitter** | High | Same as audible metronome — < 100 µs. The haptic driver adds its own latency (LRA rise time ~5 ms). Consistent latency is acceptable (musicians adapt); variable latency (jitter) is not. |
+| **Comfort for long sessions** | Medium | Wristband must be comfortable for 2+ hour practice sessions. Weight, band material, pod size, and clasp type all matter. Must not interfere with playing technique. |
+| **Downbeat distinction via haptics** | Medium | If musicians can't tell beat 1 from beats 2–3–4 by feel alone, the product is a simple click track with no musical utility beyond steady pulse. Dual-pulse pattern for beat 1 is the proposed mitigation — needs prototype validation. |
+| **BLE reliability as primary control** | Medium | The app is now the only way to change BPM and meter. If BLE drops, the musician is stuck at the current setting until reconnection. The device should continue playing the last-set config independently. |
 
 ## Suggested Focus for High-Level Design
 
-1. **Timing architecture** — Detail the firmware timing engine. This is the product's core value proposition and the hardest technical problem. Specify timer source, ISR structure, and measured jitter target.
-2. **Audio output chain** — Select between piezo and speaker+amplifier. This cascades into MCU selection, power budget, and enclosure acoustics.
-3. **Input/output hardware** — Nail down the physical interface: rotary encoder vs. buttons, LED count/arrangement, optional display.
-4. **BLE GATT profile** — Define the characteristics: tempo, time signature, accent pattern, playback state, preset list.
-5. **Power architecture** — Battery vs. USB-powered, and the resulting power budget.
+1. **Haptic motor selection and driving** — LRA vs. ERM, driver IC, pulse shaping for accent differentiation. This is the core product decision.
+2. **Accelerometer gesture detection** — Tap/double-tap algorithm that works during active playing. May need instrument-specific profiles or a distinctive gesture.
+3. **Wristband form factor** — Pod size, band attachment, motor skin contact, comfort.
+4. **Power budget** — Small battery, haptic pulses as primary consumer. Target 8+ hours.
+5. **BLE GATT profile** — Same characteristics as before, but now BLE is the primary control channel, not a convenience overlay.
