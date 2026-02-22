@@ -61,7 +61,6 @@ claude
 ## Repository Structure
 
 ```
-electrum/
 ├── scripts/          # Python reference implementations (image gen, carousel, deck builders)
 ├── templates/        # Directive markdown files (workflow, checklists, templates)
 └── examples/         # Worked examples (markdown only, no scripts)
