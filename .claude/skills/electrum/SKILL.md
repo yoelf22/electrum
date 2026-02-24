@@ -22,7 +22,15 @@ You are an expert product-definition consultant for software-augmented hardware 
 
 **Instructions:**
 1. Read the skills map: `templates/skills_map.md`
-2. Generate a markdown document titled `# Exploration Notes` with these sections:
+2. **Before writing**, use `AskUserQuestion` to gather context that shapes the exploration. Ask **all of the following in a single AskUserQuestion call** (multiple questions):
+   - **Target market / user profile:** Consumer, B2B/industrial, prosumer/maker, or medical/regulated? (options: Consumer, B2B / Industrial, Prosumer / Maker, Medical / Regulated)
+   - **Deployment context:** Indoor fixed, outdoor/portable, wearable, or vehicle-mounted? (options: Indoor fixed, Outdoor / Portable, Wearable, Vehicle-mounted)
+   - **Price point and volume:** Budget (<$50, >10k units), mid-range ($50–200, 1k–10k units), premium ($200+, <1k units), or unsure? (options: Budget (<$50, high volume), Mid-range ($50–200, medium volume), Premium ($200+, low volume), Not sure yet)
+   - **Power source preference:** Battery, USB-powered, mains AC, or energy harvest/solar? (options: Battery, USB-powered, Mains AC, Energy harvest / Solar)
+
+   Use multiSelect: false for each question. These answers feed directly into the exploration notes — they set the design envelope before you start writing.
+
+3. Generate a markdown document titled `# Exploration Notes` with these sections:
    - **Product Summary** (2-3 sentences)
    - **HW/SW Boundary Analysis** — what must be physical hardware vs. what is firmware/app/cloud
    - **Relevant Skill Areas** — from the 16 areas in the skills map, which matter most for this product and why
@@ -39,8 +47,15 @@ You are an expert product-definition consultant for software-augmented hardware 
 
 **Instructions:**
 1. Read the template: `templates/hw_sw_high_level.md`
-2. Read the worked example: `examples/chair_balancing_act/hw_sw_high_level_chair_balancing_act.md`
-3. Using the exploration notes from Phase 1 as input, generate a high-level design document following the template structure exactly. Be specific — no placeholders or TODOs.
+2. Read the worked example: `reference/high_level_design_example.md`
+3. **Before writing**, use `AskUserQuestion` to gather design-shaping input. Ask **all of the following in a single AskUserQuestion call** (multiple questions):
+   - **Key differentiator:** What one thing makes this product special? (free-text — use an open question with options like: "Novel sensor/algorithm", "Form factor / industrial design", "Price disruption", "Integration / ecosystem play". Let the user pick or type their own.)
+   - **Connectivity needs:** Standalone (no wireless), BLE to phone app, Wi-Fi / cloud-connected, or Cellular / LoRa (remote)? (options: Standalone (no wireless), BLE to phone app, Wi-Fi / cloud-connected, Cellular / LoRa (remote))
+   - **MVP scope:** What is V1 vs. future? (free-text — use options like: "Minimal — core function only, no app", "Core + companion app", "Full product with cloud + app", "Not sure — help me decide". Let the user pick or type their own.)
+
+   These answers directly determine the block diagram, subsystem list, and constraint set.
+
+4. Using the exploration notes from Phase 1 as input, generate a high-level design document following the template structure exactly. Be specific — no placeholders or TODOs.
 4. Write the output to `output/<slug>/high_level_design.md`
 5. Present a summary to the user and ask: **"Ready to proceed to Phase 3 (System Description), or would you like to adjust anything?"**
 6. If the user wants changes, revise and rewrite. Repeat until satisfied.
@@ -51,8 +66,15 @@ You are an expert product-definition consultant for software-augmented hardware 
 
 **Instructions:**
 1. Read the template: `templates/system_description_template.md`
-2. Read the worked example: `examples/chair_balancing_act/system_description_chair_balancing_act.md`
-3. Using the exploration notes AND high-level design as input, generate a complete system description following the template exactly. Include:
+2. Read the worked example: `reference/system_description_example.md`
+3. **Before writing**, use `AskUserQuestion` to gather engineering-level input. Ask **all of the following in a single AskUserQuestion call** (multiple questions):
+   - **Component preferences or aversions:** Any MCU, sensor, or module preferences? (options: "No preference — pick the best fit", "Nordic nRF series (BLE focus)", "ESP32 family (Wi-Fi + BLE, cost)", "STM32 family (industrial, broad ecosystem)". Let the user type their own if they have specific parts.)
+   - **Manufacturing context:** Prototype / proof-of-concept, small batch (100–1k units), or mass production (10k+ units)? (options: Prototype / POC only, Small batch (100–1k), Mass production (10k+))
+   - **Target regulatory markets:** Which markets need certification? (multiSelect: true, options: "US (FCC, UL)", "EU (CE)", "Medical (FDA / MDR)", "None yet — prototype stage")
+
+   These answers directly affect component selection, BOM cost targets, PCB strategy, and the constraints section.
+
+4. Using the exploration notes AND high-level design as input, generate a complete system description following the template exactly. Include:
    - Real component suggestions (specific MCUs, sensors, etc.)
    - Power budgets with actual numbers
    - Interface specifications with protocols and data formats
@@ -68,7 +90,7 @@ You are an expert product-definition consultant for software-augmented hardware 
 
 **Instructions:**
 1. Read the checklist: `templates/checklist.md`
-2. Read the worked example: `examples/chair_balancing_act/gate_checklist_chair_balancing_act.md`
+2. Read the worked example: `reference/gate_checklist_example.md`
 3. Evaluate the system description (from Phase 3) against every checklist item. For each item, mark it:
    - **PASS** — the system description adequately addresses this item
    - **FAIL** — the system description is missing or insufficient on this item
