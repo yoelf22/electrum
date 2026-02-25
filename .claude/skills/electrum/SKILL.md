@@ -1,6 +1,6 @@
 ---
 name: electrum
-description: "Run the 8-phase product definition workflow for software-augmented hardware: Explore → High-Level Design → Component Arrangement → System Description → Gate Checklist → Image Generation → PPTX Carousel → PDF Carousel. Use when the user has a hardware+software product idea to develop."
+description: "Run the 8-phase product definition workflow for software-augmented hardware: Explore → High-Level Design → Component Arrangement → System Description → Gate Checklist → Product Visual → PPTX Carousel → PDF Carousel. Use when the user has a hardware+software product idea to develop."
 argument-hint: [product idea]
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash(mkdir *), Bash(python3* *), Bash(pip3 install *), AskUserQuestion
 model: claude-opus-4-6
@@ -256,29 +256,23 @@ This phase applies to **all products** — static electronic, electromechanical,
 7. If there are FAIL items, ask: **"Would you like to revise the system description to address the FAIL items, or accept the current state?"**
    - If they want revisions, go back to Phase 4 — update the system description targeting the FAIL items, rewrite it, then re-run the gate checklist.
 
-## Phase 6: Image Generation
+## Phase 6: Product Visual
 
-**Goal:** Generate product illustration(s) using ChatGPT's DALL-E via Playwright browser automation. The user authenticates manually on first run; the session persists for subsequent runs.
+**Goal:** Select the visual image to use in the carousel. Use an existing diagram from earlier phases (e.g., the arrangement diagram from Phase 3 or the block diagram from Phase 2) or a user-provided image. No 3rd-party image generation services are used.
 
 **Instructions:**
-1. Read the reference script: `scripts/generate_illustration.py`
-2. Create a `generate_illustration.py` in `output/<slug>/` adapted for this product:
-   - Set `DESIGN_FILE` to the `high_level_design.md` from Phase 2 and `component_arrangement.md` from Phase 3 (concatenate both — the arrangement diagram gives the illustrator spatial accuracy)
-   - Set `PROMPT_PREFIX` to request a longitudinal cross section illustration and an isometric artist concept of this product
-   - Set `OUTPUT_FILE` to `cross_section_illustration_<slug>.png`
-   - Keep the same Playwright automation structure: persistent browser profile at `~/.chatgpt_playwright_profile/`, forced login flow, content pasted into prompt, spinner-based generation detection, image download with blob URL fallback
-3. Run the script: `python3.11 output/<slug>/generate_illustration.py`
-   - First run: the browser opens and the user logs into ChatGPT manually
-   - The script waits for generation, downloads the image, and saves it
-4. Verify the output image exists and is a valid PNG
-5. Present the result to the user and ask: **"Image generated. Ready to proceed to Phase 7 (PPTX Carousel), or would you like to regenerate?"**
-6. If the user wants a different image, adjust the prompt and re-run.
-
-**Key constraints:**
-- The script must use `launch_persistent_context` with `--disable-blink-features=AutomationControlled` for anti-detection
-- Use `document.execCommand('insertText', ...)` to paste the full prompt (not keyboard.type — too slow for large text)
-- Wait for the spinning/loading indicator to stop before downloading the image
-- Handle both CDN URLs (`page.request.get()`) and blob URLs (canvas extraction fallback)
+1. Check which visual assets already exist in `output/<slug>/`:
+   - `arrangement_options.png` from Phase 3
+   - `block_diagram.png` from Phase 2
+   - Any other PNG files the user may have added to the directory
+2. Use `AskUserQuestion` to ask the user which image to feature in the carousel. Present options based on what exists:
+   - "Use the arrangement diagram (arrangement_options.png)" (description: "The component arrangement cross-section/plan view from Phase 3")
+   - "Use the block diagram (block_diagram.png)" (description: "The system block diagram from Phase 2")
+   - "I'll provide my own image" (description: "Specify a path to an image file to copy into the output directory")
+3. If the user provides their own image path, copy it into `output/<slug>/` as `product_visual.png`. Otherwise, note which existing image to use.
+4. Verify the selected image exists and is a valid image file.
+5. Store the chosen image filename for use in Phases 7 and 8.
+6. Present the result to the user: **"Product visual selected: `output/<slug>/<chosen_image>.png` — ready to proceed to Phase 7 (PPTX Carousel), or would you like to pick a different image?"**
 
 ## Phase 7: PPTX Carousel Generation
 
@@ -287,7 +281,7 @@ This phase applies to **all products** — static electronic, electromechanical,
 **Instructions:**
 1. Read the reference script: `scripts/build_carousel.py`
 2. Create a `build_carousel.py` in `output/<slug>/` that generates both PPTX and PDF (Phase 8 uses the same script). Adapt all content to this product using the outputs from Phases 1-5:
-   - **Page 1: Title** — product name, tagline, cross-section illustration from Phase 6
+   - **Page 1: Title** — product name, tagline, product visual from Phase 6
    - **Page 2: The Problem** — 3 key problems from explore_notes.md, target users
    - **Page 3: How It Works** — 3-4 step user flow from high_level_design.md
    - **Page 4: Architecture** — signal chains, subsystems from system_description.md, component arrangement from Phase 3
@@ -315,7 +309,7 @@ This phase applies to **all products** — static electronic, electromechanical,
 4. Verify both output files exist:
    - `<Product_Name>_Carousel.pptx`
    - `<Product_Name>_Carousel.pdf`
-5. Present the final summary to the user: **"All 8 phases complete. Output files: explore_notes.md, high_level_design.md, component_arrangement.md, system_description.md, gate_checklist.md, <illustration>.png, <carousel>.pptx, <carousel>.pdf"**
+5. Present the final summary to the user: **"All 8 phases complete. Output files: explore_notes.md, high_level_design.md, component_arrangement.md, system_description.md, gate_checklist.md, product_visual.png, <carousel>.pptx, <carousel>.pdf"**
 
 ## Writing Guidelines
 
@@ -338,8 +332,7 @@ output/<slug>/
 ├── component_arrangement.md
 ├── system_description.md
 ├── gate_checklist.md
-├── generate_illustration.py
-├── cross_section_illustration_<slug>.png
+├── product_visual.png              # Phase 6: selected or copied product visual
 ├── build_carousel.py
 ├── <Product_Name>_Carousel.pptx
 └── <Product_Name>_Carousel.pdf
