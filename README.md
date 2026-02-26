@@ -6,11 +6,33 @@ Software PMs have established tools — user stories, PRDs, sprint planning. Pur
 
 The boundary between HW and SW is where the expensive mistakes happen, and it's usually the least documented part.
 
+## Quickstart for PMs and Product Strategists
+
+You have a connected product idea and want to stress-test it before committing resources. Here's the fastest path:
+
+```bash
+# 1. Install Claude Code (https://docs.anthropic.com/en/docs/claude-code)
+# 2. Clone this repo and open a terminal in it
+git clone https://github.com/yoelf22/electrum.git && cd electrum
+
+# 3. Start Claude Code and run the skill
+claude
+> /electrum <describe your product in one sentence>
+```
+
+The process will walk you through a structured dialogue — mapping the HW/SW boundary, forcing specifics, and surfacing what you're still assuming. It pauses after every output for your review. Budget 60–90 minutes for a full run.
+
+**Don't have Claude Code?** The templates work without AI. Copy `templates/system_description_template.md` into your project folder, fill it in by hand, then run through `templates/checklist.md`. That's 80% of the value.
+
+**Want to see what a full run looks like?** Read the [Bubbler walkthrough](examples/bubbler-automated-soap-bubble-maker/WALKTHROUGH.md) — a soup-to-nuts example that turned "automated soap bubble machine" into a force-sensing feedback system with a 90-item gate review.
+
+---
+
 ## What This Toolkit Does
 
 A repeatable, AI-assisted process for defining hardware products that have software inside them — so the firmware team and the mechanical team aren't surprised by each other at EVT.
 
-It takes a product idea from "I think this could work" through to a structured system description, product illustrations, and a presentation-ready carousel. Seven phases, driven by the `/electrum` Claude Code skill:
+It takes a product idea from "I think this could work" through to a structured system description, product illustrations, and a presentation-ready carousel. Eight phases, driven by the `/electrum` Claude Code skill:
 
 | Phase | Output | Description |
 |-------|--------|-------------|
@@ -61,12 +83,17 @@ claude
 ## Repository Structure
 
 ```
-├── scripts/          # Python reference implementations (image gen, carousel, deck builders)
+├── scripts/          # Python reference implementations (carousel, diagrams, deck builders)
 ├── templates/        # Directive markdown files (workflow, checklists, templates)
-└── examples/         # Worked examples (markdown only, no scripts)
-    ├── chair_balancing_act/
-    ├── metronome/
-    └── smart_sensor_hub/
+├── examples/         # Worked examples with full output artifacts
+│   ├── bubbler-automated-soap-bubble-maker/   ← start here (has WALKTHROUGH.md)
+│   ├── pop-miniature-popcorn-machine/
+│   ├── metronome/
+│   ├── chair_balancing_act/
+│   ├── consumable-electric-toothbrush/
+│   ├── shusher/
+│   └── smart_sensor_hub/
+└── output/           # Raw output from recent runs
 ```
 
 ## What's in the Box
@@ -97,11 +124,15 @@ claude
 
 | Project | What it is | Phases covered |
 |---------|-----------|----------------|
-| `electrum/examples/chair_balancing_act/` | Clip-on tilt sensor that plays an escalating tone when a chair leaves static balance | HLD, system description, gate checklist |
-| `electrum/examples/smart_sensor_hub/` | Wireless indoor environment monitor (CO2, temp, humidity, PM) with BLE nodes and cloud dashboard | HLD, system description |
-| `electrum/examples/metronome/` | Wrist-worn haptic metronome bracelet for musicians — silent, precise beat pulses | All 7 phases (full example with illustrations and carousel) |
+| [`bubbler-automated-soap-bubble-maker/`](examples/bubbler-automated-soap-bubble-maker/) | Force-sensing automated bubble machine with adaptive optimization — **[full walkthrough](examples/bubbler-automated-soap-bubble-maker/WALKTHROUGH.md)** | All 8 phases |
+| `pop-miniature-popcorn-machine/` | Miniature countertop popcorn machine with heating and motor control | Explore, HLD, system description, gate checklist, carousel |
+| `metronome/` | Wrist-worn haptic metronome bracelet for musicians — silent, precise beat pulses | All phases |
+| `chair_balancing_act/` | Clip-on tilt sensor that plays an escalating tone when a chair leaves static balance | HLD, system description, gate checklist |
+| `consumable-electric-toothbrush/` | Disposable electric toothbrush with wear tracking | Full |
+| `shusher/` | Noise-aware mechanical mute device with sound detection | HLD, system description, gate checklist |
+| `smart_sensor_hub/` | Wireless indoor environment monitor (CO2, temp, humidity, PM) with BLE mesh | HLD, system description |
 
-The metronome example is the most complete — its `generate_illustration.py` and `build_carousel.py` are now the reference implementations in `electrum/scripts/`.
+The bubbler example includes a [step-by-step walkthrough](examples/bubbler-automated-soap-bubble-maker/WALKTHROUGH.md) showing what each phase surfaced and what the team would have missed without the process.
 
 ## How to Use
 
@@ -110,9 +141,8 @@ The metronome example is the most complete — its `generate_illustration.py` an
 1. Open a terminal in this repo
 2. Run `claude` to start Claude Code
 3. Type `/electrum <your product idea>`
-4. Walk through all 7 phases interactively — Claude drafts, you review and refine at each step
-5. When Phase 5 runs, a browser window opens for ChatGPT login (first time only)
-6. Final output: a complete product definition + illustrations + presentation deck
+4. Walk through all 8 phases interactively — Claude drafts, you review and refine at each step
+5. Final output: a complete product definition + diagrams + presentation deck
 
 ### Without Claude Code
 
