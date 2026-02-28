@@ -63,14 +63,6 @@ pip install playwright
 python -m playwright install chromium
 ```
 
-### ChatGPT account (for image generation)
-
-Phase 5 uses Playwright to automate ChatGPT's web UI for DALL-E image generation. **No API key needed** — authentication happens through ChatGPT's own login flow.
-
-On the first run, the script opens a Chromium browser window and navigates to ChatGPT's login page. **You must log in manually** (Google, email, or any supported method). The session is saved to a persistent browser profile (`~/.chatgpt_playwright_profile/`), so subsequent runs skip login automatically.
-
-**This means an active ChatGPT account with DALL-E access is required.** Free-tier accounts may have limited image generation. If your session expires, the script will prompt you to log in again.
-
 ### Claude Code (for the `/electrum` skill)
 
 Install [Claude Code](https://docs.anthropic.com/en/docs/claude-code) and open a terminal in this repo. The `/electrum` skill is automatically available:
