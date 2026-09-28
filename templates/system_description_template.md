@@ -396,11 +396,38 @@ stateDiagram-v2
 - Target margin: [X%]
 - Key cost drivers: [what eats the budget]
 
-### Manufacturing
+### Design for X (DfX)
+
+> - Which DfX choice is locked by tooling or the PCB layout, and which can still change in firmware or packaging?
+> - What does the factory, the shipper, the repair tech, and the recycler each need from this design?
+
+**Manufacturing and assembly (DFM/DFA)**
 - Target annual volume: [units]
 - Assembly complexity: [SMT only / mixed / manual steps]
-- Test requirements: [functional test, calibration, burn-in]
+- Fastening and part count: [snap-fit / screws / adhesive; number of unique parts]
+- Tooling: [injection molds, fixtures — cost and lead time]
 - Target factory yield: [%]
+
+**Test (DFT)**
+- Board-level access: [test points, programming header, bed-of-nails fixture]
+- Production test: [functional test, calibration, burn-in — and the firmware/software that runs each]
+- Test time per unit: [seconds]
+
+**Packaging and logistics**
+- Retail/shipping packaging: [box, inserts, drop-test target]
+- Shipping constraints: [battery transport (UN38.3), size/weight tier, shelf life]
+- Out-of-box state: [charge level, factory firmware version, first-boot behavior]
+
+**Sustainability and end of life**
+- Materials: [recyclable plastics, labeled resin codes, restricted substances (RoHS, REACH)]
+- Battery: [replaceable or not; take-back obligations (WEEE, EU Battery Regulation)]
+- Product lifetime: [target years; how long firmware and cloud support last]
+- End-of-life behavior: [what happens when the cloud service shuts down]
+
+**Service and repair**
+- Field-replaceable parts: [battery, strap, filter, consumables]
+- Diagnostics: [error codes, logs the app or support can read]
+- Repair path: [user / service center / replace-only]
 
 ### Schedule
 - Key milestones: [prototype, EVT, DVT, PVT, mass production]

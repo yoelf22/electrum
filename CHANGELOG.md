@@ -2,6 +2,10 @@
 
 All notable changes to Electrum are documented here.
 
+## Unreleased
+
+- **DfX coverage** — the system description's §9 Constraints gains a Design for X subsection (manufacturing/assembly, test, packaging and logistics, sustainability and end of life, service and repair). The gate checklist adds 8 matching items (now 99). Phase 4 of the skill fills the subsection, scaled to the manufacturing context.
+
 ## v0.1.0 — 2026-05-28
 
 First tagged release. Bundles everything below and adds:

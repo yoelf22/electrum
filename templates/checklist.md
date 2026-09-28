@@ -113,6 +113,16 @@ This checklist is for products where physical hardware and software (firmware, c
 - [ ] **[HW↔SW]** App store and platform constraints noted (iOS background execution limits, Android battery optimization, minimum OS versions)
 - [ ] **[HW↔SW]** Manufacturing test requirements identified — what firmware/software is needed on the production line for device testing and provisioning
 
+## Design for X (DfX)
+- [ ] Assembly method and fastening strategy stated, with tooling cost and lead time
+- [ ] Board-level test access defined (test points, programming header, fixture)
+- [ ] Production test sequence listed with test time per unit
+- [ ] Packaging defined, including drop-test target and battery shipping requirements
+- [ ] Restricted-substance and recycling obligations for target markets identified (RoHS, REACH, WEEE, battery take-back)
+- [ ] Field-replaceable parts and repair path stated
+- [ ] **[HW↔SW]** Product lifetime stated for both hardware and software support, and device behavior defined if the cloud service shuts down
+- [ ] **[HW↔SW]** Field diagnostics defined — which error codes and logs the firmware exposes and how the app or support reads them
+
 ## Open Questions and Risks
 - [ ] All open questions have an owner and target resolution date
 - [ ] High-impact risks have mitigation plans or are flagged for prototyping

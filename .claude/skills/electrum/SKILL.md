@@ -216,7 +216,7 @@ This phase applies to **all products** — static electronic, electromechanical,
    - §6 Power Architecture (with power budget table — include mechanical loads for electromechanical products)
    - §7 Connectivity (if applicable)
    - §8 Key Decisions (with options considered, rationale, consequences)
-   - §9 Constraints (certifications, BOM cost, schedule, dependencies)
+   - §9 Constraints (certifications, BOM cost, schedule, dependencies, and the DfX subsection: manufacturing/assembly, test, packaging, sustainability/end of life, service/repair — scale depth to the manufacturing context; for a prototype, note the decisions that will be locked by tooling rather than inventing production detail)
    - §10 Open Questions and Risks
 
    Update `output/<slug>/system_description.md` with the full document. Then **STOP and wait:**
