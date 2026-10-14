@@ -284,7 +284,7 @@ def render_body(f, tbody, ebody, title, base):
     flush()
 
 
-def write_doc(f, tpl_md, ex_md, base, product, skip_until=None, stop_at=None):
+def write_doc(f, tpl_md, ex_md, base, product, skip_until=None, stop_at=None, expand_hld=False):
     tsecs = sections(parse(tpl_md))
     esecs = sections(parse(ex_md))
     if skip_until:  # drop the template's own preamble (purpose/process notes)
@@ -303,7 +303,26 @@ def write_doc(f, tpl_md, ex_md, base, product, skip_until=None, stop_at=None):
         if th is None: continue
         f.heading(th, {1: 0, 2: 1, 3: 2, 4: 3}[tl] if tl != 1 else 0, product)
         ebody = esecs[m[ti]][2] + extra.get(ti, []) if ti in m else None
+        if expand_hld: ebody = builds_on(f, th, ebody)
         render_body(f, tb, ebody, re.sub(r"[*#]", "", th), base)
+
+# System Description sections that expand a High-Level Design section (forms only; the
+# markdown templates keep both). Key = section number, value = the HLD heading it builds on.
+BUILDS_ON = {"1": "What It Is", "3": "Block Diagram", "4": "Subsystems", "5": "Key Interfaces",
+             "9": "Constraints", "10": "Open Calls"}
+
+
+def builds_on(f, th, ebody):
+    """Point an overlapping section at the High-Level Design instead of repeating it."""
+    hld = BUILDS_ON.get(key(th))
+    if not hld: return ebody
+    if hld == "Block Diagram":
+        f.para("↳ Builds on your High-Level Design block diagram. Paste an updated diagram here only if it "
+               "has changed; otherwise describe the architecture below.", style="Guidance")
+        return [b for b in ebody or [] if b[0] not in ("img", "code")]
+    f.para(f"↳ Builds on your High-Level Design ({hld}). Start from what you wrote there and add the "
+           "detail here.", style="Guidance")
+    return ebody
 
 # ---------------------------------------------------------------- checklist
 
@@ -378,7 +397,8 @@ def build(out, example):
             f, (TPL / "hw_sw_high_level.md").read_text(), ex("high_level_design.md"), base, product,
             skip_until="Template", stop_at="What This Is NOT")),
         "system-description": ("System Description", lambda f: write_doc(
-            f, (TPL / "system_description_template.md").read_text(), ex("system_description.md"), base, product)),
+            f, (TPL / "system_description_template.md").read_text(), ex("system_description.md"), base, product,
+            expand_hld=True)),
         "gate-checklist": ("Gate Checklist", lambda f: checklist(
             f, (TPL / "checklist.md").read_text(), ex("gate_checklist.md"))),
     }
