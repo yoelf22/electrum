@@ -2,9 +2,18 @@
 
 All notable changes to Electrum are documented here.
 
-## Unreleased
+## v0.2.0 — 2026-10-15
 
-- **DfX coverage** — the system description's §9 Constraints gains a Design for X subsection (manufacturing/assembly, test, packaging and logistics, sustainability and end of life, service and repair). The gate checklist adds 8 matching items (now 99). Phase 4 of the skill fills the subsection, scaled to the manufacturing context.
+- **Word fill-in forms** — `scripts/build_word_forms.py` builds the High-Level Design, System Description and Gate Checklist as Word forms, plus a workbook holding all three. Template headings and questions are fixed text; every answer area is a content control pre-filled with the Bubbler example in grey, which disappears when you type. The checklist has tick boxes and a PASS / FAIL / N/A dropdown. Sections of the System Description that expand a High-Level Design section point back to it instead of repeating it. The forms are on the [Electrum Word Kit](https://claude.ai/artifact/TeQUJAtvwVfo2a8iTkUymx) page.
+- **What each document is for** — the README gains "The Documents" section: what the High-Level Design, System Description and Gate Checklist each are, who writes and reads them, when, and how they feed each other. Each Word form opens with an "About this document" paragraph. The `/electrum` skill orients first-time users before Phase 1 and frames Phases 2, 4 and 5.
+- **Lead time and MOQ on the BOM** — the BOM table gains Lead time, MOQ (minimum order quantity) and Buy / Make columns. The Cost guidance asks for the critical-path parts and alternate sources.
+- **Manufactured part lead times** — a new §9 table for parts made to your design: tooling, first articles and approval, and production run, each a fill-in in weeks, with the basis (supplier quote or own estimate).
+- **Assembly and inspection times** — a new §9 table with assembly and inspection minutes per unit for each subassembly and for final assembly, and the bottleneck stage.
+- **Gantt schedule** — §9 Schedule is now a task table (duration, dependencies, owner). The new `scripts/gantt.py` draws it as a Gantt chart with the critical path highlighted; Phase 4 of the skill runs it.
+- **"Anything else on your mind?"** — before each document is final, the `/electrum` skill asks whether the user has concerns, constraints or ideas not yet covered, and folds them in.
+- **Gate checklist** — four new items: long-lead and high-MOQ parts, manufactured part lead times, assembly and inspection times, and the critical-path schedule (now 103).
+- **Bubbler example** — filled in for all of the above with illustrative estimates: a 30-week schedule with enclosure tooling on the critical path. Its gate checklist rows and summary tallies are updated to match.
+- **DfX coverage** — the system description's §9 Constraints gains a Design for X subsection (manufacturing/assembly, test, packaging and logistics, sustainability and end of life, service and repair). The gate checklist adds 8 matching items. Phase 4 of the skill fills the subsection, scaled to the manufacturing context.
 
 ## v0.1.0 — 2026-05-28
 
