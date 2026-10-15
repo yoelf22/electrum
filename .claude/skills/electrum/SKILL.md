@@ -24,6 +24,11 @@ These rules override per-phase instructions when they conflict:
 1. Take the user's product idea from the argument: `$ARGUMENTS`
 2. Create a slugified output directory: `output/<slugified-idea>/` (lowercase, hyphens, no special chars, max ~50 chars)
 3. Run phases sequentially, but **always wait for user acknowledgment between phases** — never auto-advance
+4. **Orient the user before Phase 1.** Many users are running this for the first time. Before the Phase 1 questions, send this orientation (in your own words, under 150 words, no headers):
+   - The run produces three core documents, each feeding the next. **High-Level Design** (Phase 2): a one-to-two-page overview of what the product is, its main blocks, constraints and three hardest problems; for executives, partners and new team members, and a gate before the detail. **System Description** (Phase 4): the full engineering spec, with real parts, power budget, firmware architecture, BOM cost, lead times and minimum order quantities; engineers design from it and suppliers quote from it. **Gate Checklist** (Phase 5): 100 PASS/FAIL/N/A items that test whether the System Description is complete enough to start detailed design; a FAIL sends you back to Phase 4.
+   - Phase 1 (exploration notes) and Phase 3 (component arrangement) feed those documents. Phases 6–8 turn the result into a presentation carousel.
+   - It pauses after every file for review. A full run takes 60–90 minutes.
+   - Each file is a draft for their team, not a final answer: the product manager owns the High-Level Design, the technical lead owns the System Description, and the Gate Checklist works best reviewed by someone who did not write the spec.
 
 ## Phase 1: Explore
 
@@ -89,6 +94,8 @@ These rules override per-phase instructions when they conflict:
 ## Phase 2: High-Level Design
 
 **Goal:** Produce a one-page high-level system overview with block diagram, subsystems, constraints, and hardest problems. Visual-first: generate a block diagram image before writing the markdown document.
+
+**Tell the user first (one or two sentences):** this is the document an executive, partner or new team member reads to understand the product in five minutes. The product manager owns it, and it should get 30 minutes of feedback from one hardware and one software person before the detail starts.
 
 **Instructions:**
 1. Read the template: `templates/hw_sw_high_level.md`
@@ -184,6 +191,8 @@ This phase applies to **all products** — static electronic, electromechanical,
 
 **Goal:** Produce a full, engineering-grade system description covering all 10 template sections. Use progressive disclosure — build the document in stages with user checkpoints, not as one massive dump.
 
+**Tell the user first (one or two sentences):** this expands the High-Level Design into the spec engineers design from and suppliers quote from. The technical lead owns it, and it stays current through the first engineering prototype build (EVT).
+
 **Instructions:**
 1. Read the template: `templates/system_description_template.md`
 2. Read the worked example: `reference/system_description_example.md`
@@ -238,6 +247,8 @@ This phase applies to **all products** — static electronic, electromechanical,
 ## Phase 5: Gate Checklist
 
 **Goal:** Evaluate the system description against the completeness checklist. Report PASS/FAIL/N/A for every item.
+
+**Tell the user first (one or two sentences):** this tests whether the System Description is complete enough to commit to detailed design. Items tagged [HW↔SW] target the hardware/software line, and with a real team it works best reviewed by someone who did not write the spec.
 
 **Instructions:**
 1. Read the checklist: `templates/checklist.md`

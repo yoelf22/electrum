@@ -180,6 +180,7 @@ class Form:
         g.paragraph_format.space_after = Pt(2); g.paragraph_format.left_indent = Cm(0.5)
         self.target = None  # sdtContent to divert body paragraphs into
         self.new_page = False  # next heading starts a page
+        self.about = None  # "About this document" paragraph to place under the next heading
 
     def _place(self, el):
         if self.target is not None: self.target.append(el)
@@ -202,6 +203,8 @@ class Form:
             runs(p, pre); self.inline(p, product, "Product name"); runs(p, post)
         else:
             runs(p, text)
+        if self.about:
+            self.para(f"**About this document.** {self.about}"); self.about = None
         return p
 
     def inline(self, par, text, alias, dropdown=None):
@@ -374,18 +377,60 @@ def checklist(f, tpl_md, ex_md):
 
 # ---------------------------------------------------------------- main
 
+# What each document is, who writes and reads it, and when. Kept in step with the README.
+ABOUT = {
+    "high-level-design":
+        "The High-Level Design is a one-to-two-page overview of the product: what it is, the main blocks "
+        "and how they connect, the constraints that rule options out, and the three hardest problems. The "
+        "product manager writes it with one hardware lead and one software lead, in half a day to a day, "
+        "after the idea has been explored and before anyone picks parts. Executives, partners, investors "
+        "and new team members read it to understand in five minutes what is being built. It is also the "
+        "first gate: if it does not hold together, do not start the System Description. "
+        "Next: the System Description expands each of its sections.",
+    "system-description":
+        "The System Description is the full engineering spec: real part numbers, interfaces, power budget, "
+        "firmware architecture, connectivity, key decisions, and constraints such as BOM cost, lead times, "
+        "minimum order quantities, certification and manufacturing. It starts from the High-Level Design; "
+        "sections marked \"Builds on your High-Level Design\" pick up where that document stopped. The "
+        "technical lead or systems engineer writes it with the electrical, mechanical, firmware and app "
+        "leads, over several days, once the High-Level Design is agreed and before schematics or tooling. "
+        "Engineers design from it; suppliers and contract manufacturers quote from it. Keep it current "
+        "through the first engineering prototype build (EVT). Next: check it against the Gate Checklist.",
+    "gate-checklist":
+        "The Gate Checklist has 100 items that test whether the System Description is complete enough to "
+        "start detailed design. Mark each item PASS, FAIL or N/A and note where the System Description "
+        "covers it. Items tagged [HW↔SW] target the line between hardware and software, where most "
+        "integration surprises start. Run it when you believe the System Description is ready, preferably "
+        "with someone who did not write it: a reviewer, the engineering manager, or the hardware and "
+        "software leads together in a design review. Every FAIL is either a gap to fill in the System "
+        "Description or a scope decision to write down. Revise and re-run until the FAILs left are ones "
+        "you accept.",
+}
+
+
 def cover(f, product, names):
     f.para().paragraph_format.space_before = Pt(120)
     f.para("ELECTRUM", bold=True, color=ACCENT)
     t = f.doc.add_paragraph(style="Title"); f.inline(t, product, "Product name")
-    f.para("Hardware–software partitioning workbook", color=GUIDE, size=Pt(14))
+    f.para("Hardware–software partitioning workbook" if len(names) > 1 else names[0], color=GUIDE, size=Pt(14))
     for label, val in (("Date", "YYYY-MM-DD"), ("Author", "Name"), ("Status", "Draft")):
         p = f.para(f"**{label}:** "); f.inline(p, val, label)
     f.para()
     f.para("Grey text is a worked example (Bubbler, an automated soap-bubble maker). Click it and type or paste: "
            "the example disappears. Tick checklist boxes with a click.", style="Guidance")
-    f.para("**Contents**")
-    for i, n in enumerate(names, 1): f.para(f"{i}. {n}")
+    if len(names) > 1:
+        f.para("This workbook holds all three Electrum documents in one file, in the order you fill them in: "
+               "the High-Level Design, then the System Description, then the Gate Checklist. It is not a "
+               "separate step, and the other documents are not generated from it: the three single files "
+               "contain the same forms. Use the workbook when one person or team takes the product through "
+               "all three. Use the single files when different people own each document or you share them "
+               "at different times.")
+        f.para("**Contents**")
+        for i, n in enumerate(names, 1): f.para(f"{i}. {n}")
+    else:
+        f.para(f"One of three Electrum documents: the High-Level Design comes first, the System Description "
+               f"expands it, and the Gate Checklist tests the System Description. The workbook "
+               f"(electrum-workbook.docx) holds all three in one file.")
 
 
 def build(out, example):
@@ -407,7 +452,7 @@ def build(out, example):
         f = Form()
         cover(f, product, [parts[k][0] for k in chosen])
         for k in chosen:
-            f.new_page = True
+            f.new_page, f.about = True, ABOUT[k]
             parts[k][1](f)
         path = out / f"electrum-{name}.docx"
         f.doc.save(path)
