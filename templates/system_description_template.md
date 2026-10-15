@@ -392,7 +392,8 @@ stateDiagram-v2
 
 ### Cost
 
-> - List the BOM with lead time and MOQ (minimum order quantity) for each line. Which parts set the critical path, and which MOQs force you to buy more than the first run needs?
+> - List the BOM with lead time and MOQ (minimum order quantity) for each line, and mark each line Buy (purchased from a supplier) or Make (manufactured to your design). For Buy lines the lead time is the supplier's; for Make lines, use your own estimate from Manufactured Part Lead Times below.
+> - Which parts set the critical path, and which MOQs force you to buy more than the first run needs?
 > - Which of those parts have an alternate source?
 
 - Target BOM cost: [$X at Y volume]
@@ -433,8 +434,39 @@ stateDiagram-v2
 - Diagnostics: [error codes, logs the app or support can read]
 - Repair path: [user / service center / replace-only]
 
+### Manufactured Part Lead Times
+
+> - List every part made to your design: molded, machined, sheet metal, die-cast, custom PCB, cable harness, printed or die-cut labels.
+> - For each, estimate the time from released drawing to parts on the line, in weeks: tooling (molds, dies, jigs, fixtures, stencils, from order to approved tool), first articles and approval, then the production run. These are your assessment; say whether each number comes from a supplier quote or your own estimate.
+
+| Part | Process | Tooling (weeks) | First articles and approval (weeks) | Production run (weeks) | Total (weeks) | Basis |
+|------|---------|-----------------|-------------------------------------|------------------------|---------------|-------|
+| [Part] | [injection molding / CNC / sheet metal / PCB fab and assembly] | [weeks] | [weeks] | [weeks] | [weeks] | [quote / own estimate] |
+| [Part] | [process] | [weeks] | [weeks] | [weeks] | [weeks] | [quote / own estimate] |
+
+### Assembly and Inspection Times
+
+> - Break the build into subassemblies, then final assembly. For each, estimate minutes per unit to assemble and to inspect or test.
+> - These times set line capacity and labor cost per unit. Which stage is the bottleneck?
+
+| Stage | Assembly time per unit | Inspection / test time per unit | Inspection method | Notes |
+|-------|------------------------|---------------------------------|-------------------|-------|
+| [Subassembly, e.g. PCBA] | [min] | [min] | [visual / AOI / board test] | |
+| [Subassembly] | [min] | [min] | [method] | |
+| Final assembly | [min] | [min] | [functional test, cosmetic check] | |
+| **Total per unit** | [min] | [min] | | |
+
 ### Schedule
-- Key milestones: [prototype, EVT, DVT, PVT, mass production]
+
+> - List the tasks from released design to the first production lot, each with a duration in weeks and the tasks it depends on. Include design work, the prototype builds (EVT, DVT, PVT), tooling and first articles for each manufactured part, orders for long-lead purchased parts, and certification testing. Use one number per duration; take the high end of a range.
+> - Which chain of tasks is the critical path, the one that sets the date? Draw it as a Gantt chart (with Claude Code, `scripts/gantt.py` draws it from this table).
+
+| # | Task | Start (week) | Duration (weeks) | Depends on | Owner |
+|---|------|--------------|------------------|------------|-------|
+| 1 | [Task] | [week] | [weeks] | [task #s] | [owner] |
+| 2 | [Task] | [week] | [weeks] | [task #s] | [owner] |
+
+- Critical path: [the task chain that sets the date, and the total weeks]
 - Hard deadlines: [trade shows, seasonal windows, partner commitments]
 - Certification timeline: [lead time for FCC/CE/etc.]
 

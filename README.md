@@ -41,8 +41,8 @@ It takes a product idea from "I think this could work" through to a structured s
 | 1. **Explore** | `explore_notes.md` | Map the HW/SW boundary, identify knowledge gaps, surface risks |
 | 2. **High-Level Design** | `high_level_design.md` | Single-page system overview: blocks, interfaces, constraints, hardest problems |
 | 3. **Component Arrangement** | `component_arrangement.md`, `arrangement_options.png` | Spatial layout alternatives — where boards, batteries, sensors, and actuators sit relative to each other and the enclosure |
-| 4. **System Description** | `system_description.md` | Full engineering-grade spec with real components, power budgets, firmware architecture |
-| 5. **Gate Checklist** | `gate_checklist.md` | Validate completeness across both domains (100 items, PASS/FAIL/N/A) |
+| 4. **System Description** | `system_description.md`, `schedule_gantt.png` | Full engineering-grade spec with real components, power budgets, firmware architecture |
+| 5. **Gate Checklist** | `gate_checklist.md` | Validate completeness across both domains (103 items, PASS/FAIL/N/A) |
 | 6. **Product Visual** | `product_visual.png` | Pick an existing diagram from earlier phases (or a user-supplied image) as the carousel visual |
 | 7. **PPTX Carousel** | `*_Carousel.pptx` | LinkedIn-format slide deck (4:5 portrait, dark theme, 8 pages) |
 | 8. **PDF Carousel** | `*_Carousel.pdf` | Same carousel as multi-page PDF |
@@ -63,8 +63,8 @@ High-Level Design  →  System Description  →  Gate Checklist
 | Document | What it is | Who writes it | Who reads it | When |
 |----------|-----------|---------------|--------------|------|
 | **High-Level Design** | A one-to-two-page overview: what the product is, the main blocks and how they connect, the constraints that rule options out, the three hardest problems | The product manager, with one hardware lead and one software lead | Executives, partners, investors, new team members: anyone who needs to understand the product in five minutes | After the idea is explored, before anyone picks parts. Half a day to a day |
-| **System Description** | The full engineering spec: real part numbers, interfaces, power budget, firmware architecture, connectivity, key decisions, and constraints (BOM cost with lead times and minimum order quantities, certification, manufacturing) | The technical lead or systems engineer, with the electrical, mechanical, firmware and app leads | Engineers design from it; suppliers and contract manufacturers quote from it | Once the High-Level Design is agreed, before schematics or tooling. Several days, then kept current through the first engineering prototype build (EVT) |
-| **Gate Checklist** | 100 items, each marked PASS / FAIL / N/A, that test whether the System Description is complete enough to start detailed design. Items tagged **[HW↔SW]** target the hardware/software line | Preferably someone who did not write the System Description: a reviewer, the engineering manager, or the hardware and software leads together | The team deciding whether to commit to detailed design | When you believe the System Description is ready. Re-run after each revision until the FAILs left are ones you accept |
+| **System Description** | The full engineering spec: real part numbers, interfaces, power budget, firmware architecture, connectivity, key decisions, and constraints (BOM cost with lead times and minimum order quantities, lead times for manufactured parts, assembly and inspection times, certification) and a Gantt schedule with the critical path | The technical lead or systems engineer, with the electrical, mechanical, firmware and app leads | Engineers design from it; suppliers and contract manufacturers quote from it | Once the High-Level Design is agreed, before schematics or tooling. Several days, then kept current through the first engineering prototype build (EVT) |
+| **Gate Checklist** | 103 items, each marked PASS / FAIL / N/A, that test whether the System Description is complete enough to start detailed design. Items tagged **[HW↔SW]** target the hardware/software line | Preferably someone who did not write the System Description: a reviewer, the engineering manager, or the hardware and software leads together | The team deciding whether to commit to detailed design | When you believe the System Description is ready. Re-run after each revision until the FAILs left are ones you accept |
 
 **The High-Level Design is also a gate.** If it doesn't hold together, the details won't either, so don't start the System Description until it does. The System Description builds on it rather than repeating it: its vision, architecture, subsystem, interface, constraint and open-question sections each expand the matching High-Level Design section.
 
@@ -125,7 +125,7 @@ claude
 | `electrum/templates/hw_sw_product_initiation.md` | 8-phase workflow from concept to presentation |
 | `electrum/templates/hw_sw_high_level.md` | Single-page system overview template |
 | `electrum/templates/system_description_template.md` | Full system description template with HW↔SW boundary items |
-| `electrum/templates/checklist.md` | Gate checklist — 100 items, each tagged if it targets the HW/SW boundary |
+| `electrum/templates/checklist.md` | Gate checklist — 103 items, each tagged if it targets the HW/SW boundary |
 | `electrum/templates/skills_map.md` | 16 competency areas a PM should understand or staff for |
 | `.claude/skills/electrum/SKILL.md` | Claude Code skill definition (drives the 8-phase workflow) |
 
@@ -139,6 +139,8 @@ claude
 | `electrum/scripts/build_high_level_deck.py` | High-level design deck builder |
 | `electrum/scripts/visualize.py` | Visualization utilities |
 | `electrum/scripts/block_diagram.py` | Block diagram generator |
+| `scripts/gantt.py` | Gantt chart of the §9 Schedule table, critical path highlighted |
+| `scripts/build_word_forms.py` | Builds the Word fill-in forms from `templates/` and the Bubbler example |
 
 ### Worked Examples
 

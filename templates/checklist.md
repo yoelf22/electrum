@@ -109,6 +109,7 @@ This checklist is for products where physical hardware and software (firmware, c
 - [ ] Target BOM cost or cost range stated
 - [ ] Target production volume stated
 - [ ] Key schedule milestones listed
+- [ ] Schedule laid out as tasks with durations and dependencies (Gantt chart), with the critical path from released design to the first production lot named
 - [ ] Third-party dependencies identified
 - [ ] Long-lead and high-MOQ parts identified, with an alternate source or a buffer plan
 - [ ] **[HW↔SW]** App store and platform constraints noted (iOS background execution limits, Android battery optimization, minimum OS versions)
@@ -116,6 +117,8 @@ This checklist is for products where physical hardware and software (firmware, c
 
 ## Design for X (DfX)
 - [ ] Assembly method and fastening strategy stated, with tooling cost and lead time
+- [ ] Lead time estimated for every manufactured part (tooling, first articles, production run), with its basis: quote or own estimate
+- [ ] Assembly and inspection time per unit estimated for each subassembly and for final assembly, with the bottleneck stage named
 - [ ] Board-level test access defined (test points, programming header, fixture)
 - [ ] Production test sequence listed with test time per unit
 - [ ] Packaging defined, including drop-test target and battery shipping requirements

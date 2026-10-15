@@ -18,6 +18,7 @@ These rules override per-phase instructions when they conflict:
 2. **Stop-and-wait at every file gate.** After writing or generating any output file, STOP generating text. Present the file path and a short prompt for the user to review. Do NOT continue to the next step or phase until the user explicitly acknowledges. This prevents the file link from scrolling out of view.
 3. **Progressive disclosure.** Don't dump large documents in one shot. Break them into reviewable stages. Get user approval on the structure before filling in details.
 4. **Decisions before design.** When there are 2+ valid approaches, present them as visual side-by-side comparisons (in a single matplotlib image) BEFORE committing to one. Each comparison should collapse a branch of the design space.
+5. **Ask what else is on their mind before each document is final.** In every phase, after the user has reviewed the draft and before you treat the phase's output as final and offer the next phase, ask in one short question whether anything else is on their mind for this document: concerns, constraints, ideas or context not covered yet (e.g. "Before we lock the high-level design: anything else on your mind, such as a worry, a constraint, or something we haven't covered?"). If they raise something, fold it into the document, show what changed, and ask once more. Move on only when they say there's nothing more. Ask this once per phase, not after every small edit.
 
 ## Setup
 
@@ -25,7 +26,7 @@ These rules override per-phase instructions when they conflict:
 2. Create a slugified output directory: `output/<slugified-idea>/` (lowercase, hyphens, no special chars, max ~50 chars)
 3. Run phases sequentially, but **always wait for user acknowledgment between phases** — never auto-advance
 4. **Orient the user before Phase 1.** Many users are running this for the first time. Before the Phase 1 questions, send this orientation (in your own words, under 150 words, no headers):
-   - The run produces three core documents, each feeding the next. **High-Level Design** (Phase 2): a one-to-two-page overview of what the product is, its main blocks, constraints and three hardest problems; for executives, partners and new team members, and a gate before the detail. **System Description** (Phase 4): the full engineering spec, with real parts, power budget, firmware architecture, BOM cost, lead times and minimum order quantities; engineers design from it and suppliers quote from it. **Gate Checklist** (Phase 5): 100 PASS/FAIL/N/A items that test whether the System Description is complete enough to start detailed design; a FAIL sends you back to Phase 4.
+   - The run produces three core documents, each feeding the next. **High-Level Design** (Phase 2): a one-to-two-page overview of what the product is, its main blocks, constraints and three hardest problems; for executives, partners and new team members, and a gate before the detail. **System Description** (Phase 4): the full engineering spec, with real parts, power budget, firmware architecture, BOM cost, lead times and minimum order quantities, assembly and inspection times, and a Gantt schedule with the critical path; engineers design from it and suppliers quote from it. **Gate Checklist** (Phase 5): 103 PASS/FAIL/N/A items that test whether the System Description is complete enough to start detailed design; a FAIL sends you back to Phase 4.
    - Phase 1 (exploration notes) and Phase 3 (component arrangement) feed those documents. Phases 6–8 turn the result into a presentation carousel.
    - It pauses after every file for review. A full run takes 60–90 minutes.
    - Each file is a draft for their team, not a final answer: the product manager owns the High-Level Design, the technical lead owns the System Description, and the Gate Checklist works best reviewed by someone who did not write the spec.
@@ -225,8 +226,10 @@ This phase applies to **all products** — static electronic, electromechanical,
    - §6 Power Architecture (with power budget table — include mechanical loads for electromechanical products)
    - §7 Connectivity (if applicable)
    - §8 Key Decisions (with options considered, rationale, consequences)
-   - §9 Constraints (certifications, BOM cost, schedule, dependencies, and the DfX subsection: manufacturing/assembly, test, packaging, sustainability/end of life, service/repair — scale depth to the manufacturing context; for a prototype, note the decisions that will be locked by tooling rather than inventing production detail)
+   - §9 Constraints (certifications, BOM cost with Buy/Make per line, manufactured part lead times, assembly and inspection times, schedule, dependencies, and the DfX subsection: manufacturing/assembly, test, packaging, sustainability/end of life, service/repair — scale depth to the manufacturing context; for a prototype, note the decisions that will be locked by tooling rather than inventing production detail)
    - §10 Open Questions and Risks
+
+   For the §9 Schedule, fill the task table (durations, dependencies; manufactured-part tooling and long-lead purchased parts become tasks), then draw it: `python3 scripts/gantt.py output/<slug>/system_description.md output/<slug>/schedule_gantt.png`, and embed the image under the table. Name the critical path in the Schedule bullets, matching the script's output.
 
    Update `output/<slug>/system_description.md` with the full document. Then **STOP and wait:**
    > "System description complete (§1–§10): `output/<slug>/system_description.md` — review and let me know when ready to proceed to Phase 5 (Gate Checklist)."

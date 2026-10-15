@@ -131,9 +131,10 @@
 | 74 | Operating environment defined | PASS | §9 — 5–40°C operating, IPX4 electronics, UV-stabilized enclosure |
 | 75 | Target BOM cost stated | PASS | §9 — $12.80 estimated, target <$15 for sub-$50 retail |
 | 76 | Target production volume stated | PASS | §9 — 10k+ units |
-| 77 | Key schedule milestones listed | GAP | No milestone schedule provided. Should add target dates for prototype, EVT, DVT, PVT, mass production. |
+| 77 | Key schedule milestones listed | PASS | §9 Schedule — EVT week 6, DVT week 20, PVT week 24, first lot week 28–30 |
+| 77a | Schedule with durations, dependencies and critical path | PASS | §9 Schedule — 14 tasks, Gantt chart; critical path runs through enclosure tooling, 30 weeks |
 | 78 | Third-party dependencies identified | PASS | Implicit — COTS motors, fans, HX711, STM32 availability. No single-source risks identified. |
-| 78a | Long-lead and high-MOQ parts identified | PASS | §9 BOM — geared motor (6–8 wk, 5k MOQ) and enclosure tooling (6–8 wk) set the critical path. MCU has a pin-compatible alternate. |
+| 78a | Long-lead and high-MOQ parts identified | PASS | §9 BOM — enclosure (10–12 wk, tooling plus first articles) sets the critical path; geared motor is next (6–8 wk, 5k MOQ). MCU has a pin-compatible alternate. |
 | 79 | [HW↔SW] App store constraints | N/A | No app |
 | 80 | [HW↔SW] Manufacturing test requirements | PASS | §4.1 — SWD programming via Tag-Connect. §4.2 — factory tare calibration of strain gauge at boot. |
 
@@ -174,16 +175,15 @@
 | Power Architecture | 6 | 2 | 0 | 8 |
 | Connectivity | 0 | 6 | 0 | 6 |
 | Key Decisions | 4 | 0 | 1 | 5 |
-| Constraints | 5 | 1 | 1 | 7 |
+| Constraints | 8 | 1 | 0 | 9 |
 | Open Questions | 4 | 0 | 0 | 4 |
 | Overall Quality | 5 | 1 | 0 | 6 |
-| **Total** | **62** | **23** | **3** | **88** |
+| **Total** | **65** | **23** | **2** | **90** |
 
 ### Gaps to Address
 
 1. **FW versioning scheme** (#34): Add a firmware version byte or struct in flash for factory traceability (e.g., `{major, minor, build}` readable via SWD during production test).
 2. **Decision consequences** (#70): §8 decisions state rationale but not explicit downstream consequences. The risks are captured in §10, so this is a formatting gap rather than a content gap.
-3. **Schedule milestones** (#77): Add a milestone timeline (prototype → EVT → DVT → PVT → MP) to §9.
 
 ### N/A Justification
 
@@ -191,4 +191,4 @@
 
 ### Gate Decision
 
-**PASS** — proceed to next phase. The 3 gaps are minor (versioning is a one-line addition, consequences are already covered in §10, schedule is a planning artifact). None block the product definition from being actionable.
+**PASS** — proceed to next phase. The 2 gaps are minor (versioning is a one-line addition, consequences are already covered in §10). None block the product definition from being actionable.

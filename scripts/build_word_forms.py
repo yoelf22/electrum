@@ -390,14 +390,14 @@ ABOUT = {
     "system-description":
         "The System Description is the full engineering spec: real part numbers, interfaces, power budget, "
         "firmware architecture, connectivity, key decisions, and constraints such as BOM cost, lead times, "
-        "minimum order quantities, certification and manufacturing. It starts from the High-Level Design; "
+        "minimum order quantities, assembly and inspection times, certification, and a schedule. It starts from the High-Level Design; "
         "sections marked \"Builds on your High-Level Design\" pick up where that document stopped. The "
         "technical lead or systems engineer writes it with the electrical, mechanical, firmware and app "
         "leads, over several days, once the High-Level Design is agreed and before schematics or tooling. "
         "Engineers design from it; suppliers and contract manufacturers quote from it. Keep it current "
         "through the first engineering prototype build (EVT). Next: check it against the Gate Checklist.",
     "gate-checklist":
-        "The Gate Checklist has 100 items that test whether the System Description is complete enough to "
+        "The Gate Checklist has 103 items that test whether the System Description is complete enough to "
         "start detailed design. Mark each item PASS, FAIL or N/A and note where the System Description "
         "covers it. Items tagged [HW↔SW] target the line between hardware and software, where most "
         "integration surprises start. Run it when you believe the System Description is ready, preferably "

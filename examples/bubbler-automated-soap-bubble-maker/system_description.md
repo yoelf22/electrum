@@ -260,20 +260,20 @@ No BLE, Wi-Fi, cellular, USB data, or any other communication interface. The pro
 
 ### BOM Cost
 
-| Category | Target | Lead time | MOQ | Notes |
-|----------|--------|-----------|-----|-------|
-| MCU + passives | $1.50 | 8–12 wk | 3k reel | STM32C011 + decoupling + crystal + resistors. Pin-compatible STM32C011F6 as alternate |
-| HX711 + strain gauge | $0.80 | 2–4 wk | 1k | Gauge $0.30 + HX711 $0.50. Several HX711 sources |
-| Motor + H-bridge | $1.80 | 6–8 wk | 5k (motor) | Geared DC $1.50 + DRV8837 $0.30. Motor is the longest-lead mechanical part |
-| Fan + MOSFET | $1.10 | 4–6 wk | 2k (fan) | Centrifugal blower $0.80 + IRLML6344 $0.30 |
-| LDO + power | $0.40 | 2–4 wk | 3k reel | MCP1700 + battery holder |
-| PCB (2-layer, panelized) | $0.60 | 2–3 wk | Per panel | 50×35mm, 10k+ volume |
-| Connectors + passives | $0.80 | 2–4 wk | Full reel | JST-PH × 4, JST-SH × 1, resistors, caps |
-| Enclosure (3-part injection mold) | $3.50 | 6–8 wk tooling, then 2 wk | 1k shot run | Base + U-rim + vat, ABS or PP |
-| Wand arm + loop + shaft | $1.50 | 3–4 wk | 2k | Stainless rod, spring wire loop, bearings × 2 |
-| Buttons + LEDs | $0.30 | 1–2 wk | Full reel | 2× tactile + 4× LED + resistors |
-| Misc (rubber feet, labels, screws) | $0.50 | 1–2 wk | 1k | |
-| **Total BOM** | **~$12.80** | **Critical path: motor and enclosure tooling, 8 wk** | | Target < $15 for sub-$50 retail at 3.5× markup. Lead times and MOQs are estimates; confirm with quotes |
+| Category | Buy / Make | Target | Lead time | MOQ | Notes |
+|----------|------------|--------|-----------|-----|-------|
+| MCU + passives | Buy | $1.50 | 8–12 wk | 3k reel | STM32C011 + decoupling + crystal + resistors. Pin-compatible STM32C011F6 as alternate |
+| HX711 + strain gauge | Buy | $0.80 | 2–4 wk | 1k | Gauge $0.30 + HX711 $0.50. Several HX711 sources |
+| Motor + H-bridge | Buy | $1.80 | 6–8 wk | 5k (motor) | Geared DC $1.50 + DRV8837 $0.30. Motor is the longest-lead mechanical part |
+| Fan + MOSFET | Buy | $1.10 | 4–6 wk | 2k (fan) | Centrifugal blower $0.80 + IRLML6344 $0.30 |
+| LDO + power | Buy | $0.40 | 2–4 wk | 3k reel | MCP1700 + battery holder |
+| PCB (2-layer, panelized) | Make | $0.60 | 4–5 wk (see below) | Per panel | 50×35mm, 10k+ volume |
+| Connectors + passives | Buy | $0.80 | 2–4 wk | Full reel | JST-PH × 4, JST-SH × 1, resistors, caps |
+| Enclosure (3-part injection mold) | Make | $3.50 | 10–12 wk (see below) | 1k shot run | Base + U-rim + vat, ABS or PP |
+| Wand arm + loop + shaft | Make | $1.50 | 4 wk (see below) | 2k | Stainless rod, spring wire loop, bearings × 2 |
+| Buttons + LEDs | Buy | $0.30 | 1–2 wk | Full reel | 2× tactile + 4× LED + resistors |
+| Misc (rubber feet, labels, screws) | Buy | $0.50 | 1–2 wk | 1k | |
+| **Total BOM** | | **~$12.80** | **Critical path: enclosure, 10–12 wk** | | Target < $15 for sub-$50 retail at 3.5× markup. Lead times and MOQs are estimates; confirm with quotes |
 
 ### Mechanical
 - Overall footprint: 215 × 206mm
@@ -287,6 +287,51 @@ No BLE, Wi-Fi, cellular, USB data, or any other communication interface. The pro
 - Storage temperature: -20–60°C
 - Water resistance: IPX4 for electronics compartment (splash-proof). Vat and wand arm are wet by design.
 - UV resistance: Enclosure material must be UV-stabilized (outdoor use)
+
+### Manufactured Part Lead Times
+
+| Part | Process | Tooling (weeks) | First articles and approval (weeks) | Production run (weeks) | Total (weeks) | Basis |
+|------|---------|-----------------|-------------------------------------|------------------------|---------------|-------|
+| Enclosure (base, U-rim, vat) | Injection molding, 3 single-cavity molds; T1 samples, one round of fixes | 6–8 | 2 | 2 | 10–12 | Own estimate |
+| Wand arm + loop + shaft | Wire forming (jig), rod cut and turned | 1 | 1 | 2 | 4 | Own estimate |
+| PCBA | PCB fab + SMT assembly (stencil, programming fixture) | 1 | 1 | 2–3 | 4–5 | Own estimate |
+
+### Assembly and Inspection Times
+
+| Stage | Assembly time per unit | Inspection / test time per unit | Inspection method | Notes |
+|-------|------------------------|---------------------------------|-------------------|-------|
+| PCBA | 3 min (at the board assembler) | 2 min | AOI, then firmware flash and board test via Tag-Connect | Hand-soldered JST connectors are the slow step |
+| Drive module (motor, gearbox, shaft, bearings, wand arm, loop) | 4 min | 1 min | Spin test, loop alignment gauge | |
+| Fan module (blower in duct) | 2 min | 0.5 min | Run test, airflow check by hand | |
+| Final assembly | 8 min | 3 min | Functional test (wand cycle, fan, strain-gauge tare), cosmetic check; IPX4 spray test on a sample per lot | Bottleneck stage |
+| **Total per unit** | **17 min** | **6.5 min** | | Estimates, before line balancing |
+
+### Schedule
+
+Week 0 is the start of detailed design, right after the gate review. Durations are estimates.
+
+| # | Task | Start (week) | Duration (weeks) | Depends on | Owner |
+|---|------|--------------|------------------|------------|-------|
+| 1 | Schematic and PCB layout | 0 | 4 | | EE |
+| 2 | Enclosure CAD, ready for tooling | 0 | 5 | | ME |
+| 3 | Firmware: control loop and force sensing | 0 | 10 | | FW |
+| 4 | EVT PCB fab and assembly | 4 | 2 | 1 | EE |
+| 5 | EVT build and test (3D-printed enclosure) | 6 | 4 | 2, 4 | All |
+| 6 | Enclosure tooling | 10 | 8 | 5 | ME + molder |
+| 7 | Enclosure first articles (T1) and approval | 18 | 2 | 6 | ME |
+| 8 | Geared motor order (purchased) | 10 | 8 | 5 | Ops |
+| 9 | DVT PCBA run | 10 | 5 | 5 | EE |
+| 10 | Wand assembly jig and samples | 10 | 2 | 5 | ME |
+| 11 | DVT build and test | 20 | 4 | 3, 7, 9, 10 | All |
+| 12 | FCC / CE testing | 24 | 4 | 11 | EE |
+| 13 | PVT pilot run | 24 | 3 | 8, 11 | Ops |
+| 14 | Mass production, first lot | 28 | 2 | 12, 13 | Ops |
+
+![Schedule Gantt chart](schedule_gantt.png)
+
+- Critical path: schematic → EVT → enclosure tooling and first articles → DVT → FCC/CE testing → first lot, 30 weeks. Enclosure tooling alone is 8 of them.
+- Hard deadlines: holiday retail window; first lot must ship by week 30 to reach shelves for the season
+- Certification timeline: FCC Part 15B and CE EMC testing, 4 weeks including one retest
 
 ---
 
