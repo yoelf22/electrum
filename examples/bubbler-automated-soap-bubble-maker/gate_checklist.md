@@ -133,6 +133,7 @@
 | 76 | Target production volume stated | PASS | §9 — 10k+ units |
 | 77 | Key schedule milestones listed | GAP | No milestone schedule provided. Should add target dates for prototype, EVT, DVT, PVT, mass production. |
 | 78 | Third-party dependencies identified | PASS | Implicit — COTS motors, fans, HX711, STM32 availability. No single-source risks identified. |
+| 78a | Long-lead and high-MOQ parts identified | PASS | §9 BOM — geared motor (6–8 wk, 5k MOQ) and enclosure tooling (6–8 wk) set the critical path. MCU has a pin-compatible alternate. |
 | 79 | [HW↔SW] App store constraints | N/A | No app |
 | 80 | [HW↔SW] Manufacturing test requirements | PASS | §4.1 — SWD programming via Tag-Connect. §4.2 — factory tare calibration of strain gauge at boot. |
 

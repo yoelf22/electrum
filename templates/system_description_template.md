@@ -391,6 +391,10 @@ stateDiagram-v2
 - Other: [vibration, shock, UV, humidity, altitude]
 
 ### Cost
+
+> - List the BOM with lead time and MOQ (minimum order quantity) for each line. Which parts set the critical path, and which MOQs force you to buy more than the first run needs?
+> - Which of those parts have an alternate source?
+
 - Target BOM cost: [$X at Y volume]
 - Target retail price: [$Z]
 - Target margin: [X%]

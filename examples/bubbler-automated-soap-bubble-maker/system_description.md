@@ -260,20 +260,20 @@ No BLE, Wi-Fi, cellular, USB data, or any other communication interface. The pro
 
 ### BOM Cost
 
-| Category | Target | Notes |
-|----------|--------|-------|
-| MCU + passives | $1.50 | STM32C011 + decoupling + crystal + resistors |
-| HX711 + strain gauge | $0.80 | Gauge $0.30 + HX711 $0.50 |
-| Motor + H-bridge | $1.80 | Geared DC $1.50 + DRV8837 $0.30 |
-| Fan + MOSFET | $1.10 | Centrifugal blower $0.80 + IRLML6344 $0.30 |
-| LDO + power | $0.40 | MCP1700 + battery holder |
-| PCB (2-layer, panelized) | $0.60 | 50×35mm, 10k+ volume |
-| Connectors + passives | $0.80 | JST-PH × 4, JST-SH × 1, resistors, caps |
-| Enclosure (3-part injection mold) | $3.50 | Base + U-rim + vat, ABS or PP |
-| Wand arm + loop + shaft | $1.50 | Stainless rod, spring wire loop, bearings × 2 |
-| Buttons + LEDs | $0.30 | 2× tactile + 4× LED + resistors |
-| Misc (rubber feet, labels, screws) | $0.50 | |
-| **Total BOM** | **~$12.80** | Target < $15 for sub-$50 retail at 3.5× markup |
+| Category | Target | Lead time | MOQ | Notes |
+|----------|--------|-----------|-----|-------|
+| MCU + passives | $1.50 | 8–12 wk | 3k reel | STM32C011 + decoupling + crystal + resistors. Pin-compatible STM32C011F6 as alternate |
+| HX711 + strain gauge | $0.80 | 2–4 wk | 1k | Gauge $0.30 + HX711 $0.50. Several HX711 sources |
+| Motor + H-bridge | $1.80 | 6–8 wk | 5k (motor) | Geared DC $1.50 + DRV8837 $0.30. Motor is the longest-lead mechanical part |
+| Fan + MOSFET | $1.10 | 4–6 wk | 2k (fan) | Centrifugal blower $0.80 + IRLML6344 $0.30 |
+| LDO + power | $0.40 | 2–4 wk | 3k reel | MCP1700 + battery holder |
+| PCB (2-layer, panelized) | $0.60 | 2–3 wk | Per panel | 50×35mm, 10k+ volume |
+| Connectors + passives | $0.80 | 2–4 wk | Full reel | JST-PH × 4, JST-SH × 1, resistors, caps |
+| Enclosure (3-part injection mold) | $3.50 | 6–8 wk tooling, then 2 wk | 1k shot run | Base + U-rim + vat, ABS or PP |
+| Wand arm + loop + shaft | $1.50 | 3–4 wk | 2k | Stainless rod, spring wire loop, bearings × 2 |
+| Buttons + LEDs | $0.30 | 1–2 wk | Full reel | 2× tactile + 4× LED + resistors |
+| Misc (rubber feet, labels, screws) | $0.50 | 1–2 wk | 1k | |
+| **Total BOM** | **~$12.80** | **Critical path: motor and enclosure tooling, 8 wk** | | Target < $15 for sub-$50 retail at 3.5× markup. Lead times and MOQs are estimates; confirm with quotes |
 
 ### Mechanical
 - Overall footprint: 215 × 206mm

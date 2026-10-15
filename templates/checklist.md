@@ -110,6 +110,7 @@ This checklist is for products where physical hardware and software (firmware, c
 - [ ] Target production volume stated
 - [ ] Key schedule milestones listed
 - [ ] Third-party dependencies identified
+- [ ] Long-lead and high-MOQ parts identified, with an alternate source or a buffer plan
 - [ ] **[HW↔SW]** App store and platform constraints noted (iOS background execution limits, Android battery optimization, minimum OS versions)
 - [ ] **[HW↔SW]** Manufacturing test requirements identified — what firmware/software is needed on the production line for device testing and provisioning
 
