@@ -2,6 +2,10 @@
 
 All notable changes to Electrum are documented here.
 
+## v0.3.0 — 2026-10-22
+
+- **Three routes, one skill** — `/electrum` now runs as an uploaded skill in Claude chat, in Claude Cowork, or in Claude Code. `SKILL.md` gains an Environment section: where the templates and outputs live in each place, plain-text questions where `AskUserQuestion` is not available, resume from existing phase files, and context economy for chat (edit sections instead of rewriting files, hand off Phases 6–8 to a fresh conversation). `.github/workflows/skill-zip.yml` builds `electrum-skill.zip` on each release tag; the README opens with "Choose Your Route".
+
 ## v0.2.0 — 2026-10-15
 
 - **Word fill-in forms** — `scripts/build_word_forms.py` builds the High-Level Design, System Description and Gate Checklist as Word forms, plus a workbook holding all three. Template headings and questions are fixed text; every answer area is a content control pre-filled with the Bubbler example in grey, which disappears when you type. The checklist has tick boxes and a PASS / FAIL / N/A dropdown. Sections of the System Description that expand a High-Level Design section point back to it instead of repeating it. The forms are on the [Electrum Word Kit](https://claude.ai/artifact/TeQUJAtvwVfo2a8iTkUymx) page.

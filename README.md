@@ -1,6 +1,6 @@
 # Electrum — Product Definition Toolkit for Software-Augmented Hardware
 
-*Status: v0.2 — exercised on 7 worked examples (see [`examples/`](examples/)), MIT-licensed.*
+*Status: v0.3 — exercised on 7 worked examples (see [`examples/`](examples/)), MIT-licensed.*
 
 ## The Problem
 
@@ -8,23 +8,66 @@ Software PMs have established tools — user stories, PRDs, sprint planning. Pur
 
 The boundary between HW and SW is where the expensive mistakes happen, and it's usually the least documented part.
 
-## Quickstart for PMs and Product Strategists
+## Choose Your Route
 
-You have a connected product idea and want to stress-test it before committing resources. Here's the fastest path:
+You have a connected product idea and want to stress-test it before committing resources. The same
+`/electrum` skill runs in three places. The phases, the questions and the output files are identical;
+what differs is what you install and where the files live.
+
+| Route | For | Needs | What you give up |
+|-------|-----|-------|------------------|
+| **1. Skill in Claude chat** | Trying it out, no installs | A claude.ai plan with code execution on | Files are downloads; you re-upload them to resume. A full run may need two conversations |
+| **2. Claude Cowork** | Real work without a terminal | A paid plan and the Claude Desktop app | Nothing in the workflow; outputs persist in a folder you pick |
+| **3. Claude Code** | Teams, git, long runs, extending the scripts | Claude Code, Python 3.11, this repo | Nothing |
+
+Routes 1 and 2 use the same ZIP, so start with 1 and move to 2 when it earns a working folder.
+Route 3 picks up where either left off: copy your phase files into `output/<slug>/` in a clone and
+the skill resumes from the first missing phase.
+
+### Route 1: Skill in Claude chat
+
+1. Download [`electrum-skill.zip`](https://github.com/yoelf22/electrum/releases/latest/download/electrum-skill.zip)
+   (about 100 KB: the skill, templates, reference documents and scripts; no examples).
+2. In claude.ai or the Claude Desktop app, open **Settings**, then **Customize**, then **Skills**.
+   Click **Add** and choose **Upload skill**. Pick the ZIP.
+3. Under **Settings**, **Capabilities**, make sure **Code execution and file creation** is on. The
+   skill needs it to draw diagrams and build the carousel.
+4. Start a new chat and type `/electrum <describe your product in one sentence>`.
+
+Download each file as it is produced. To continue in a new conversation, upload the files you have
+and run `/electrum` again; it resumes from the first missing phase.
+
+### Route 2: Claude Cowork
+
+1. Upload the same ZIP the same way (Cowork reads your uploaded skills).
+2. Open Cowork in the Claude Desktop app, pick a working folder for the product, and type
+   `/electrum <describe your product in one sentence>`.
+
+Phase files land in `electrum-output/<slug>/` inside that folder and stay there between sessions.
+
+### Route 3: Claude Code
 
 ```bash
-# 1. Install Claude Code (https://docs.anthropic.com/en/docs/claude-code)
+# 1. Install Claude Code (https://docs.anthropic.com/en/docs/claude-code) and Python 3.11+
 # 2. Clone this repo and open a terminal in it
-git clone https://github.com/yoelf22/electrum.git && cd electrum
+git clone https://github.com/yoelf22/electrum.git
+cd electrum
+pip install -r requirements.txt
 
 # 3. Start Claude Code and run the skill
 claude
 > /electrum <describe your product in one sentence>
 ```
 
-The process will walk you through a structured dialogue — mapping the HW/SW boundary, forcing specifics, and surfacing what you're still assuming. It pauses after every output for your review. Budget 60–90 minutes for a full run.
+On Windows, install Python from python.org with **Add python.exe to PATH** ticked, and use `python`
+and `pip` where this README says `python3` and `pip3`. Git for Windows is recommended but optional:
+the green **Code** button on GitHub also offers **Download ZIP**.
 
-**Don't have Claude Code?** The templates work without AI. Copy `templates/system_description_template.md` into your project folder, fill it in by hand, then run through `templates/checklist.md`. That's 80% of the value.
+Whichever route you take, the process walks you through a structured dialogue: mapping the HW/SW
+boundary, forcing specifics, and surfacing what you're still assuming. It pauses after every output
+for your review. Budget 60–90 minutes for a full run.
+
+**Don't want AI in the loop?** The templates work without it. Copy `templates/system_description_template.md` into your project folder, fill it in by hand, then run through `templates/checklist.md`. That's 80% of the value.
 
 **Want to see what a full run looks like?** Read the [Bubbler walkthrough](examples/bubbler-automated-soap-bubble-maker/WALKTHROUGH.md) — a soup-to-nuts example that turned "automated soap bubble machine" into a force-sensing feedback system with a 90-item gate review.
 
@@ -74,7 +117,9 @@ For people who'd rather fill in Word than markdown, the same three documents are
 
 The **workbook** (`electrum-workbook.docx`) is all three forms in one file, in fill-in order. It is not a fourth step, and the other documents don't come from it: the three single files contain the same forms. Use the workbook when one person or team takes the product through all three. Use the single files when different people own each document or you share them at different times.
 
-## Prerequisites
+## Prerequisites (Route 3 only)
+
+Routes 1 and 2 run the scripts in Claude's sandbox and need nothing installed. For Claude Code:
 
 ### Python dependencies
 
@@ -82,9 +127,10 @@ The **workbook** (`electrum-workbook.docx`) is all three forms in one file, in f
 pip install -r requirements.txt
 ```
 
-Required packages: `python-pptx`, `reportlab`, `playwright`, `matplotlib`, `numpy`.
+Required packages: `python-pptx`, `reportlab`, `matplotlib`, `numpy`. `playwright` and `python-docx`
+are only for the optional scripts below.
 
-### Playwright browser (for image generation)
+### Playwright browser (optional, for `scripts/generate_illustration.py`)
 
 ```bash
 pip install playwright
@@ -103,6 +149,8 @@ claude
 ## Repository Structure
 
 ```
+├── .claude/skills/   # The /electrum skill (one SKILL.md for all three routes)
+├── .github/workflows/skill-zip.yml   # Builds electrum-skill.zip on each release tag
 ├── scripts/          # Python reference implementations (carousel, diagrams, deck builders)
 ├── templates/        # Directive markdown files (workflow, checklists, templates)
 ├── examples/         # Worked examples with full output artifacts
@@ -122,23 +170,23 @@ claude
 
 | File | What it does |
 |------|-------------|
-| `electrum/templates/hw_sw_product_initiation.md` | 8-phase workflow from concept to presentation |
-| `electrum/templates/hw_sw_high_level.md` | Single-page system overview template |
-| `electrum/templates/system_description_template.md` | Full system description template with HW↔SW boundary items |
-| `electrum/templates/checklist.md` | Gate checklist — 103 items, each tagged if it targets the HW/SW boundary |
-| `electrum/templates/skills_map.md` | 16 competency areas a PM should understand or staff for |
+| `templates/hw_sw_product_initiation.md` | 8-phase workflow from concept to presentation |
+| `templates/hw_sw_high_level.md` | Single-page system overview template |
+| `templates/system_description_template.md` | Full system description template with HW↔SW boundary items |
+| `templates/checklist.md` | Gate checklist — 103 items, each tagged if it targets the HW/SW boundary |
+| `templates/skills_map.md` | 16 competency areas a PM should understand or staff for |
 | `.claude/skills/electrum/SKILL.md` | Claude Code skill definition (drives the 8-phase workflow) |
 
 ### Reference Scripts
 
 | File | What it does |
 |------|-------------|
-| `electrum/scripts/generate_illustration.py` | DALL-E image generation via Playwright browser automation |
-| `electrum/scripts/build_carousel.py` | PPTX + PDF carousel builder (LinkedIn-format, 4:5 portrait) |
-| `electrum/scripts/build_deck.py` | Executive product overview deck builder |
-| `electrum/scripts/build_high_level_deck.py` | High-level design deck builder |
-| `electrum/scripts/visualize.py` | Visualization utilities |
-| `electrum/scripts/block_diagram.py` | Block diagram generator |
+| `scripts/generate_illustration.py` | DALL-E image generation via Playwright browser automation |
+| `scripts/build_carousel.py` | PPTX + PDF carousel builder (LinkedIn-format, 4:5 portrait) |
+| `scripts/build_deck.py` | Executive product overview deck builder |
+| `scripts/build_high_level_deck.py` | High-level design deck builder |
+| `scripts/visualize.py` | Visualization utilities |
+| `scripts/block_diagram.py` | Block diagram generator |
 | `scripts/gantt.py` | Gantt chart of the §9 Schedule table, critical path highlighted |
 | `scripts/build_word_forms.py` | Builds the Word fill-in forms from `templates/` and the Bubbler example |
 
@@ -158,13 +206,17 @@ The bubbler example includes a [step-by-step walkthrough](examples/bubbler-autom
 
 ## How to Use
 
-### With Claude Code (recommended)
+### With the `/electrum` skill
 
-1. Open a terminal in this repo
-2. Run `claude` to start Claude Code
-3. Type `/electrum <your product idea>`
-4. Walk through all 8 phases interactively — Claude drafts, you review and refine at each step
-5. Final output: a complete product definition + diagrams + presentation deck
+Pick a route from [Choose Your Route](#choose-your-route), then:
+
+1. Type `/electrum <your product idea>`
+2. Walk through all 8 phases interactively. Claude drafts, you review and refine at each step
+3. Final output: a complete product definition + diagrams + presentation deck
+
+**Moving up a route.** The output files are the same everywhere. Chat downloads go into a Cowork
+working folder, or into `output/<slug>/` in a Claude Code clone, and `/electrum` resumes from the
+first missing phase. Nothing is redone.
 
 ### With the Word forms
 
@@ -174,13 +226,13 @@ Download the workbook or the three single forms from the [Electrum Word Kit](htt
 
 The core toolkit is markdown templates and checklists — no AI required:
 
-1. **Understand the process** — Read `electrum/templates/hw_sw_product_initiation.md` for the workflow overview
-2. **Assess your gaps** — Review `electrum/templates/skills_map.md` for team competency planning
-3. **Create the high-level design** — Copy `electrum/templates/hw_sw_high_level.md` into your project folder and fill it in
-4. **Write the system description** — Copy `electrum/templates/system_description_template.md` and work through each section
-5. **Validate** — Run through `electrum/templates/checklist.md` to confirm nothing was missed
+1. **Understand the process** — Read `templates/hw_sw_product_initiation.md` for the workflow overview
+2. **Assess your gaps** — Review `templates/skills_map.md` for team competency planning
+3. **Create the high-level design** — Copy `templates/hw_sw_high_level.md` into your project folder and fill it in
+4. **Write the system description** — Copy `templates/system_description_template.md` and work through each section
+5. **Validate** — Run through `templates/checklist.md` to confirm nothing was missed
 
-For image generation and carousel building, adapt the scripts in `electrum/scripts/` to your product.
+For image generation and carousel building, adapt the scripts in `scripts/` to your product.
 
 ## Who This is For
 
