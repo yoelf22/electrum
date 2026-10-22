@@ -2,6 +2,10 @@
 
 All notable changes to Electrum are documented here.
 
+## v0.3.1 — 2026-10-22
+
+- **Skill output path** — in Claude chat and Cowork, outputs go to `electrum-output/<slug>/`; the chat sandbox has no "outputs directory". Found in the first Route 1 test run.
+
 ## v0.3.0 — 2026-10-22
 
 - **Three routes, one skill** — `/electrum` now runs as an uploaded skill in Claude chat, in Claude Cowork, or in Claude Code. `SKILL.md` gains an Environment section: where the templates and outputs live in each place, plain-text questions where `AskUserQuestion` is not available, resume from existing phase files, and context economy for chat (edit sections instead of rewriting files, hand off Phases 6–8 to a fresh conversation). `.github/workflows/skill-zip.yml` builds `electrum-skill.zip` on each release tag; the README opens with "Choose Your Route".
