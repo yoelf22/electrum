@@ -31,7 +31,7 @@ the skill resumes from the first missing phase.
 2. In claude.ai or the Claude Desktop app, open **Settings**, then **Customize**, then **Skills**.
    Click **Add** and choose **Upload skill**. Pick the ZIP.
 3. Under **Settings**, **Capabilities**, make sure **Code execution and file creation** is on. The
-   skill needs it to draw diagrams and build the carousel.
+   skill needs it to draw the diagrams and build the HTML page.
 4. Start a new chat and type `/electrum <describe your product in one sentence>`.
 
 Download each file as it is produced. To continue in a new conversation, upload the files you have
@@ -77,7 +77,7 @@ for your review. Budget 60–90 minutes for a full run.
 
 A repeatable, AI-assisted process for defining hardware products that have software inside them — so the firmware team and the mechanical team aren't surprised by each other at EVT.
 
-It takes a product idea from "I think this could work" through to a structured system description, product illustrations, and a presentation-ready carousel. Eight phases, driven by the `/electrum` Claude Code skill:
+It takes a product idea from "I think this could work" through to a structured system description with its diagrams and a gate review, bundled into one HTML page. Five phases, driven by the `/electrum` Claude Code skill:
 
 | Phase | Output | Description |
 |-------|--------|-------------|
@@ -85,12 +85,9 @@ It takes a product idea from "I think this could work" through to a structured s
 | 2. **High-Level Design** | `high_level_design.md` | Single-page system overview: blocks, interfaces, constraints, hardest problems |
 | 3. **Component Arrangement** | `component_arrangement.md`, `arrangement_options.png` | Spatial layout alternatives — where boards, batteries, sensors, and actuators sit relative to each other and the enclosure |
 | 4. **System Description** | `system_description.md`, `schedule_gantt.png` | Full engineering-grade spec with real components, power budgets, firmware architecture |
-| 5. **Gate Checklist** | `gate_checklist.md` | Validate completeness across both domains (103 items, PASS/FAIL/N/A) |
-| 6. **Product Visual** | `product_visual.png` | Pick an existing diagram from earlier phases (or a user-supplied image) as the carousel visual |
-| 7. **PPTX Carousel** | `*_Carousel.pptx` | LinkedIn-format slide deck (4:5 portrait, dark theme, 8 pages) |
-| 8. **PDF Carousel + HTML** | `*_Carousel.pdf`, `review.html` | Same carousel as multi-page PDF, plus every document in one HTML page that opens in any browser (refreshed after each phase, so you can review the `.md` files without a markdown viewer) |
+| 5. **Gate Checklist** | `gate_checklist.md`, `review.html` | Validate completeness across both domains (103 items, PASS/FAIL/N/A), then the deliverables checklist |
 
-Phases 1-5 produce the engineering definition. Phases 6-8 turn it into visual presentation materials.
+Every phase refreshes `review.html`: all the documents so far in one HTML page with the diagrams embedded, so the `.md` files can be reviewed in any browser without a markdown viewer.
 
 ## The Documents: What Each One Is For
 
@@ -127,7 +124,7 @@ Routes 1 and 2 run the scripts in Claude's sandbox and need nothing installed. F
 pip install -r requirements.txt
 ```
 
-Required packages: `python-pptx`, `reportlab`, `matplotlib`, `numpy`, `markdown`. `playwright` and `python-docx`
+Required packages: `matplotlib`, `numpy`, `markdown`. `python-pptx`, `playwright` and `python-docx`
 are only for the optional scripts below.
 
 ### Playwright browser (optional, for `scripts/generate_illustration.py`)
@@ -151,7 +148,7 @@ claude
 ```
 ├── .claude/skills/   # The /electrum skill (one SKILL.md for all three routes)
 ├── .github/workflows/skill-zip.yml   # Builds electrum-skill.zip on each release tag
-├── scripts/          # Python reference implementations (carousel, diagrams, deck builders)
+├── scripts/          # Python reference implementations (diagrams, HTML bundle, deck builders)
 ├── templates/        # Directive markdown files (workflow, checklists, templates)
 ├── examples/         # Worked examples with full output artifacts
 │   ├── bubbler-automated-soap-bubble-maker/   ← start here (has WALKTHROUGH.md)
@@ -170,19 +167,18 @@ claude
 
 | File | What it does |
 |------|-------------|
-| `templates/hw_sw_product_initiation.md` | 8-phase workflow from concept to presentation |
+| `templates/hw_sw_product_initiation.md` | Workflow guide from concept to system description to PRD |
 | `templates/hw_sw_high_level.md` | Single-page system overview template |
 | `templates/system_description_template.md` | Full system description template with HW↔SW boundary items |
 | `templates/checklist.md` | Gate checklist — 103 items, each tagged if it targets the HW/SW boundary |
 | `templates/skills_map.md` | 16 competency areas a PM should understand or staff for |
-| `.claude/skills/electrum/SKILL.md` | Claude Code skill definition (drives the 8-phase workflow) |
+| `.claude/skills/electrum/SKILL.md` | Claude Code skill definition (drives the 5-phase workflow) |
 
 ### Reference Scripts
 
 | File | What it does |
 |------|-------------|
 | `scripts/generate_illustration.py` | DALL-E image generation via Playwright browser automation |
-| `scripts/build_carousel.py` | PPTX + PDF carousel builder (LinkedIn-format, 4:5 portrait) |
 | `scripts/build_html.py` | Bundles a run's `.md` documents into one `review.html` with the PNGs embedded |
 | `scripts/build_deck.py` | Executive product overview deck builder |
 | `scripts/build_high_level_deck.py` | High-level design deck builder |
@@ -196,8 +192,8 @@ claude
 
 | Project | What it is | Phases covered |
 |---------|-----------|----------------|
-| [`bubbler-automated-soap-bubble-maker/`](examples/bubbler-automated-soap-bubble-maker/) | Force-sensing automated bubble machine with adaptive optimization — **[full walkthrough](examples/bubbler-automated-soap-bubble-maker/WALKTHROUGH.md)** | All 8 phases |
-| `pop-miniature-popcorn-machine/` | Miniature countertop popcorn machine with heating and motor control | Explore, HLD, system description, gate checklist, carousel |
+| [`bubbler-automated-soap-bubble-maker/`](examples/bubbler-automated-soap-bubble-maker/) | Force-sensing automated bubble machine with adaptive optimization — **[full walkthrough](examples/bubbler-automated-soap-bubble-maker/WALKTHROUGH.md)** | All 5 phases, plus a carousel from an earlier version |
+| `pop-miniature-popcorn-machine/` | Miniature countertop popcorn machine with heating and motor control | Explore, HLD, system description, gate checklist |
 | `metronome/` | Wrist-worn haptic metronome bracelet for musicians — silent, precise beat pulses | All phases |
 | `chair_balancing_act/` | Clip-on tilt sensor that plays an escalating tone when a chair leaves static balance | HLD, system description, gate checklist |
 | `consumable-electric-toothbrush/` | Disposable electric toothbrush with wear tracking | Full |
@@ -214,11 +210,11 @@ Pick a route from [Choose Your Route](#choose-your-route), then:
 
 1. Type `/electrum <your product idea>`, or `/electrum <path to a spec>` if you already have a
    brief, PRD or proposal (txt, md, html, docx, rtf, pdf, doc; in chat, upload the file instead)
-2. Walk through all 8 phases interactively. Claude drafts, you review and refine at each step
+2. Walk through all 5 phases interactively. Claude drafts, you review and refine at each step
 3. Final output: a complete product definition + diagrams + presentation deck
 
 **Starting from a document you already have.** Phase 0 reads it, scores every question the
-eight phases will ask as answered, implied or missing, lists the claims it makes without evidence
+five phases will ask as answered, implied or missing, lists the claims it makes without evidence
 and the places it contradicts itself, and parks the open items in `open_questions.md` with the
 phase that will resolve each. It then puts the three to five core premises to you with options.
 Later phases do not re-ask what the document answers; they ask the parked questions when they
@@ -250,7 +246,7 @@ The core toolkit is markdown templates and checklists — no AI required:
 4. **Write the system description** — Copy `templates/system_description_template.md` and work through each section
 5. **Validate** — Run through `templates/checklist.md` to confirm nothing was missed
 
-For image generation and carousel building, adapt the scripts in `scripts/` to your product.
+For diagrams and decks, adapt the scripts in `scripts/` to your product.
 
 ## Who This is For
 

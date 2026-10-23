@@ -2,9 +2,15 @@
 
 All notable changes to Electrum are documented here.
 
+## v0.5.0 — 2026-10-23
+
+- **Carousel removed** — Phases 6–8 (product visual, PPTX and PDF LinkedIn carousel) and `scripts/build_carousel.py` are gone; `reportlab` is no longer required. The workflow is five phases ending in the gate review; `review.html` is the final output. The Bubbler example keeps its carousel files as history.
+- **Decisions go through dialogs** — Interaction Principle 7: any list of two or more items that need the user's decision (premises, parked questions, FAIL items, open rows at the end, design options) is walked through with `AskUserQuestion` one item at a time, never as a prose list to answer in prose.
+- **Deliverables checklist** — the run ends with a tick list of every output file, its path, status and counts, and the items still floating.
+
 ## v0.4.2 — 2026-10-23
 
-- **Hands-free runs from `decisions.md`** — an answer sheet (`Key | Answer | Note`) in the output folder, the working folder or uploaded to the chat. The skill reads it before asking: a question whose key has a row is not asked, its answer is applied and cited; `phaseN.instruction` rows are applied at the start of that phase as if typed; `mode | hands-free` skips the file gates; `phase7.carousel | Skip` ends the run with `review.html`; answers the run collects are appended at the end so the next run is fully covered. SKILL.md gains a "Question keys" table naming every question the skill asks. Written so a run completed interactively can be replayed in Claude chat without the person present.
+- **Hands-free runs from `decisions.md`** — an answer sheet (`Key | Answer | Note`) in the output folder, the working folder or uploaded to the chat. The skill reads it before asking: a question whose key has a row is not asked, its answer is applied and cited; `phaseN.instruction` rows are applied at the start of that phase as if typed; `mode | hands-free` skips the file gates; answers the run collects are appended at the end so the next run is fully covered. SKILL.md gains a "Question keys" table naming every question the skill asks. Written so a run completed interactively can be replayed in Claude chat without the person present.
 
 ## v0.4.1 — 2026-10-23
 

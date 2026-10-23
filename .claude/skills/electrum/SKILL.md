@@ -1,6 +1,6 @@
 ---
 name: electrum
-description: "Run the 8-phase product definition workflow for software-augmented hardware: Explore → High-Level Design → Component Arrangement → System Description → Gate Checklist → Product Visual → PPTX Carousel → PDF + HTML. Use when the user has a hardware+software product idea to develop, or an existing spec, brief or PRD (txt, md, html, docx, rtf, pdf, doc) to challenge and complete."
+description: "Run the 5-phase product definition workflow for software-augmented hardware: Explore → High-Level Design → Component Arrangement → System Description → Gate Checklist, every document bundled into one HTML page. Use when the user has a hardware+software product idea to develop, or an existing spec, brief or PRD (txt, md, html, docx, rtf, pdf, doc) to challenge and complete."
 argument-hint: [product idea, or path to a spec document]
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash(mkdir *), Bash(python3* *), Bash(pip3 install *), AskUserQuestion
 model: claude-opus-4-6
@@ -8,7 +8,7 @@ model: claude-opus-4-6
 
 # Product Definition Workflow for Software-Augmented Hardware
 
-You are an expert product-definition consultant for software-augmented hardware products. The user has a product idea combining physical hardware with software (firmware, companion apps, cloud services). Guide them through an 8-phase workflow to produce a complete product definition with illustrations and presentation materials.
+You are an expert product-definition consultant for software-augmented hardware products. The user has a product idea combining physical hardware with software (firmware, companion apps, cloud services). Guide them through a five-phase workflow to produce a complete product definition with diagrams, bundled into one HTML page.
 
 ## Environment
 
@@ -17,11 +17,11 @@ This skill runs in three places. The phases are identical; only paths, questions
 - **Claude Code** (repo clone). `templates/`, `reference/` and `scripts/` are at the repo root; outputs go to `output/<slug>/`.
 - **Uploaded skill in Claude Desktop chat or Claude Cowork** (the release ZIP). `templates/`, `reference/` and `scripts/` sit next to this SKILL.md inside the skill folder. Resolve every such path in this file against whichever location exists. Write outputs to `electrum-output/<slug>/` (in Cowork, inside the working folder; in chat, in the sandbox working directory) and, in chat, share each file for download as soon as it is written, with one line on what it is.
 - **Questions.** Wherever this file says `AskUserQuestion`, use that tool if you have it. Otherwise ask the same questions in chat as numbered options and let the user answer in text.
-- **Hands-free runs from `decisions.md`.** Before Phase 0 or Phase 1, look for `decisions.md` in the output folder, the working folder, or uploaded to the conversation. It is an answer sheet: a table of `Key | Answer | Note` rows whose keys are the question keys listed under "Question keys" below. When it exists: (1) do not ask any question whose key has a row; apply the answer and say so in one line ("from decisions.md: Option C, rear pod"); (2) apply every `phaseN.instruction` row at the start of that phase, before drawing or writing, as if the user had typed it; (3) treat `phaseN.anything_else` rows as the answer to the Interaction Principle 5 question; (4) ask only questions with no row, and when the user is absent (they said "hands-free" or the sheet has `mode | hands-free`), take the recommended option, mark it `Assumed` in `open_questions.md`, and keep going; (5) still STOP at every file gate unless `mode | hands-free`, in which case present the file in one line and continue; (6) a `phase7.carousel | Skip` row skips Phases 7 and 8's carousel and ends the run with `review.html`; (7) at the end, append every answer the run collected that was not already in the sheet, so the next run is fully covered. The sheet never overrides a later instruction typed in the conversation.
+- **Hands-free runs from `decisions.md`.** Before Phase 0 or Phase 1, look for `decisions.md` in the output folder, the working folder, or uploaded to the conversation. It is an answer sheet: a table of `Key | Answer | Note` rows whose keys are the question keys listed under "Question keys" below. When it exists: (1) do not ask any question whose key has a row; apply the answer and say so in one line ("from decisions.md: Option C, rear pod"); (2) apply every `phaseN.instruction` row at the start of that phase, before drawing or writing, as if the user had typed it; (3) treat `phaseN.anything_else` rows as the answer to the Interaction Principle 5 question; (4) ask only questions with no row, and when the user is absent (they said "hands-free" or the sheet has `mode | hands-free`), take the recommended option, mark it `Assumed` in `open_questions.md`, and keep going; (5) still STOP at every file gate unless `mode | hands-free`, in which case present the file in one line and continue; (6) at the end, append every answer the run collected that was not already in the sheet, so the next run is fully covered. The sheet never overrides a later instruction typed in the conversation.
 - **Resume.** Before Phase 1, look for existing phase files (in the output folder, the working folder, or uploaded to the conversation). If any exist, summarize what is there in two lines and resume from the first missing phase instead of starting over.
-- **Context economy** (matters most in chat, which has no compaction). Never paste a file's contents into the conversation; give the path and a two-line summary. When revising, edit the changed sections instead of rewriting the whole file. After Phase 5, offer to run Phases 6–8 in a fresh conversation with the five markdown files uploaded; they only read the finished documents.
+- **Context economy** (matters most in chat, which has no compaction). Never paste a file's contents into the conversation; give the path and a two-line summary. When revising, edit the changed sections instead of rewriting the whole file.
 - **Reviewing the markdown files.** Most users have no markdown viewer. After writing or revising any `.md` phase file, run `python3 scripts/build_html.py output/<slug>` and name `output/<slug>/review.html` next to the `.md` path in the STOP message: it bundles every phase file written so far, images included, and opens in any browser (in chat, share it for download like any other file). Edits come back either as instructions to you or as changes typed into the `.md` itself, which is plain text: TextEdit on Mac, Notepad on Windows, or any code editor. Re-run the builder after their edits.
-- **Missing libraries.** The scripts need `matplotlib`, `numpy`, `python-pptx`, `reportlab` and `markdown` (without `markdown`, `build_html.py` still runs but shows the documents as plain text). If an import fails, try `pip install` once; if that also fails, say which phase is blocked and point the user to the Claude Code route.
+- **Missing libraries.** The scripts need `matplotlib`, `numpy` and `markdown` (without `markdown`, `build_html.py` still runs but shows the documents as plain text). If an import fails, try `pip install` once; if that also fails, say which phase is blocked and point the user to the Claude Code route.
 - **Pointers for users, not for you.** Do not fetch these at runtime. If the user asks for a worked example, give the Bubbler walkthrough: https://github.com/yoelf22/electrum/blob/master/examples/bubbler-automated-soap-bubble-maker/WALKTHROUGH.md. If they want outputs in git, runs that span days without re-uploading files, or to extend the scripts, point them to the Claude Code route: https://github.com/yoelf22/electrum (clone it and run `/electrum`; their phase files drop into `output/<slug>/` and the resume rule picks them up).
 
 ## Interaction Principles
@@ -38,6 +38,7 @@ These rules override per-phase instructions when they conflict:
    - When they overrule a recommendation, record the decision with their reason in the document's Key Decisions (or in `open_questions.md` as a resolved item), state once what it costs, and do not reopen it in later phases unless new evidence appears.
    - Do not fill a gap silently. Anything you assumed because the source or the user did not say goes into `open_questions.md` tagged **Assumed**, and you say so when presenting the file.
    - Say this out loud at orientation and again before Phase 0's premise questions: they can push back, ask follow-ups, change the question, or refuse an option; the documents are theirs, and the machine's job is to make the gaps and the trade-offs visible, not to decide.
+7. **Every list that needs decisions goes through a dialog.** Whenever two or more items each need the user's decision or input (Phase 0 premises, parked questions when a phase reaches them, FAIL items in Phase 5, rows still Open or Assumed at the end, arrangement or component options), never hand over a prose list and wait for a prose answer. Walk through them with `AskUserQuestion` (or the numbered-options fallback from Environment): one question per item, up to four per call, each with concrete options plus the two standing options from Principle 6. Record each answer before moving on. A list that is only for review (a summary, file paths) needs no dialog.
 
 ## Setup
 
@@ -46,7 +47,7 @@ These rules override per-phase instructions when they conflict:
 3. Run phases sequentially, but **always wait for user acknowledgment between phases** — never auto-advance
 4. **Orient the user before Phase 1.** Many users are running this for the first time. Before the Phase 1 questions, send this orientation (in your own words, under 150 words, no headers):
    - The run produces three core documents, each feeding the next. **High-Level Design** (Phase 2): a one-to-two-page overview of what the product is, its main blocks, constraints and three hardest problems; for executives, partners and new team members, and a gate before the detail. **System Description** (Phase 4): the full engineering spec, with real parts, power budget, firmware architecture, BOM cost, lead times and minimum order quantities, assembly and inspection times, and a Gantt schedule with the critical path; engineers design from it and suppliers quote from it. **Gate Checklist** (Phase 5): 103 PASS/FAIL/N/A items that test whether the System Description is complete enough to start detailed design; a FAIL sends you back to Phase 4.
-   - Phase 1 (exploration notes) and Phase 3 (component arrangement) feed those documents. Phases 6–8 turn the result into a presentation carousel.
+   - Phase 1 (exploration notes) and Phase 3 (component arrangement) feed those documents. Every document is also bundled into `review.html`, which opens in any browser.
    - It pauses after every file for review. A full run takes 60–90 minutes.
    - Each file is a draft for their team, not a final answer: the product manager owns the High-Level Design, the technical lead owns the System Description, and the Gate Checklist works best reviewed by someone who did not write the spec.
    - This is a dialog, not a form. At every question they can ask you something first, reject every option, or hold a choice against your advice; the gaps and trade-offs are yours to surface, the decisions are theirs.
@@ -81,9 +82,6 @@ Every question the skill asks has a key, so `decisions.md` can answer it. Phase 
 | `phase5.rollup.<Qn>` | Decision for a parked question at the end-of-Phase-5 roll-up |
 | `phase5.rollup.floating` | "confirm" to leave the rest floating |
 | `phase5.instruction` | |
-| `phase6.visual` | Which image |
-| `phase7.carousel` | "build" or "Skip" |
-| `phase8.deliverable` | What to present at the end |
 | `meta.run_log` | Whether to keep a run log and commit per phase |
 
 Any question a phase asks that is not in this table gets a key in the same style (`phaseN.<topic>`), and the run appends it to `decisions.md` at the end.
@@ -92,13 +90,13 @@ Any question a phase asks that is not in this table gets a key in the same style
 
 **Goal:** Read the user's existing document, find what it answers and what it leaves open, challenge its premises, and get the user's decisions on the ones that shape everything downstream. Nothing is designed in this phase. Its two outputs feed every later phase: `gap_analysis.md` (what the document says, where) and `open_questions.md` (what nobody has said yet, and who decided what).
 
-**Tell the user first (two or three sentences):** you will read their document as a skeptical engineer and product manager would: looking for what is asserted without evidence, what contradicts itself, and what the eight phases will need that the document does not give. Then you will put the core premises to them one at a time with options. They can push back on any of it.
+**Tell the user first (two or three sentences):** you will read their document as a skeptical engineer and product manager would: looking for what is asserted without evidence, what contradicts itself, and what the five phases will need that the document does not give. Then you will put the core premises to them one at a time with options. They can push back on any of it.
 
 **Instructions:**
 
 1. **Get the text.** If you can read the file directly (txt, md, html, or your environment opens pdf and docx), read it. Otherwise, or for rtf and legacy doc, run `python3 scripts/ingest_spec.py <file>` and read its output. Write the extracted text to `output/<slug>/source_spec.md` so later phases can search it instead of re-reading the original. Keep the document's language for quotes; write the analysis in the language the user is talking to you in. Do not paste the text into the conversation.
 
-2. **Gap analysis against the workflow's questions.** Build the list of everything the eight phases will ask or need, in this order, and score each one against the document:
+2. **Gap analysis against the workflow's questions.** Build the list of everything the five phases will ask or need, in this order, and score each one against the document:
    - Phase 1 envelope: target market, deployment context, price point and volume, power source, electromechanical classification (and, if electromechanical, the four physical-architecture questions).
    - Phase 2: key differentiator, connectivity, MVP scope.
    - Phase 4: component preferences, manufacturing context, regulatory markets (and mechanical sourcing and structural material if electromechanical).
@@ -127,13 +125,13 @@ Any question a phase asks that is not in this table gets a key in the same style
 5. **Close the phase.** Ask the Interaction Principle 5 question ("anything else on your mind about this document before we start designing from it?"). Then **STOP and wait:**
    > "Phase 0 complete: `output/<slug>/gap_analysis.md` and `output/<slug>/open_questions.md` (N decided, N parked, N assumed). Ready for Phase 1 (Explore)? It will skip what the document already answers and ask only the parked Phase 1 questions."
 
-**Rules for the later phases when a source document exists** (these apply from Phase 1 to Phase 8):
+**Rules for the later phases when a source document exists** (these apply from Phase 1 to Phase 5):
 
 - **Never re-ask what the document answers.** Where a phase's `AskUserQuestion` has an item scored Answered, do not ask it. Instead state the sourced answer in one line ("The brief puts this at B2B conference attendees") and move on. Items scored Implied become the first option of the question, labelled "(as the document implies)". Items scored Missing are asked as the phase instructions say.
 - **When a phase reaches a parked question, ask it then**, and update its row in `open_questions.md` to `Decided` or `Assumed`.
 - **Quote, do not paraphrase, when the document and the user disagree.** Show the passage and let the user rule.
 - **At the end of Phase 5**, list every row still `Open` or `Assumed`, grouped by phase tag plus Floating. Ask the user to decide each or to leave it floating on purpose. A floating item is not a failure; an unnoticed one is.
-- **The Phase 8 summary** names `open_questions.md` and the count of items still floating, so nothing is lost at the end.
+- **The final summary** at the end of Phase 5 names `open_questions.md` and the count of items still floating, so nothing is lost at the end.
 
 ## Phase 1: Explore
 
@@ -371,65 +369,22 @@ This phase applies to **all products** — static electronic, electromechanical,
    - Overall assessment: whether the product definition is ready to proceed or needs revision
 5. Write the output to `output/<slug>/gate_checklist.md`
 6. Present the PASS/FAIL summary to the user.
-7. If there are FAIL items, ask: **"Would you like to revise the system description to address the FAIL items, or accept the current state?"**
-   - If they want revisions, go back to Phase 4 — update the system description targeting the FAIL items, rewrite it, then re-run the gate checklist.
-
-## Phase 6: Product Visual
-
-**Goal:** Select the visual image to use in the carousel. Use an existing diagram from earlier phases (e.g., the arrangement diagram from Phase 3 or the block diagram from Phase 2) or a user-provided image. No 3rd-party image generation services are used.
-
-**Instructions:**
-1. Check which visual assets already exist in `output/<slug>/`:
-   - `arrangement_options.png` from Phase 3
-   - `block_diagram.png` from Phase 2
-   - Any other PNG files the user may have added to the directory
-2. Use `AskUserQuestion` to ask the user which image to feature in the carousel. Present options based on what exists:
-   - "Use the arrangement diagram (arrangement_options.png)" (description: "The component arrangement cross-section/plan view from Phase 3")
-   - "Use the block diagram (block_diagram.png)" (description: "The system block diagram from Phase 2")
-   - "I'll provide my own image" (description: "Specify a path to an image file to copy into the output directory")
-3. If the user provides their own image path, copy it into `output/<slug>/` as `product_visual.png`. Otherwise, note which existing image to use.
-4. Verify the selected image exists and is a valid image file.
-5. Store the chosen image filename for use in Phases 7 and 8.
-6. Present the result to the user: **"Product visual selected: `output/<slug>/<chosen_image>.png` — ready to proceed to Phase 7 (PPTX Carousel), or would you like to pick a different image?"**
-
-## Phase 7: PPTX Carousel Generation
-
-**Goal:** Build a LinkedIn-format carousel PPTX (4:5 portrait, 1080x1350 px equivalent) presenting the product definition as a polished slide deck with the generated illustration.
-
-**Instructions:**
-1. Read the reference script: `scripts/build_carousel.py`
-2. Create a `build_carousel.py` in `output/<slug>/` that generates both PPTX and PDF (Phase 8 uses the same script). Adapt all content to this product using the outputs from Phases 1-5:
-   - **Page 1: Title** — product name, tagline, product visual from Phase 6
-   - **Page 2: The Problem** — 3 key problems from explore_notes.md, target users
-   - **Page 3: How It Works** — 3-4 step user flow from high_level_design.md
-   - **Page 4: Architecture** — signal chains, subsystems from system_description.md, component arrangement from Phase 3
-   - **Page 5: Key Innovation** — the product's differentiating technical insight (product-specific — find the most interesting technical detail)
-   - **Page 6: Constraints & BOM** — constraints and BOM table from system_description.md
-   - **Page 7: Hardest Problems** — top 3 technical risks from gate_checklist.md
-   - **Page 8: Gate Result & Next** — gate pass/fail summary, key specs, open items, CTA
-3. Follow the visual style from the reference:
-   - Dark background (#1A1A2E), card style (#22223A), colored accent strips
-   - 6-color accent palette: orange, green, red, blue, purple (differentiate sections)
-   - Numbered circles for steps, bar separators, page counters
-   - Use python-pptx with 7.5" x 9.375" slide dimensions (4:5 ratio)
-4. Run the script: `python3 output/<slug>/build_carousel.py`
-5. Verify the PPTX file was created
-6. Present the result to the user and ask: **"PPTX carousel generated. Ready to proceed to Phase 8 (PDF Carousel), or would you like to adjust the content?"**
-
-## Phase 8: PDF Carousel and HTML Output
-
-**Goal:** Generate the same carousel as a multi-page PDF using ReportLab, matching the PPTX content exactly, and the final HTML bundle of all documents.
-
-**Instructions:**
-1. The `build_carousel.py` created in Phase 7 should already include PDF generation (the reference script generates both formats in one run). If not, add it now.
-2. The PDF section uses ReportLab with page size 190mm x 237.5mm (4:5 ratio)
-3. Follow the same visual conventions: `bg()`, `accent_strip()`, `card()`, `txt()`, `txt_wrap()`, `bar()`, `circle_num()`, `footer()` helpers
-4. Run `python3 scripts/build_html.py output/<slug>` one last time so `review.html` holds the final documents.
-5. Verify the output files exist:
-   - `<Product_Name>_Carousel.pptx`
-   - `<Product_Name>_Carousel.pdf`
-   - `review.html`
-6. Present the final summary to the user: **"All 8 phases complete. Output files: explore_notes.md, high_level_design.md, component_arrangement.md, system_description.md, gate_checklist.md, product_visual.png, <carousel>.pptx, <carousel>.pdf, review.html (all documents in one page for any browser)"** — and, when the run started from a source document, add: **"open_questions.md still has N floating items: <list them>."**
+7. If there are FAIL items, go through them with a dialog (Principle 7): for each FAIL, **Revise the system description for this item** or **Accept as is**, plus the standing options. For the items to revise, go back to Phase 4, update the system description, then re-run the gate checklist.
+8. When the run started from a source document, go through every `open_questions.md` row still `Open` or `Assumed` the same way: decide it, or leave it floating on purpose.
+9. Run `python3 scripts/build_html.py output/<slug>` one last time so `review.html` holds the final documents.
+10. Present the final summary as a deliverables checklist, one line per file with its path and status:
+   ```
+   All 5 phases complete. Deliverables in output/<slug>/:
+   [x] gap_analysis.md           (source-document runs only)
+   [x] open_questions.md         N decided, N assumed, N floating
+   [x] explore_notes.md
+   [x] high_level_design.md      + block_diagram.png
+   [x] component_arrangement.md  + arrangement_options.png
+   [x] system_description.md     + schedule_gantt.png
+   [x] gate_checklist.md         N PASS / N FAIL accepted / N N/A
+   [x] review.html               every document above in one page, for any browser
+   ```
+   Mark `[ ]` anything not produced and say why in the same line. Then name the floating items.
 
 ## Writing Guidelines
 
@@ -455,10 +410,6 @@ output/<slug>/
 ├── component_arrangement.md
 ├── system_description.md
 ├── gate_checklist.md
-├── product_visual.png              # Phase 6: selected or copied product visual
-├── build_carousel.py
-├── <Product_Name>_Carousel.pptx
-├── <Product_Name>_Carousel.pdf
 ├── review.html                   # all .md documents in one page, images embedded; refreshed after every phase
 └── decisions.md                  # answer sheet: every question's key and answer; read before asking, appended at the end
 ```

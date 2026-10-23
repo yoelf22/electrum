@@ -1,7 +1,6 @@
 python-pptx
 matplotlib
 numpy
-reportlab
 markdown
 playwright
 anthropic>=0.42.0
