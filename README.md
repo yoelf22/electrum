@@ -88,7 +88,7 @@ It takes a product idea from "I think this could work" through to a structured s
 | 5. **Gate Checklist** | `gate_checklist.md` | Validate completeness across both domains (103 items, PASS/FAIL/N/A) |
 | 6. **Product Visual** | `product_visual.png` | Pick an existing diagram from earlier phases (or a user-supplied image) as the carousel visual |
 | 7. **PPTX Carousel** | `*_Carousel.pptx` | LinkedIn-format slide deck (4:5 portrait, dark theme, 8 pages) |
-| 8. **PDF Carousel** | `*_Carousel.pdf` | Same carousel as multi-page PDF |
+| 8. **PDF Carousel + HTML** | `*_Carousel.pdf`, `review.html` | Same carousel as multi-page PDF, plus every document in one HTML page that opens in any browser (refreshed after each phase, so you can review the `.md` files without a markdown viewer) |
 
 Phases 1-5 produce the engineering definition. Phases 6-8 turn it into visual presentation materials.
 
@@ -127,7 +127,7 @@ Routes 1 and 2 run the scripts in Claude's sandbox and need nothing installed. F
 pip install -r requirements.txt
 ```
 
-Required packages: `python-pptx`, `reportlab`, `matplotlib`, `numpy`. `playwright` and `python-docx`
+Required packages: `python-pptx`, `reportlab`, `matplotlib`, `numpy`, `markdown`. `playwright` and `python-docx`
 are only for the optional scripts below.
 
 ### Playwright browser (optional, for `scripts/generate_illustration.py`)
@@ -183,6 +183,7 @@ claude
 |------|-------------|
 | `scripts/generate_illustration.py` | DALL-E image generation via Playwright browser automation |
 | `scripts/build_carousel.py` | PPTX + PDF carousel builder (LinkedIn-format, 4:5 portrait) |
+| `scripts/build_html.py` | Bundles a run's `.md` documents into one `review.html` with the PNGs embedded |
 | `scripts/build_deck.py` | Executive product overview deck builder |
 | `scripts/build_high_level_deck.py` | High-level design deck builder |
 | `scripts/visualize.py` | Visualization utilities |

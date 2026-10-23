@@ -1,6 +1,6 @@
 ---
 name: electrum
-description: "Run the 8-phase product definition workflow for software-augmented hardware: Explore → High-Level Design → Component Arrangement → System Description → Gate Checklist → Product Visual → PPTX Carousel → PDF Carousel. Use when the user has a hardware+software product idea to develop, or an existing spec, brief or PRD (txt, md, html, docx, rtf, pdf, doc) to challenge and complete."
+description: "Run the 8-phase product definition workflow for software-augmented hardware: Explore → High-Level Design → Component Arrangement → System Description → Gate Checklist → Product Visual → PPTX Carousel → PDF + HTML. Use when the user has a hardware+software product idea to develop, or an existing spec, brief or PRD (txt, md, html, docx, rtf, pdf, doc) to challenge and complete."
 argument-hint: [product idea, or path to a spec document]
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash(mkdir *), Bash(python3* *), Bash(pip3 install *), AskUserQuestion
 model: claude-opus-4-6
@@ -19,7 +19,8 @@ This skill runs in three places. The phases are identical; only paths, questions
 - **Questions.** Wherever this file says `AskUserQuestion`, use that tool if you have it. Otherwise ask the same questions in chat as numbered options and let the user answer in text.
 - **Resume.** Before Phase 1, look for existing phase files (in the output folder, the working folder, or uploaded to the conversation). If any exist, summarize what is there in two lines and resume from the first missing phase instead of starting over.
 - **Context economy** (matters most in chat, which has no compaction). Never paste a file's contents into the conversation; give the path and a two-line summary. When revising, edit the changed sections instead of rewriting the whole file. After Phase 5, offer to run Phases 6–8 in a fresh conversation with the five markdown files uploaded; they only read the finished documents.
-- **Missing libraries.** The scripts need `matplotlib`, `numpy`, `python-pptx` and `reportlab`. If an import fails, try `pip install` once; if that also fails, say which phase is blocked and point the user to the Claude Code route.
+- **Reviewing the markdown files.** Most users have no markdown viewer. After writing or revising any `.md` phase file, run `python3 scripts/build_html.py output/<slug>` and name `output/<slug>/review.html` next to the `.md` path in the STOP message: it bundles every phase file written so far, images included, and opens in any browser (in chat, share it for download like any other file). Edits come back either as instructions to you or as changes typed into the `.md` itself, which is plain text: TextEdit on Mac, Notepad on Windows, or any code editor. Re-run the builder after their edits.
+- **Missing libraries.** The scripts need `matplotlib`, `numpy`, `python-pptx`, `reportlab` and `markdown` (without `markdown`, `build_html.py` still runs but shows the documents as plain text). If an import fails, try `pip install` once; if that also fails, say which phase is blocked and point the user to the Claude Code route.
 - **Pointers for users, not for you.** Do not fetch these at runtime. If the user asks for a worked example, give the Bubbler walkthrough: https://github.com/yoelf22/electrum/blob/master/examples/bubbler-automated-soap-bubble-maker/WALKTHROUGH.md. If they want outputs in git, runs that span days without re-uploading files, or to extend the scripts, point them to the Claude Code route: https://github.com/yoelf22/electrum (clone it and run `/electrum`; their phase files drop into `output/<slug>/` and the resume rule picks them up).
 
 ## Interaction Principles
@@ -377,18 +378,20 @@ This phase applies to **all products** — static electronic, electromechanical,
 5. Verify the PPTX file was created
 6. Present the result to the user and ask: **"PPTX carousel generated. Ready to proceed to Phase 8 (PDF Carousel), or would you like to adjust the content?"**
 
-## Phase 8: PDF Carousel Generation
+## Phase 8: PDF Carousel and HTML Output
 
-**Goal:** Generate the same carousel as a multi-page PDF using ReportLab, matching the PPTX content exactly.
+**Goal:** Generate the same carousel as a multi-page PDF using ReportLab, matching the PPTX content exactly, and the final HTML bundle of all documents.
 
 **Instructions:**
 1. The `build_carousel.py` created in Phase 7 should already include PDF generation (the reference script generates both formats in one run). If not, add it now.
 2. The PDF section uses ReportLab with page size 190mm x 237.5mm (4:5 ratio)
 3. Follow the same visual conventions: `bg()`, `accent_strip()`, `card()`, `txt()`, `txt_wrap()`, `bar()`, `circle_num()`, `footer()` helpers
-4. Verify both output files exist:
+4. Run `python3 scripts/build_html.py output/<slug>` one last time so `review.html` holds the final documents.
+5. Verify the output files exist:
    - `<Product_Name>_Carousel.pptx`
    - `<Product_Name>_Carousel.pdf`
-5. Present the final summary to the user: **"All 8 phases complete. Output files: explore_notes.md, high_level_design.md, component_arrangement.md, system_description.md, gate_checklist.md, product_visual.png, <carousel>.pptx, <carousel>.pdf"** — and, when the run started from a source document, add: **"open_questions.md still has N floating items: <list them>."**
+   - `review.html`
+6. Present the final summary to the user: **"All 8 phases complete. Output files: explore_notes.md, high_level_design.md, component_arrangement.md, system_description.md, gate_checklist.md, product_visual.png, <carousel>.pptx, <carousel>.pdf, review.html (all documents in one page for any browser)"** — and, when the run started from a source document, add: **"open_questions.md still has N floating items: <list them>."**
 
 ## Writing Guidelines
 
@@ -417,5 +420,6 @@ output/<slug>/
 ├── product_visual.png              # Phase 6: selected or copied product visual
 ├── build_carousel.py
 ├── <Product_Name>_Carousel.pptx
-└── <Product_Name>_Carousel.pdf
+├── <Product_Name>_Carousel.pdf
+└── review.html                   # all .md documents in one page, images embedded; refreshed after every phase
 ```

@@ -2,6 +2,10 @@
 
 All notable changes to Electrum are documented here.
 
+## Unreleased
+
+- **HTML output and review copy** — `scripts/build_html.py` bundles every `.md` document of a run into one `review.html` with the diagrams embedded, so the documents open in any browser on Mac or Windows with nothing installed. The skill refreshes it after every phase (reviewers without a markdown viewer read it there and edit the `.md` in TextEdit or Notepad) and lists it as a final output in Phase 8 next to the PPTX and PDF.
+
 ## v0.4.0 — 2026-10-23
 
 - **Phase 0: Ingest and Challenge** — `/electrum <path>` (or an uploaded file in chat) starts from an existing spec, brief or PRD in txt, md, html, docx, rtf, pdf or doc. `scripts/ingest_spec.py` prints any of them as plain text (standard library; pypdf or `pdftotext` for PDF, macOS `textutil` for legacy .doc). The phase writes `gap_analysis.md` (every question the eight phases will ask, scored answered / implied / missing against the document; claims without evidence; contradictions; topics the document is silent on) and `open_questions.md` (parked items tagged with the phase that resolves them, or Floating), then puts the core premises to the user with options. Later phases skip what the document answers, ask parked questions when they reach them, and list what is still floating at the end of Phase 5 and Phase 8.
