@@ -2,6 +2,10 @@
 
 All notable changes to Electrum are documented here.
 
+## v0.4.2 — 2026-10-23
+
+- **Hands-free runs from `decisions.md`** — an answer sheet (`Key | Answer | Note`) in the output folder, the working folder or uploaded to the chat. The skill reads it before asking: a question whose key has a row is not asked, its answer is applied and cited; `phaseN.instruction` rows are applied at the start of that phase as if typed; `mode | hands-free` skips the file gates; `phase7.carousel | Skip` ends the run with `review.html`; answers the run collects are appended at the end so the next run is fully covered. SKILL.md gains a "Question keys" table naming every question the skill asks. Written so a run completed interactively can be replayed in Claude chat without the person present.
+
 ## v0.4.1 — 2026-10-23
 
 - **HTML output and review copy** — `scripts/build_html.py` bundles every `.md` document of a run into one `review.html` with the diagrams embedded, so the documents open in any browser on Mac or Windows with nothing installed. The skill refreshes it after every phase (reviewers without a markdown viewer read it there and edit the `.md` in TextEdit or Notepad) and lists it as a final output in Phase 8 next to the PPTX and PDF.

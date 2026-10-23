@@ -17,6 +17,7 @@ This skill runs in three places. The phases are identical; only paths, questions
 - **Claude Code** (repo clone). `templates/`, `reference/` and `scripts/` are at the repo root; outputs go to `output/<slug>/`.
 - **Uploaded skill in Claude Desktop chat or Claude Cowork** (the release ZIP). `templates/`, `reference/` and `scripts/` sit next to this SKILL.md inside the skill folder. Resolve every such path in this file against whichever location exists. Write outputs to `electrum-output/<slug>/` (in Cowork, inside the working folder; in chat, in the sandbox working directory) and, in chat, share each file for download as soon as it is written, with one line on what it is.
 - **Questions.** Wherever this file says `AskUserQuestion`, use that tool if you have it. Otherwise ask the same questions in chat as numbered options and let the user answer in text.
+- **Hands-free runs from `decisions.md`.** Before Phase 0 or Phase 1, look for `decisions.md` in the output folder, the working folder, or uploaded to the conversation. It is an answer sheet: a table of `Key | Answer | Note` rows whose keys are the question keys listed under "Question keys" below. When it exists: (1) do not ask any question whose key has a row; apply the answer and say so in one line ("from decisions.md: Option C, rear pod"); (2) apply every `phaseN.instruction` row at the start of that phase, before drawing or writing, as if the user had typed it; (3) treat `phaseN.anything_else` rows as the answer to the Interaction Principle 5 question; (4) ask only questions with no row, and when the user is absent (they said "hands-free" or the sheet has `mode | hands-free`), take the recommended option, mark it `Assumed` in `open_questions.md`, and keep going; (5) still STOP at every file gate unless `mode | hands-free`, in which case present the file in one line and continue; (6) a `phase7.carousel | Skip` row skips Phases 7 and 8's carousel and ends the run with `review.html`; (7) at the end, append every answer the run collected that was not already in the sheet, so the next run is fully covered. The sheet never overrides a later instruction typed in the conversation.
 - **Resume.** Before Phase 1, look for existing phase files (in the output folder, the working folder, or uploaded to the conversation). If any exist, summarize what is there in two lines and resume from the first missing phase instead of starting over.
 - **Context economy** (matters most in chat, which has no compaction). Never paste a file's contents into the conversation; give the path and a two-line summary. When revising, edit the changed sections instead of rewriting the whole file. After Phase 5, offer to run Phases 6–8 in a fresh conversation with the five markdown files uploaded; they only read the finished documents.
 - **Reviewing the markdown files.** Most users have no markdown viewer. After writing or revising any `.md` phase file, run `python3 scripts/build_html.py output/<slug>` and name `output/<slug>/review.html` next to the `.md` path in the STOP message: it bundles every phase file written so far, images included, and opens in any browser (in chat, share it for download like any other file). Edits come back either as instructions to you or as changes typed into the `.md` itself, which is plain text: TextEdit on Mac, Notepad on Windows, or any code editor. Re-run the builder after their edits.
@@ -40,7 +41,7 @@ These rules override per-phase instructions when they conflict:
 
 ## Setup
 
-1. Take the user's product idea from the argument: `$ARGUMENTS`. If the argument is a file path, or a document is uploaded to the conversation, or the user says they have a spec, brief, PRD or proposal: that is the product idea's source, and **Phase 0 (Ingest and Challenge) runs first**. Otherwise skip Phase 0.
+1. Read `decisions.md` if present (see Environment, hands-free runs) and apply `source`, `output_dir` and `mode` first. Then take the user's product idea from the argument: `$ARGUMENTS`. If the argument is a file path, or a document is uploaded to the conversation, or the user says they have a spec, brief, PRD or proposal: that is the product idea's source, and **Phase 0 (Ingest and Challenge) runs first**. Otherwise skip Phase 0.
 2. Create a slugified output directory: `output/<slugified-idea>/` (lowercase, hyphens, no special chars, max ~50 chars). With a source document, slugify the product name the document uses.
 3. Run phases sequentially, but **always wait for user acknowledgment between phases** — never auto-advance
 4. **Orient the user before Phase 1.** Many users are running this for the first time. Before the Phase 1 questions, send this orientation (in your own words, under 150 words, no headers):
@@ -49,6 +50,43 @@ These rules override per-phase instructions when they conflict:
    - It pauses after every file for review. A full run takes 60–90 minutes.
    - Each file is a draft for their team, not a final answer: the product manager owns the High-Level Design, the technical lead owns the System Description, and the Gate Checklist works best reviewed by someone who did not write the spec.
    - This is a dialog, not a form. At every question they can ask you something first, reject every option, or hold a choice against your advice; the gaps and trade-offs are yours to surface, the decisions are theirs.
+
+## Question keys
+
+Every question the skill asks has a key, so `decisions.md` can answer it. Phase 0 premise keys are product-specific; use `phase0.premise.<topic>` with a short topic slug (e.g. `capture`, `uplink`, `consent`, `identification`, `form`) and match on topic.
+
+| Key | Question |
+|---|---|
+| `source` | Path or name of the source document (Phase 0) |
+| `output_dir` | Where outputs go, if not the default |
+| `mode` | `hands-free` to run without stopping at gates; otherwise interactive |
+| `phase0.gap_analysis.corrections` | Corrections to the gap analysis ("none" to accept) |
+| `phase0.premise.<topic>` | The chosen option for that premise |
+| `phase0.anything_else` | Phase 0 close |
+| `phase1.market`, `phase1.deployment`, `phase1.price_volume`, `phase1.power`, `phase1.classification` | Phase 1 envelope |
+| `phase1.physical.function`, `phase1.physical.structure`, `phase1.physical.motion`, `phase1.physical.media` | Electromechanical only |
+| `phase1.instruction`, `phase1.anything_else` | |
+| `phase2.differentiator`, `phase2.connectivity`, `phase2.mvp_scope` | Phase 2 design questions |
+| `phase2.block_diagram` | "approved" or what to change |
+| `phase2.instruction`, `phase2.anything_else` | |
+| `phase3.inventory` | "complete", or additions/removals |
+| `phase3.arrangement` | Option A/B/C or a change |
+| `phase3.instruction`, `phase3.anything_else` | |
+| `phase4.parts`, `phase4.manufacturing`, `phase4.regulatory` | Phase 4 engineering questions |
+| `phase4.mechanical_sourcing`, `phase4.structural_material` | Electromechanical only |
+| `phase4.stage_a` | "approved" or what to change in §1–§5 |
+| `phase4.instruction`, `phase4.anything_else` | |
+| `phase5.fail_items` | "revise" or "accept" |
+| `phase5.reviewers` | Who does the independent review |
+| `phase5.rollup.<Qn>` | Decision for a parked question at the end-of-Phase-5 roll-up |
+| `phase5.rollup.floating` | "confirm" to leave the rest floating |
+| `phase5.instruction` | |
+| `phase6.visual` | Which image |
+| `phase7.carousel` | "build" or "Skip" |
+| `phase8.deliverable` | What to present at the end |
+| `meta.run_log` | Whether to keep a run log and commit per phase |
+
+Any question a phase asks that is not in this table gets a key in the same style (`phaseN.<topic>`), and the run appends it to `decisions.md` at the end.
 
 ## Phase 0: Ingest and Challenge (only when a source document exists)
 
@@ -421,5 +459,6 @@ output/<slug>/
 ├── build_carousel.py
 ├── <Product_Name>_Carousel.pptx
 ├── <Product_Name>_Carousel.pdf
-└── review.html                   # all .md documents in one page, images embedded; refreshed after every phase
+├── review.html                   # all .md documents in one page, images embedded; refreshed after every phase
+└── decisions.md                  # answer sheet: every question's key and answer; read before asking, appended at the end
 ```

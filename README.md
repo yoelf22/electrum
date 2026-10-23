@@ -226,6 +226,12 @@ reach them, and whatever is still open at the end is listed, not dropped. At eve
 can ask Claude something first, or hold your choice against its recommendation; the decision is
 recorded with your reason and not reopened.
 
+**Running hands-free.** A `decisions.md` answer sheet in the output folder (or uploaded to the
+chat) answers the questions before they are asked; `mode | hands-free` lets the run go through
+every gate on its own. The skill writes one at the end of any run, so an interactive run can be
+replayed, or handed to someone else, without the dialog. The keys are listed in SKILL.md under
+"Question keys".
+
 **Moving up a route.** The output files are the same everywhere. Chat downloads go into a Cowork
 working folder, or into `output/<slug>/` in a Claude Code clone, and `/electrum` resumes from the
 first missing phase. Nothing is redone.
