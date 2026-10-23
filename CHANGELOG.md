@@ -2,6 +2,11 @@
 
 All notable changes to Electrum are documented here.
 
+## Unreleased
+
+- **Phase 0: Ingest and Challenge** — `/electrum <path>` (or an uploaded file in chat) starts from an existing spec, brief or PRD in txt, md, html, docx, rtf, pdf or doc. `scripts/ingest_spec.py` prints any of them as plain text (standard library; pypdf or `pdftotext` for PDF, macOS `textutil` for legacy .doc). The phase writes `gap_analysis.md` (every question the eight phases will ask, scored answered / implied / missing against the document; claims without evidence; contradictions; topics the document is silent on) and `open_questions.md` (parked items tagged with the phase that resolves them, or Floating), then puts the core premises to the user with options. Later phases skip what the document answers, ask parked questions when they reach them, and list what is still floating at the end of Phase 5 and Phase 8.
+- **The user is a party to the dialog** — Interaction Principle 6: every options question carries "Ask me something first" and "Keep my choice as stated"; overruled recommendations are recorded with the user's reason and not reopened; nothing assumed is filled in silently.
+
 ## v0.3.1 — 2026-10-22
 
 - **Skill output path** — in Claude chat and Cowork, outputs go to `electrum-output/<slug>/`; the chat sandbox has no "outputs directory". Found in the first Route 1 test run.

@@ -188,6 +188,7 @@ claude
 | `scripts/visualize.py` | Visualization utilities |
 | `scripts/block_diagram.py` | Block diagram generator |
 | `scripts/gantt.py` | Gantt chart of the §9 Schedule table, critical path highlighted |
+| `scripts/ingest_spec.py` | Prints a spec document (txt, md, html, docx, rtf, pdf, doc) as plain text for Phase 0 |
 | `scripts/build_word_forms.py` | Builds the Word fill-in forms from `templates/` and the Bubbler example |
 
 ### Worked Examples
@@ -210,9 +211,19 @@ The bubbler example includes a [step-by-step walkthrough](examples/bubbler-autom
 
 Pick a route from [Choose Your Route](#choose-your-route), then:
 
-1. Type `/electrum <your product idea>`
+1. Type `/electrum <your product idea>`, or `/electrum <path to a spec>` if you already have a
+   brief, PRD or proposal (txt, md, html, docx, rtf, pdf, doc; in chat, upload the file instead)
 2. Walk through all 8 phases interactively. Claude drafts, you review and refine at each step
 3. Final output: a complete product definition + diagrams + presentation deck
+
+**Starting from a document you already have.** Phase 0 reads it, scores every question the
+eight phases will ask as answered, implied or missing, lists the claims it makes without evidence
+and the places it contradicts itself, and parks the open items in `open_questions.md` with the
+phase that will resolve each. It then puts the three to five core premises to you with options.
+Later phases do not re-ask what the document answers; they ask the parked questions when they
+reach them, and whatever is still open at the end is listed, not dropped. At every question you
+can ask Claude something first, or hold your choice against its recommendation; the decision is
+recorded with your reason and not reopened.
 
 **Moving up a route.** The output files are the same everywhere. Chat downloads go into a Cowork
 working folder, or into `output/<slug>/` in a Claude Code clone, and `/electrum` resumes from the

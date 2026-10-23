@@ -1,7 +1,7 @@
 ---
 name: electrum
-description: "Run the 8-phase product definition workflow for software-augmented hardware: Explore → High-Level Design → Component Arrangement → System Description → Gate Checklist → Product Visual → PPTX Carousel → PDF Carousel. Use when the user has a hardware+software product idea to develop."
-argument-hint: [product idea]
+description: "Run the 8-phase product definition workflow for software-augmented hardware: Explore → High-Level Design → Component Arrangement → System Description → Gate Checklist → Product Visual → PPTX Carousel → PDF Carousel. Use when the user has a hardware+software product idea to develop, or an existing spec, brief or PRD (txt, md, html, docx, rtf, pdf, doc) to challenge and complete."
+argument-hint: [product idea, or path to a spec document]
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash(mkdir *), Bash(python3* *), Bash(pip3 install *), AskUserQuestion
 model: claude-opus-4-6
 ---
@@ -31,17 +31,70 @@ These rules override per-phase instructions when they conflict:
 3. **Progressive disclosure.** Don't dump large documents in one shot. Break them into reviewable stages. Get user approval on the structure before filling in details.
 4. **Decisions before design.** When there are 2+ valid approaches, present them as visual side-by-side comparisons (in a single matplotlib image) BEFORE committing to one. Each comparison should collapse a branch of the design space.
 5. **Ask what else is on their mind before each document is final.** In every phase, after the user has reviewed the draft and before you treat the phase's output as final and offer the next phase, ask in one short question whether anything else is on their mind for this document: concerns, constraints, ideas or context not covered yet (e.g. "Before we lock the high-level design: anything else on your mind, such as a worry, a constraint, or something we haven't covered?"). If they raise something, fold it into the document, show what changed, and ask once more. Move on only when they say there's nothing more. Ask this once per phase, not after every small edit.
+6. **The user is a party to the dialog, not a passenger.** This workflow is adversarial in both directions. You challenge their premises; they challenge yours. Concretely:
+   - Every time you present options, add two standing options: **"Ask me something first"** (they get to question you before choosing: why this recommendation, what it costs, what happens if they pick otherwise; answer, then re-ask) and **"Keep my choice as stated"** (their decision stands even against your recommendation).
+   - When they overrule a recommendation, record the decision with their reason in the document's Key Decisions (or in `open_questions.md` as a resolved item), state once what it costs, and do not reopen it in later phases unless new evidence appears.
+   - Do not fill a gap silently. Anything you assumed because the source or the user did not say goes into `open_questions.md` tagged **Assumed**, and you say so when presenting the file.
+   - Say this out loud at orientation and again before Phase 0's premise questions: they can push back, ask follow-ups, change the question, or refuse an option; the documents are theirs, and the machine's job is to make the gaps and the trade-offs visible, not to decide.
 
 ## Setup
 
-1. Take the user's product idea from the argument: `$ARGUMENTS`
-2. Create a slugified output directory: `output/<slugified-idea>/` (lowercase, hyphens, no special chars, max ~50 chars)
+1. Take the user's product idea from the argument: `$ARGUMENTS`. If the argument is a file path, or a document is uploaded to the conversation, or the user says they have a spec, brief, PRD or proposal: that is the product idea's source, and **Phase 0 (Ingest and Challenge) runs first**. Otherwise skip Phase 0.
+2. Create a slugified output directory: `output/<slugified-idea>/` (lowercase, hyphens, no special chars, max ~50 chars). With a source document, slugify the product name the document uses.
 3. Run phases sequentially, but **always wait for user acknowledgment between phases** — never auto-advance
 4. **Orient the user before Phase 1.** Many users are running this for the first time. Before the Phase 1 questions, send this orientation (in your own words, under 150 words, no headers):
    - The run produces three core documents, each feeding the next. **High-Level Design** (Phase 2): a one-to-two-page overview of what the product is, its main blocks, constraints and three hardest problems; for executives, partners and new team members, and a gate before the detail. **System Description** (Phase 4): the full engineering spec, with real parts, power budget, firmware architecture, BOM cost, lead times and minimum order quantities, assembly and inspection times, and a Gantt schedule with the critical path; engineers design from it and suppliers quote from it. **Gate Checklist** (Phase 5): 103 PASS/FAIL/N/A items that test whether the System Description is complete enough to start detailed design; a FAIL sends you back to Phase 4.
    - Phase 1 (exploration notes) and Phase 3 (component arrangement) feed those documents. Phases 6–8 turn the result into a presentation carousel.
    - It pauses after every file for review. A full run takes 60–90 minutes.
    - Each file is a draft for their team, not a final answer: the product manager owns the High-Level Design, the technical lead owns the System Description, and the Gate Checklist works best reviewed by someone who did not write the spec.
+   - This is a dialog, not a form. At every question they can ask you something first, reject every option, or hold a choice against your advice; the gaps and trade-offs are yours to surface, the decisions are theirs.
+
+## Phase 0: Ingest and Challenge (only when a source document exists)
+
+**Goal:** Read the user's existing document, find what it answers and what it leaves open, challenge its premises, and get the user's decisions on the ones that shape everything downstream. Nothing is designed in this phase. Its two outputs feed every later phase: `gap_analysis.md` (what the document says, where) and `open_questions.md` (what nobody has said yet, and who decided what).
+
+**Tell the user first (two or three sentences):** you will read their document as a skeptical engineer and product manager would: looking for what is asserted without evidence, what contradicts itself, and what the eight phases will need that the document does not give. Then you will put the core premises to them one at a time with options. They can push back on any of it.
+
+**Instructions:**
+
+1. **Get the text.** If you can read the file directly (txt, md, html, or your environment opens pdf and docx), read it. Otherwise, or for rtf and legacy doc, run `python3 scripts/ingest_spec.py <file>` and read its output. Write the extracted text to `output/<slug>/source_spec.md` so later phases can search it instead of re-reading the original. Keep the document's language for quotes; write the analysis in the language the user is talking to you in. Do not paste the text into the conversation.
+
+2. **Gap analysis against the workflow's questions.** Build the list of everything the eight phases will ask or need, in this order, and score each one against the document:
+   - Phase 1 envelope: target market, deployment context, price point and volume, power source, electromechanical classification (and, if electromechanical, the four physical-architecture questions).
+   - Phase 2: key differentiator, connectivity, MVP scope.
+   - Phase 4: component preferences, manufacturing context, regulatory markets (and mechanical sourcing and structural material if electromechanical).
+   - Phase 5: the section headings of `templates/checklist.md` (Vision and Context, User Scenarios, System Architecture, Subsystems, Interfaces, Power, Connectivity, Key Decisions, Constraints, DfX, Open Questions and Risks). Score at the section level; do not run the 103 items here.
+
+   Score each as **Answered** (quote or cite the passage), **Implied** (your inference from the text; must be confirmed), or **Missing**. Then add three further lists:
+   - **Claims without evidence.** Statements the document asserts that an engineer would want shown: feasibility ("the camera reads the badge"), performance, cost, user behaviour, market.
+   - **Contradictions and things that do not add up.** Numbers, scope or claims that conflict with each other or with physics, cost or regulation as the document states them.
+   - **Not asked for.** Topics the document is silent on that the product plainly needs (for a wearable recorder: consent, data retention, battery day, weight on the head).
+
+   Write `output/<slug>/gap_analysis.md` with these tables, then **STOP and wait:**
+   > "Gap analysis written: `output/<slug>/gap_analysis.md` — N answered, N implied, N missing, plus N claims to challenge. Tell me where I misread the document before we go to the premises."
+
+   Correct the file on their feedback. Do not argue about what the document says; argue about what it means.
+
+3. **Park the open questions.** Create `output/<slug>/open_questions.md` with one row per Implied and Missing item and per unanswered claim: the question, where it came from (document section or your analysis), the phase that will resolve it (**Phase 1** envelope, **Phase 2** design, **Phase 4** engineering, **Phase 5** gate, or **Floating** if no phase owns it), and a Status column: `Open` / `Assumed: <value>` / `Decided: <value> (<who>, <reason>)`. This file lives for the whole run.
+
+4. **Interrogate the core premises.** Pick the three to five premises on which the rest of the product rests. A premise qualifies when, if it is wrong, the architecture changes: who the user is, what the product does that nothing else does, where the processing runs, what the physical form must be, what the business model needs from the hardware. For each premise, in turn, with one `AskUserQuestion` per premise:
+   - State the premise as the document has it (quote).
+   - State the strongest case that it is wrong or underspecified, in two or three sentences.
+   - Give two to four options with the trade-off of each in one line, your recommendation first and marked, plus the two standing options from Interaction Principle 6 ("Ask me something first", "Keep my choice as stated").
+   - When they answer "Ask me something first", answer their question fully, then re-ask the same premise. When they hold their choice, record it as `Decided` with their reason and move on without repeating the warning.
+
+   Record every decision in `open_questions.md` (status `Decided`). Add any new question a premise raises.
+
+5. **Close the phase.** Ask the Interaction Principle 5 question ("anything else on your mind about this document before we start designing from it?"). Then **STOP and wait:**
+   > "Phase 0 complete: `output/<slug>/gap_analysis.md` and `output/<slug>/open_questions.md` (N decided, N parked, N assumed). Ready for Phase 1 (Explore)? It will skip what the document already answers and ask only the parked Phase 1 questions."
+
+**Rules for the later phases when a source document exists** (these apply from Phase 1 to Phase 8):
+
+- **Never re-ask what the document answers.** Where a phase's `AskUserQuestion` has an item scored Answered, do not ask it. Instead state the sourced answer in one line ("The brief puts this at B2B conference attendees") and move on. Items scored Implied become the first option of the question, labelled "(as the document implies)". Items scored Missing are asked as the phase instructions say.
+- **When a phase reaches a parked question, ask it then**, and update its row in `open_questions.md` to `Decided` or `Assumed`.
+- **Quote, do not paraphrase, when the document and the user disagree.** Show the passage and let the user rule.
+- **At the end of Phase 5**, list every row still `Open` or `Assumed`, grouped by phase tag plus Floating. Ask the user to decide each or to leave it floating on purpose. A floating item is not a failure; an unnoticed one is.
+- **The Phase 8 summary** names `open_questions.md` and the count of items still floating, so nothing is lost at the end.
 
 ## Phase 1: Explore
 
@@ -335,7 +388,7 @@ This phase applies to **all products** — static electronic, electromechanical,
 4. Verify both output files exist:
    - `<Product_Name>_Carousel.pptx`
    - `<Product_Name>_Carousel.pdf`
-5. Present the final summary to the user: **"All 8 phases complete. Output files: explore_notes.md, high_level_design.md, component_arrangement.md, system_description.md, gate_checklist.md, product_visual.png, <carousel>.pptx, <carousel>.pdf"**
+5. Present the final summary to the user: **"All 8 phases complete. Output files: explore_notes.md, high_level_design.md, component_arrangement.md, system_description.md, gate_checklist.md, product_visual.png, <carousel>.pptx, <carousel>.pdf"** — and, when the run started from a source document, add: **"open_questions.md still has N floating items: <list them>."**
 
 ## Writing Guidelines
 
@@ -349,6 +402,9 @@ This phase applies to **all products** — static electronic, electromechanical,
 
 ```
 output/<slug>/
+├── source_spec.md                # Phase 0 (source document only): extracted text
+├── gap_analysis.md               # Phase 0: answered / implied / missing, claims to challenge
+├── open_questions.md             # Phase 0 onward: parked questions, decisions, assumptions
 ├── explore_notes.md
 ├── block_diagram.py              # Phase 2: matplotlib block diagram generator
 ├── block_diagram.png             # Phase 2: visual block diagram
