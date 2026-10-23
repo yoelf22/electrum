@@ -2,7 +2,7 @@
 
 All notable changes to Electrum are documented here.
 
-## Unreleased
+## v0.4.1 — 2026-10-23
 
 - **HTML output and review copy** — `scripts/build_html.py` bundles every `.md` document of a run into one `review.html` with the diagrams embedded, so the documents open in any browser on Mac or Windows with nothing installed. The skill refreshes it after every phase (reviewers without a markdown viewer read it there and edit the `.md` in TextEdit or Notepad) and lists it as a final output in Phase 8 next to the PPTX and PDF.
 
