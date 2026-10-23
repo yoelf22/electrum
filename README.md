@@ -1,6 +1,6 @@
 # Electrum — Product Definition Toolkit for Software-Augmented Hardware
 
-*Status: v0.3 — exercised on 7 worked examples (see [`examples/`](examples/)), MIT-licensed.*
+*Status: v0.4 — exercised on 7 worked examples (see [`examples/`](examples/)), MIT-licensed.*
 
 ## The Problem
 
