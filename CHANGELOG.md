@@ -2,6 +2,10 @@
 
 All notable changes to Electrum are documented here.
 
+## v0.5.2 — 2026-10-24
+
+- `argument-hint` in SKILL.md is a YAML list, the form claude.ai normalizes to, so the release ZIP and the uploaded copy are byte-identical.
+
 ## v0.5.1 — 2026-10-24
 
 - **Ask before proposing** — Phase 2 opens by asking whether the user already has a system architecture (none / partly / fixed), and Phase 4 by asking which critical components are already designated (MCU, key sensor, actuator, radio, battery, display). What is given is reproduced as given and marked **(given)**; the skill's own ideas become flagged alternatives, never substitutions. New question keys `phase2.known_architecture` and `phase4.critical_components`.

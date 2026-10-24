@@ -1,7 +1,9 @@
 ---
 name: electrum
 description: "Run the 5-phase product definition workflow for software-augmented hardware: Explore → High-Level Design → Component Arrangement → System Description → Gate Checklist, every document bundled into one HTML page. Use when the user has a hardware+software product idea to develop, or an existing spec, brief or PRD (txt, md, html, docx, rtf, pdf, doc) to challenge and complete."
-argument-hint: [product idea, or path to a spec document]
+argument-hint:
+- product idea
+- or path to a spec document
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash(mkdir *), Bash(python3* *), Bash(pip3 install *), AskUserQuestion
 model: claude-opus-4-6
 ---
