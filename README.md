@@ -69,6 +69,8 @@ for your review. Budget 60–90 minutes for a full run.
 
 **Don't want AI in the loop?** The templates work without it. Copy `templates/system_description_template.md` into your project folder, fill it in by hand, then run through `templates/checklist.md`. That's 80% of the value.
 
+**Input language: English works best.** The templates, the 103 checklist items and the scripts are English, and the skill answers in whatever language you write in. Hebrew (or any right-to-left or non-Latin language) runs the dialog fine, but has known rough edges: a non-Latin product name gives an empty output-folder slug, so give the product an English working name; `scripts/gantt.py` looks for the English heading `### Schedule` and English column names, so keep template headings in English and translate only the content; `review.html` is laid out left to right; and text extracted from a Hebrew PDF by pypdf may come out reversed (`pdftotext` is more reliable). Part numbers, standards and protocol names should stay in Latin script so the gate review can find them.
+
 **Want to see what a full run looks like?** Read the [Bubbler walkthrough](examples/bubbler-automated-soap-bubble-maker/WALKTHROUGH.md) — a soup-to-nuts example that turned "automated soap bubble machine" into a force-sensing feedback system with a 90-item gate review.
 
 ---
