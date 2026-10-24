@@ -2,6 +2,10 @@
 
 All notable changes to Electrum are documented here.
 
+## v0.5.3 — 2026-10-24
+
+- **README reaches the uploader** — the release ZIP now carries `README.md` and `CHANGELOG.md`, so they show under the skill's Contents tab in claude.ai, and the Phase 1 orientation points to the README and its input-language note (English works best; Hebrew and other non-Latin input has listed rough edges).
+
 ## v0.5.2 — 2026-10-24
 
 - `argument-hint` in SKILL.md is a YAML list, the form claude.ai normalizes to, so the release ZIP and the uploaded copy are byte-identical.

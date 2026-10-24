@@ -17,7 +17,7 @@ jobs:
         run: |
           set -e
           mkdir -p dist/electrum
-          cp .claude/skills/electrum/SKILL.md dist/electrum/
+          cp .claude/skills/electrum/SKILL.md README.md CHANGELOG.md dist/electrum/
           cp -r templates reference scripts dist/electrum/
           # Need a browser, an API key or the examples folder; not part of the uploaded skill.
           rm -f dist/electrum/scripts/generate_illustration.py dist/electrum/scripts/build_word_forms.py
