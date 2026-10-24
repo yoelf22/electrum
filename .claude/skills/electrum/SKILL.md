@@ -67,13 +67,13 @@ Every question the skill asks has a key, so `decisions.md` can answer it. Phase 
 | `phase1.market`, `phase1.deployment`, `phase1.price_volume`, `phase1.power`, `phase1.classification` | Phase 1 envelope |
 | `phase1.physical.function`, `phase1.physical.structure`, `phase1.physical.motion`, `phase1.physical.media` | Electromechanical only |
 | `phase1.instruction`, `phase1.anything_else` | |
-| `phase2.differentiator`, `phase2.connectivity`, `phase2.mvp_scope` | Phase 2 design questions |
+| `phase2.known_architecture`, `phase2.differentiator`, `phase2.connectivity`, `phase2.mvp_scope` | Phase 2 design questions |
 | `phase2.block_diagram` | "approved" or what to change |
 | `phase2.instruction`, `phase2.anything_else` | |
 | `phase3.inventory` | "complete", or additions/removals |
 | `phase3.arrangement` | Option A/B/C or a change |
 | `phase3.instruction`, `phase3.anything_else` | |
-| `phase4.parts`, `phase4.manufacturing`, `phase4.regulatory` | Phase 4 engineering questions |
+| `phase4.critical_components`, `phase4.parts`, `phase4.manufacturing`, `phase4.regulatory` | Phase 4 engineering questions |
 | `phase4.mechanical_sourcing`, `phase4.structural_material` | Electromechanical only |
 | `phase4.stage_a` | "approved" or what to change in §1–§5 |
 | `phase4.instruction`, `phase4.anything_else` | |
@@ -98,8 +98,8 @@ Any question a phase asks that is not in this table gets a key in the same style
 
 2. **Gap analysis against the workflow's questions.** Build the list of everything the five phases will ask or need, in this order, and score each one against the document:
    - Phase 1 envelope: target market, deployment context, price point and volume, power source, electromechanical classification (and, if electromechanical, the four physical-architecture questions).
-   - Phase 2: key differentiator, connectivity, MVP scope.
-   - Phase 4: component preferences, manufacturing context, regulatory markets (and mechanical sourcing and structural material if electromechanical).
+   - Phase 2: known system architecture, key differentiator, connectivity, MVP scope.
+   - Phase 4: designated critical components, component preferences, manufacturing context, regulatory markets (and mechanical sourcing and structural material if electromechanical).
    - Phase 5: the section headings of `templates/checklist.md` (Vision and Context, User Scenarios, System Architecture, Subsystems, Interfaces, Power, Connectivity, Key Decisions, Constraints, DfX, Open Questions and Risks). Score at the section level; do not run the 103 items here.
 
    Score each as **Answered** (quote or cite the passage), **Implied** (your inference from the text; must be confirmed), or **Missing**. Then add three further lists:
@@ -204,6 +204,7 @@ Any question a phase asks that is not in this table gets a key in the same style
 1. Read the template: `templates/hw_sw_high_level.md`
 2. Read the worked example: `reference/high_level_design_example.md`
 3. **Before writing**, use `AskUserQuestion` to gather design-shaping input. Ask **all of the following in a single AskUserQuestion call** (multiple questions):
+   - **Known architecture (ask this first):** Do you already have a system architecture in mind: the main blocks, where the processing runs, how they connect? (options: "No — propose one", "Partly — I'll describe what is fixed", "Yes, fixed — use it as given". For the second and third, take their description (or the source document's architecture section) before you draw anything. The block diagram reproduces what they gave; anything you would do differently is offered as a flagged alternative, never substituted. Record the given architecture in Key Decisions with the user as the source.)
    - **Key differentiator:** What one thing makes this product special? (free-text — use an open question with options like: "Novel sensor/algorithm", "Form factor / industrial design", "Price disruption", "Integration / ecosystem play". Let the user pick or type their own.)
    - **Connectivity needs:** Standalone (no wireless), BLE to phone app, Wi-Fi / cloud-connected, or Cellular / LoRa (remote)? (options: Standalone (no wireless), BLE to phone app, Wi-Fi / cloud-connected, Cellular / LoRa (remote))
    - **MVP scope:** What is V1 vs. future? (free-text — use options like: "Minimal — core function only, no app", "Core + companion app", "Full product with cloud + app", "Not sure — help me decide". Let the user pick or type their own.)
@@ -300,7 +301,8 @@ This phase applies to **all products** — static electronic, electromechanical,
 1. Read the template: `templates/system_description_template.md`
 2. Read the worked example: `reference/system_description_example.md`
 3. **Before writing**, use `AskUserQuestion` to gather engineering-level input. Ask **all of the following in a single AskUserQuestion call** (multiple questions):
-   - **Component preferences or aversions:** Any MCU, sensor, or module preferences? (options: "No preference — pick the best fit", "Nordic nRF series (BLE focus)", "ESP32 family (Wi-Fi + BLE, cost)", "STM32 family (industrial, broad ecosystem)". Let the user type their own if they have specific parts.)
+   - **Designated critical components (ask this first):** Have you already chosen any of the critical parts: MCU or SoC, key sensor, actuator or motor, radio, battery, display? (options: "None chosen — pick the best fit", "Some are fixed — I'll list them", "All critical parts are fixed". Take the list before proposing anything. A designated part is used as given, with its real datasheet figures, and is marked **(given)** in the subsystem tables and BOM; if it conflicts with a constraint, say so once and record the user's decision in Key Decisions instead of swapping it.)
+   - **Component preferences or aversions** (for the parts not designated): Any MCU, sensor, or module preferences? (options: "No preference — pick the best fit", "Nordic nRF series (BLE focus)", "ESP32 family (Wi-Fi + BLE, cost)", "STM32 family (industrial, broad ecosystem)". Let the user type their own if they have specific parts.)
    - **Manufacturing context:** Prototype / proof-of-concept, small batch (100–1k units), or mass production (10k+ units)? (options: Prototype / POC only, Small batch (100–1k), Mass production (10k+))
    - **Target regulatory markets:** Which markets need certification? (multiSelect: true, options: "US (FCC, UL)", "EU (CE)", "Medical (FDA / MDR)", "None yet — prototype stage")
 

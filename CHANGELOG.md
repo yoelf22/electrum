@@ -2,6 +2,10 @@
 
 All notable changes to Electrum are documented here.
 
+## v0.5.1 — 2026-10-24
+
+- **Ask before proposing** — Phase 2 opens by asking whether the user already has a system architecture (none / partly / fixed), and Phase 4 by asking which critical components are already designated (MCU, key sensor, actuator, radio, battery, display). What is given is reproduced as given and marked **(given)**; the skill's own ideas become flagged alternatives, never substitutions. New question keys `phase2.known_architecture` and `phase4.critical_components`.
+
 ## v0.5.0 — 2026-10-23
 
 - **Carousel removed** — Phases 6–8 (product visual, PPTX and PDF LinkedIn carousel) and `scripts/build_carousel.py` are gone; `reportlab` is no longer required. The workflow is five phases ending in the gate review; `review.html` is the final output. The Bubbler example keeps its carousel files as history.
