@@ -17,7 +17,8 @@
       "Bash(curl:*)",
       "Bash(python3.11:*)",
       "Bash(find:*)",
-      "Bash(open:*)"
+      "Bash(open:*)",
+      "Bash(gh api:*)"
     ]
   }
 }
