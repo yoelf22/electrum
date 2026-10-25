@@ -2,6 +2,10 @@
 
 All notable changes to Electrum are documented here.
 
+## v0.5.4 — 2026-10-25
+
+- **Graphics are a source** — an uploaded or referenced image of any kind (sketch, block diagram, technical drawing, marketing render, prototype photo) starts Phase 0 like a document. The skill writes what the image shows into `source_spec.md`, fuses it with the text into one depiction of the product with `(from image)` marks and named conflicts, and loops present → correct → re-present until the user confirms it; only then does the gap analysis run. The confirmed image is treated the image as the given architecture or arrangement downstream. New question key `phase0.fused_depiction`.
+
 ## v0.5.3 — 2026-10-24
 
 - **README reaches the uploader** — the release ZIP now carries `README.md` and `CHANGELOG.md`, so they show under the skill's Contents tab in claude.ai, and the Phase 1 orientation points to the README and its input-language note (English works best; Hebrew and other non-Latin input has listed rough edges).

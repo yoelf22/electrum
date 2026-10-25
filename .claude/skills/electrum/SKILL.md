@@ -44,7 +44,7 @@ These rules override per-phase instructions when they conflict:
 
 ## Setup
 
-1. Read `decisions.md` if present (see Environment, hands-free runs) and apply `source`, `output_dir` and `mode` first. Then take the user's product idea from the argument: `$ARGUMENTS`. If the argument is a file path, or a document is uploaded to the conversation, or the user says they have a spec, brief, PRD or proposal: that is the product idea's source, and **Phase 0 (Ingest and Challenge) runs first**. Otherwise skip Phase 0.
+1. Read `decisions.md` if present (see Environment, hands-free runs) and apply `source`, `output_dir` and `mode` first. Then take the user's product idea from the argument: `$ARGUMENTS`. If the argument is a file path, or a document is uploaded to the conversation, or the user says they have a spec, brief, PRD or proposal, **or an image is uploaded or referenced** (any kind: a sketch, a block diagram, a technical drawing of a component, a marketing image or product render, a photo of a prototype or competitor, a screenshot of a slide; png, jpg, svg, or a figure inside a pdf/docx you can open): that is the product idea's source, and **Phase 0 (Ingest and Challenge) runs first**. Otherwise skip Phase 0.
 2. Create a slugified output directory: `output/<slugified-idea>/` (lowercase, hyphens, no special chars, max ~50 chars). With a source document, slugify the product name the document uses.
 3. Run phases sequentially, but **always wait for user acknowledgment between phases** — never auto-advance
 4. **Orient the user before Phase 1.** Many users are running this for the first time. Before the Phase 1 questions, send this orientation (in your own words, under 150 words, no headers):
@@ -61,7 +61,8 @@ Every question the skill asks has a key, so `decisions.md` can answer it. Phase 
 
 | Key | Question |
 |---|---|
-| `source` | Path or name of the source document (Phase 0) |
+| `source` | Path or name of the source document or image (Phase 0) |
+| `phase0.fused_depiction` | "approved" or corrections to the text+image depiction |
 | `output_dir` | Where outputs go, if not the default |
 | `mode` | `hands-free` to run without stopping at gates; otherwise interactive |
 | `phase0.gap_analysis.corrections` | Corrections to the gap analysis ("none" to accept) |
@@ -98,6 +99,8 @@ Any question a phase asks that is not in this table gets a key in the same style
 **Instructions:**
 
 1. **Get the text.** If you can read the file directly (txt, md, html, or your environment opens pdf and docx), read it. Otherwise, or for rtf and legacy doc, run `python3 scripts/ingest_spec.py <file>` and read its output. Write the extracted text to `output/<slug>/source_spec.md` so later phases can search it instead of re-reading the original. Keep the document's language for quotes; write the analysis in the language the user is talking to you in. Do not paste the text into the conversation.
+
+   **Graphics.** If the source includes an image, or is only an image, look at it and write what it shows into `source_spec.md` under `## From the graphics`: the blocks or parts and their labels, how they connect or sit relative to each other, dimensions and annotations as written, and anything the text does not say (an extra module, a port, a mounting). Then write a **fused depiction**: one or two paragraphs that combine the text and the image into a single description of the product, each image-only fact marked `(from image)`, each text-only fact unmarked, and each conflict between them named. Read each kind for what it carries: a block diagram for topology, a technical drawing for geometry, dimensions and interfaces, a marketing image or render for form, materials, controls and the parts the user can see, a photo for what is actually built. Present the fused depiction to the user and STOP: "Here is how I read the text and the image together; correct me before the gap analysis." Ingestion is not finished until the user confirms. If they correct anything, rewrite the depiction with the correction worked in (not appended), present it again, and wait for confirmation; repeat until they say it is right. Record the confirmed depiction in `source_spec.md` and the number of rounds in `open_questions.md`. The confirmed depiction is what the gap analysis scores, and the image counts as the given architecture (Phase 2) or given arrangement (Phase 3) unless the user says otherwise. Images you cannot open (rtf-embedded, legacy doc) are listed by their captions as `[image: …]` only; say so.
 
 2. **Gap analysis against the workflow's questions.** Build the list of everything the five phases will ask or need, in this order, and score each one against the document:
    - Phase 1 envelope: target market, deployment context, price point and volume, power source, electromechanical classification (and, if electromechanical, the four physical-architecture questions).
