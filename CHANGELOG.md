@@ -2,6 +2,10 @@
 
 All notable changes to Electrum are documented here.
 
+## v0.6.1 — 2026-10-28
+
+- **The skill states its version** — SKILL.md opens with `Electrum vX.Y.Z` and the releases link, and the orientation repeats it at the start of every run, so a user of an uploaded copy can see it is stale. README gains "Which version do I have?". Release step: bump the two version strings in SKILL.md and the CHANGELOG before tagging.
+
 ## v0.6.0 — 2026-10-28
 
 - **Team first** — Phase 1 proposes the domain leads the product needs (product, electrical, firmware, mechanical/industrial design, app, cloud, ML/data, UX, security and compliance, manufacturing/NPI), each with why and what it owns, marked required or recommended, and walks them through role by role (keep / remove / merge / change ownership), asks what is missing, then requires explicit approval of the final roster before anything is designed; nothing is written until approved, even hands-free. Written to `team.md`. New question keys `phase1.team.<role>`, `phase1.team.add`, `phase1.team` and `phase1.competition`.

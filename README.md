@@ -250,6 +250,12 @@ every gate on its own. The skill writes one at the end of any run, so an interac
 replayed, or handed to someone else, without the dialog. The keys are listed in SKILL.md under
 "Question keys".
 
+**Which version do I have?** An uploaded skill is a static copy and never updates itself. SKILL.md
+states its version on its first line and the orientation repeats it at the start of every run;
+compare it with the [releases page](https://github.com/yoelf22/electrum/releases/latest). To get
+release emails, Watch the repo on GitHub with Custom > Releases. Claude Code clones update with
+`git pull`.
+
 **Moving up a route.** The output files are the same everywhere. Chat downloads go into a Cowork
 working folder, or into `output/<slug>/` in a Claude Code clone, and `/electrum` resumes from the
 first missing phase. Nothing is redone.

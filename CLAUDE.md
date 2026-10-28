@@ -73,6 +73,10 @@ Seven worked examples with complete output artifacts. The `bubbler-automated-soa
 
 Worked reference documents (high-level design, system description, gate checklist) used by the skill as examples when generating output.
 
+## Releasing
+
+Bump the two `Electrum vX.Y.Z` strings in `.claude/skills/electrum/SKILL.md` (title line and orientation) and add the CHANGELOG entry, commit, then tag `vX.Y.Z` and push the tag; the workflow builds the ZIP. `grep -n 'Electrum v' .claude/skills/electrum/SKILL.md` must show the tag's version.
+
 ## Conventions
 
 - **Commit messages**: `type(scope): short description` — types: `feat`, `fix`, `docs`, `refactor`, `chore`
