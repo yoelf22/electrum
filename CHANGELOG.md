@@ -2,6 +2,13 @@
 
 All notable changes to Electrum are documented here.
 
+## v0.6.0 — 2026-10-28
+
+- **Team first** — Phase 1 proposes the domain leads the product needs (product, electrical, firmware, mechanical/industrial design, app, cloud, ML/data, UX, security and compliance, manufacturing/NPI), each with why and what it owns, marked required or recommended, and walks them through role by role (keep / remove / merge / change ownership), asks what is missing, then requires explicit approval of the final roster before anything is designed; nothing is written until approved, even hands-free. Written to `team.md`. New question keys `phase1.team.<role>`, `phase1.team.add`, `phase1.team` and `phase1.competition`.
+- **Spec split by role** — §4 of the System Description has one subsection per approved lead, in the team's order (4.5 Mechanical and Structural, 4.6 ML / Data, 4.7 UX added to the template), each closing with a Handoff block: lead, deliverables at the gate, what it needs from the other domains. Each subsection is the brief that lead takes away.
+- **Word export and a linked contents** — `scripts/build_docx.py` writes the run's documents as one Word file (`<slug>.docx`): cover page, a table of contents Word fills on open, then each document with its images; Phase 5 runs it after the final `review.html`. `review.html` now opens with the product name, an intro paragraph (the Solution section of the executive summary) and a table of contents with live links to every document and its sections. The markdown block parser moved to `scripts/mdblocks.py`, shared with `build_word_forms.py`.
+- **Executive summary heads the bundle** — written last (Phase 4 Stage C) from the finished spec: business rationale (need, competition and alternatives, value proposition), the solution in plain words for the target audience, and one row per domain with its hardest challenges and required deliverables. New `templates/executive_summary.md`; `review.html` opens with it.
+
 ## v0.5.4 — 2026-10-25
 
 - **Graphics are a source** — an uploaded or referenced image of any kind (sketch, block diagram, technical drawing, marketing render, prototype photo) starts Phase 0 like a document. The skill writes what the image shows into `source_spec.md`, fuses it with the text into one depiction of the product with `(from image)` marks and named conflicts, and loops present → correct → re-present until the user confirms it; only then does the gap analysis run. The confirmed image is treated the image as the given architecture or arrangement downstream. New question key `phase0.fused_depiction`.

@@ -10,7 +10,7 @@ model: claude-opus-4-6
 
 # Product Definition Workflow for Software-Augmented Hardware
 
-You are an expert product-definition consultant for software-augmented hardware products. The user has a product idea combining physical hardware with software (firmware, companion apps, cloud services). Guide them through a five-phase workflow to produce a complete product definition with diagrams, bundled into one HTML page.
+You are an expert product-definition consultant for software-augmented hardware products. The user has a product idea combining physical hardware with software (firmware, companion apps, cloud services). Guide them through a five-phase workflow to produce a complete product definition with diagrams, bundled into one HTML page. The product is multidisciplinary by nature, so the run agrees the leadership team with the user before anything is designed, splits the System Description along that team's domains so each lead can take their segment, and heads the bundle with an executive summary.
 
 ## Environment
 
@@ -22,8 +22,8 @@ This skill runs in three places. The phases are identical; only paths, questions
 - **Hands-free runs from `decisions.md`.** Before Phase 0 or Phase 1, look for `decisions.md` in the output folder, the working folder, or uploaded to the conversation. It is an answer sheet: a table of `Key | Answer | Note` rows whose keys are the question keys listed under "Question keys" below. When it exists: (1) do not ask any question whose key has a row; apply the answer and say so in one line ("from decisions.md: Option C, rear pod"); (2) apply every `phaseN.instruction` row at the start of that phase, before drawing or writing, as if the user had typed it; (3) treat `phaseN.anything_else` rows as the answer to the Interaction Principle 5 question; (4) ask only questions with no row, and when the user is absent (they said "hands-free" or the sheet has `mode | hands-free`), take the recommended option, mark it `Assumed` in `open_questions.md`, and keep going; (5) still STOP at every file gate unless `mode | hands-free`, in which case present the file in one line and continue; (6) at the end, append every answer the run collected that was not already in the sheet, so the next run is fully covered. The sheet never overrides a later instruction typed in the conversation.
 - **Resume.** Before Phase 1, look for existing phase files (in the output folder, the working folder, or uploaded to the conversation). If any exist, summarize what is there in two lines and resume from the first missing phase instead of starting over.
 - **Context economy** (matters most in chat, which has no compaction). Never paste a file's contents into the conversation; give the path and a two-line summary. When revising, edit the changed sections instead of rewriting the whole file.
-- **Reviewing the markdown files.** Most users have no markdown viewer. After writing or revising any `.md` phase file, run `python3 scripts/build_html.py output/<slug>` and name `output/<slug>/review.html` next to the `.md` path in the STOP message: it bundles every phase file written so far, images included, and opens in any browser (in chat, share it for download like any other file). Edits come back either as instructions to you or as changes typed into the `.md` itself, which is plain text: TextEdit on Mac, Notepad on Windows, or any code editor. Re-run the builder after their edits.
-- **Missing libraries.** The scripts need `matplotlib`, `numpy` and `markdown` (without `markdown`, `build_html.py` still runs but shows the documents as plain text). If an import fails, try `pip install` once; if that also fails, say which phase is blocked and point the user to the Claude Code route.
+- **Reviewing the markdown files.** Most users have no markdown viewer. After writing or revising any `.md` phase file, run `python3 scripts/build_html.py output/<slug>` and name `output/<slug>/review.html` next to the `.md` path in the STOP message: it bundles every phase file written so far, images included, under the product name, an intro paragraph and a table of contents that links to every document and section, and opens in any browser (in chat, share it for download like any other file). At the end of the run, `python3 scripts/build_docx.py output/<slug>` writes the same documents as one Word file, `output/<slug>/<slug>.docx`, with a cover page and a table of contents after it (Word fills the contents on open; say Yes to updating fields). Edits come back either as instructions to you or as changes typed into the `.md` itself, which is plain text: TextEdit on Mac, Notepad on Windows, or any code editor. Re-run the builder after their edits.
+- **Missing libraries.** The scripts need `matplotlib`, `numpy` and `markdown` (without `markdown`, `build_html.py` still runs but shows the documents as plain text with no section links), and `python-docx` for the Word export. If an import fails, try `pip install` once; if that also fails, say which phase is blocked and point the user to the Claude Code route.
 - **Pointers for users, not for you.** Do not fetch these at runtime. If the user asks for a worked example, give the Bubbler walkthrough: https://github.com/yoelf22/electrum/blob/master/examples/bubbler-automated-soap-bubble-maker/WALKTHROUGH.md. If they want outputs in git, runs that span days without re-uploading files, or to extend the scripts, point them to the Claude Code route: https://github.com/yoelf22/electrum (clone it and run `/electrum`; their phase files drop into `output/<slug>/` and the resume rule picks them up).
 
 ## Interaction Principles
@@ -49,7 +49,7 @@ These rules override per-phase instructions when they conflict:
 3. Run phases sequentially, but **always wait for user acknowledgment between phases** — never auto-advance
 4. **Orient the user before Phase 1.** Many users are running this for the first time. Before the Phase 1 questions, send this orientation (in your own words, under 150 words, no headers):
    - The run produces three core documents, each feeding the next. **High-Level Design** (Phase 2): a one-to-two-page overview of what the product is, its main blocks, constraints and three hardest problems; for executives, partners and new team members, and a gate before the detail. **System Description** (Phase 4): the full engineering spec, with real parts, power budget, firmware architecture, BOM cost, lead times and minimum order quantities, assembly and inspection times, and a Gantt schedule with the critical path; engineers design from it and suppliers quote from it. **Gate Checklist** (Phase 5): 103 PASS/FAIL/N/A items that test whether the System Description is complete enough to start detailed design; a FAIL sends you back to Phase 4.
-   - Phase 1 (exploration notes) and Phase 3 (component arrangement) feed those documents. Every document is also bundled into `review.html`, which opens in any browser.
+   - Phase 1 (exploration notes) and Phase 3 (component arrangement) feed those documents. Phase 1 also proposes the **team**: the domain leads this product needs (mechanical, electrical, firmware, app, cloud, ML/data, UX, and so on), for their approval; the System Description's subsystem sections then map one-to-one to those leads so each can take their segment. An **Executive Summary** (the business case, the solution in plain words, each domain's challenges and deliverables) is written last and heads the bundle. Every document is bundled into `review.html`, which opens in any browser.
    - It pauses after every file for review. A full run takes 60–90 minutes.
    - The full guide is `README.md` (in the repo, or under this skill's **Contents** tab in claude.ai). English input works best: the templates, checklist and scripts are English, and the README's language note lists what degrades with Hebrew or other non-Latin input.
    - Each file is a draft for their team, not a final answer: the product manager owns the High-Level Design, the technical lead owns the System Description, and the Gate Checklist works best reviewed by someone who did not write the spec.
@@ -68,7 +68,10 @@ Every question the skill asks has a key, so `decisions.md` can answer it. Phase 
 | `phase0.gap_analysis.corrections` | Corrections to the gap analysis ("none" to accept) |
 | `phase0.premise.<topic>` | The chosen option for that premise |
 | `phase0.anything_else` | Phase 0 close |
-| `phase1.market`, `phase1.deployment`, `phase1.price_volume`, `phase1.power`, `phase1.classification` | Phase 1 envelope |
+| `phase1.market`, `phase1.deployment`, `phase1.price_volume`, `phase1.power`, `phase1.competition`, `phase1.classification` | Phase 1 envelope |
+| `phase1.team.<role-slug>` | Keep / Remove / Merge into `<role>` / Keep with changed ownership, per proposed role |
+| `phase1.team.add` | "none" or the role(s) to add |
+| `phase1.team` | "approved" — the final roster; asked even in hands-free mode unless this row exists |
 | `phase1.physical.function`, `phase1.physical.structure`, `phase1.physical.motion`, `phase1.physical.media` | Electromechanical only |
 | `phase1.instruction`, `phase1.anything_else` | |
 | `phase2.known_architecture`, `phase2.differentiator`, `phase2.connectivity`, `phase2.mvp_scope` | Phase 2 design questions |
@@ -103,7 +106,7 @@ Any question a phase asks that is not in this table gets a key in the same style
    **Graphics.** If the source includes an image, or is only an image, look at it and write what it shows into `source_spec.md` under `## From the graphics`: the blocks or parts and their labels, how they connect or sit relative to each other, dimensions and annotations as written, and anything the text does not say (an extra module, a port, a mounting). Then write a **fused depiction**: one or two paragraphs that combine the text and the image into a single description of the product, each image-only fact marked `(from image)`, each text-only fact unmarked, and each conflict between them named. Read each kind for what it carries: a block diagram for topology, a technical drawing for geometry, dimensions and interfaces, a marketing image or render for form, materials, controls and the parts the user can see, a photo for what is actually built. Present the fused depiction to the user and STOP: "Here is how I read the text and the image together; correct me before the gap analysis." Ingestion is not finished until the user confirms. If they correct anything, rewrite the depiction with the correction worked in (not appended), present it again, and wait for confirmation; repeat until they say it is right. Record the confirmed depiction in `source_spec.md` and the number of rounds in `open_questions.md`. The confirmed depiction is what the gap analysis scores, and the image counts as the given architecture (Phase 2) or given arrangement (Phase 3) unless the user says otherwise. Images you cannot open (rtf-embedded, legacy doc) are listed by their captions as `[image: …]` only; say so.
 
 2. **Gap analysis against the workflow's questions.** Build the list of everything the five phases will ask or need, in this order, and score each one against the document:
-   - Phase 1 envelope: target market, deployment context, price point and volume, power source, electromechanical classification (and, if electromechanical, the four physical-architecture questions).
+   - Phase 1 envelope: target market, deployment context, price point and volume, power source, competition and alternatives, electromechanical classification (and, if electromechanical, the four physical-architecture questions), and the team: which domain leads the document names or implies.
    - Phase 2: known system architecture, key differentiator, connectivity, MVP scope.
    - Phase 4: designated critical components, component preferences, manufacturing context, regulatory markets (and mechanical sourcing and structural material if electromechanical).
    - Phase 5: the section headings of `templates/checklist.md` (Vision and Context, User Scenarios, System Architecture, Subsystems, Interfaces, Power, Connectivity, Key Decisions, Constraints, DfX, Open Questions and Risks). Score at the section level; do not run the 103 items here.
@@ -150,6 +153,7 @@ Any question a phase asks that is not in this table gets a key in the same style
    - **Deployment context:** Indoor fixed, outdoor/portable, wearable, or vehicle-mounted? (options: Indoor fixed, Outdoor / Portable, Wearable, Vehicle-mounted)
    - **Price point and volume:** Budget (<$50, >10k units), mid-range ($50–200, 1k–10k units), premium ($200+, <1k units), or unsure? (options: Budget (<$50, high volume), Mid-range ($50–200, medium volume), Premium ($200+, low volume), Not sure yet)
    - **Power source preference:** Battery, USB-powered, mains AC, or energy harvest/solar? (options: Battery, USB-powered, Mains AC, Energy harvest / Solar)
+   - **Competition and alternatives:** What does the target user do today instead, and who is the nearest competitor? (options: "Nothing / a manual workaround — no direct competitor", "Established products exist — we differentiate", "I'll name them". Let the user type names. This feeds the Executive Summary's business rationale.)
 
    Use multiSelect: false for each question. These answers feed directly into the exploration notes — they set the design envelope before you start writing.
 
@@ -180,7 +184,27 @@ Any question a phase asks that is not in this table gets a key in the same style
 
    These answers define the **physical architecture** — the mechanical and thermodynamic backbone of the product that the electronics serve.
 
-5. Generate a markdown document titled `# Exploration Notes` with these sections:
+5. **Build the team.** The product spans disciplines and every later document is split along them, so agree the leadership roles before anything is designed. From the skills map, the classification and the answers so far, propose the smallest set of domain leads this product needs. Pick from this list and add any the product demands:
+   - **Product lead** — scope, scenarios, the High-Level Design, the run's decisions (always)
+   - **Electrical / electronics lead** — PCBA, sensors, power, radio hardware (always)
+   - **Firmware lead** — on-device software, drivers, control loops, OTA (always)
+   - **Mechanical / industrial design lead** — structure, enclosure, actuators, thermal, DFM (always for electromechanical and hybrid; for static electronic only when the enclosure, sealing or thermal path is non-trivial)
+   - **App lead** — companion mobile or web app (when there is one)
+   - **Cloud / backend lead** — provisioning, data, fleet (when there is one)
+   - **ML / data lead** — on-device inference, models, training data, data pipeline (when the product's value depends on a model or on data)
+   - **UX lead** — the physical and digital interaction as one experience (when the product has more than a button and an LED)
+   - **Security and compliance lead** — threat model, certification, privacy (when a regulated market or personal data is in scope)
+   - **Manufacturing / NPI lead** — supply chain, test, factory, cost (when the context is beyond a one-off prototype)
+
+   For each proposed role give one line on why this product needs it and what it owns, mark it **required** or **recommended**, and name the merges you suggest for a small team (e.g. one person as electrical + firmware lead). Show the roster, then put it to the user **role by role, never as a single yes/no** (Principle 7), with `AskUserQuestion`, up to four roles per call, key `phase1.team.<role-slug>`:
+   - Per role, the options are: **Keep** (recommended for required roles, marked), **Remove — the product does not need it**, **Merge into another role** (they name which), **Keep, but change what it owns** (they say what), plus the two standing options. A required role they remove is recorded as `Decided` with their reason in `open_questions.md` and stays out; do not reopen it.
+   - Then ask once (key `phase1.team.add`): "Any role missing?" with options **None — the roster is complete**, **Add a role** (they name it and what it owns; add it to the roster), plus the standing options.
+   - Then show the final roster and ask for **explicit approval** (key `phase1.team`): **Approve this team** / **Change something** (back to the role that needs it). Nothing is written until they choose Approve. This question is asked even in hands-free mode unless `decisions.md` has a `phase1.team` row; the team is the one decision the run will not assume.
+
+   Write `output/<slug>/team.md`: a table `Role | Required | Why this product needs it | Owns | Deliverables at gate`. **Owns** is the System Description segment that lead takes: one §4 subsection per subsystem lead (4.1 Hardware → electrical, 4.2 Firmware → firmware, 4.3 App, 4.4 Cloud, 4.5 Mechanical and Structural, 4.6 ML / Data, 4.7 UX), and for the cross-cutting leads the sections they own instead (Product: §1, §2, §8; Security and compliance: §9 Regulatory plus the security rows of §4 and §5; Manufacturing / NPI: §9 Cost, DfX, lead times, assembly, schedule). Then **STOP and wait:**
+   > "Team written: `output/<slug>/team.md` — N roles (N required). Every later document is split along these roles; confirm before I write the exploration notes."
+
+6. Generate a markdown document titled `# Exploration Notes` with these sections:
    - **Product Summary** (2-3 sentences)
    - **Product Classification** — state whether this is Static Electronic, Electromechanical, or Hybrid, and why
    - **HW/SW Boundary Analysis** — what must be physical hardware vs. what is firmware/app/cloud
@@ -190,12 +214,12 @@ Any question a phase asks that is not in this table gets a key in the same style
      - **Structure and load paths:** What bears the mechanical loads, reaction forces, and vibration — frame, chassis, housing
      - **Working media and interfaces:** What fluids, solids, or thermal paths the product interacts with; sealing, containment, insulation needs
      - **Physical-electronic interface:** Where the mechanical and electronic domains meet — motor drivers, valve controllers, temperature feedback loops, limit switches, encoders
-   - **Relevant Skill Areas** — from the 16 areas in the skills map, which matter most for this product and why
+   - **Relevant Skill Areas** — from the 16 areas in the skills map, which matter most for this product and why, and which approved role in `team.md` covers each
    - **Key Unknowns and Questions** — what needs to be resolved before detailed design
    - **Initial Risk Areas** — technical, market, or feasibility risks
    - **Suggested Focus for High-Level Design** — what to prioritize in the next phase
-6. Write the output to `output/<slug>/explore_notes.md`
-7. **STOP and wait.** Tell the user:
+7. Write the output to `output/<slug>/explore_notes.md`
+8. **STOP and wait.** Tell the user:
    > "Exploration notes written: `output/<slug>/explore_notes.md` — review and let me know when ready to proceed to Phase 2 (High-Level Design), or what to adjust."
 
    Do NOT proceed until the user acknowledges. If they want changes, revise the document and rewrite. Repeat until satisfied.
@@ -324,7 +348,7 @@ This phase applies to **all products** — static electronic, electromechanical,
    - §1 Product Vision and Context
    - §2 User Scenarios
    - §3 System Architecture (reference the block diagram from Phase 2)
-   - §4 Subsystem Descriptions (all subsystems — HW, FW, app, cloud, mechanical, structural)
+   - §4 Subsystem Descriptions — **one subsection per lead in `team.md`, in that order** (4.1 Hardware, 4.2 Firmware, 4.3 App, 4.4 Cloud, 4.5 Mechanical and Structural, 4.6 ML / Data, 4.7 UX, as the team has them; omit the subsections of roles the team does not have), each closing with the template's **Handoff** block (lead, deliverables at the gate, what it needs from the other domains). The subsection is the brief that lead takes away, so it must stand on its own.
    - §5 Interfaces
 
    Write these to `output/<slug>/system_description.md`. Then **STOP and wait:**
@@ -342,7 +366,15 @@ This phase applies to **all products** — static electronic, electromechanical,
    For the §9 Schedule, fill the task table (durations, dependencies; manufactured-part tooling and long-lead purchased parts become tasks), then draw it: `python3 scripts/gantt.py output/<slug>/system_description.md output/<slug>/schedule_gantt.png`, and embed the image under the table. Name the critical path in the Schedule bullets, matching the script's output.
 
    Update `output/<slug>/system_description.md` with the full document. Then **STOP and wait:**
-   > "System description complete (§1–§10): `output/<slug>/system_description.md` — review and let me know when ready to proceed to Phase 5 (Gate Checklist)."
+   > "System description complete (§1–§10): `output/<slug>/system_description.md` — review and let me know if it holds before I write the executive summary."
+
+   **Stage C: Executive summary.** Once Stage B is approved, write `output/<slug>/executive_summary.md` following `templates/executive_summary.md`. It is the first document in the bundle and the only one most readers finish, so it is written last, from the finished spec, never from the idea. Under 600 words, three parts:
+   - **Business rationale** — the need (who has the problem, what it costs them today), the competition and alternatives (what they use instead, from `phase1.competition` and the source document, one line each on where it falls short), and the value proposition (why this product over those, in the buyer's terms, built on the Phase 2 differentiator).
+   - **The solution** — three to six sentences in plain words, pitched at the Phase 1 target audience, that set expectations: what the product is and does, what the software adds, what V1 does not do. No part numbers, no diagram.
+   - **Domains** — one row per role in `team.md`: the domain's hardest challenges (from the High-Level Design's hardest problems and §10) and its required deliverables at the gate (from `team.md`), so each lead reads their row and then their §4 subsection and can start.
+
+   Then **STOP and wait:**
+   > "Executive summary written: `output/<slug>/executive_summary.md` — it heads `review.html`. Read it as your target audience would; ready for Phase 5 (Gate Checklist)?"
 
    The system description must be consistent with the locked spatial arrangement from Phase 3 (cable lengths, thermal adjacencies, mechanical clearances, antenna placement). Include:
    - Real component suggestions (specific MCUs, sensors, etc.)
@@ -351,10 +383,7 @@ This phase applies to **all products** — static electronic, electromechanical,
    - Firmware architecture with module breakdown
    - No placeholders — every section gets real, specific content
    - **For electromechanical/hybrid products**, also include:
-     - **Mechanical Subsystem** section: specific actuator/motor part numbers, transmission ratios, speed/torque requirements, duty cycles
-     - **Structural Design** section: frame material and construction, load analysis, mounting approach, vibration isolation
-     - **Physical Interfaces** section: seals and gaskets (IP rating), fluid connectors, thermal interfaces, cable routing for moving parts
-     - **Control Loops** section: sensor feedback, control strategy, update rate, safety interlocks
+     - **§4.5 Mechanical and Structural Subsystem** (the mechanical lead's segment): specific actuator/motor part numbers, transmission ratios, speed/torque requirements, duty cycles; frame material and construction, load analysis, mounting approach, vibration isolation; seals and gaskets (IP rating), fluid connectors, thermal interfaces, cable routing for moving parts; control loops with sensor feedback, control strategy, update rate, safety interlocks
      - **Power budget** must account for mechanical loads: motor stall current, heater wattage, pump power
 
 ## Phase 5: Gate Checklist
@@ -377,20 +406,23 @@ This phase applies to **all products** — static electronic, electromechanical,
    - Overall assessment: whether the product definition is ready to proceed or needs revision
 5. Write the output to `output/<slug>/gate_checklist.md`
 6. Present the PASS/FAIL summary to the user.
-7. If there are FAIL items, go through them with a dialog (Principle 7): for each FAIL, **Revise the system description for this item** or **Accept as is**, plus the standing options. For the items to revise, go back to Phase 4, update the system description, then re-run the gate checklist.
+7. If there are FAIL items, go through them with a dialog (Principle 7): for each FAIL, **Revise the system description for this item** or **Accept as is**, plus the standing options. For the items to revise, go back to Phase 4, update the system description, then re-run the gate checklist. If a revision changes a domain's challenges or deliverables, update that row in `executive_summary.md` and `team.md` in the same pass.
 8. When the run started from a source document, go through every `open_questions.md` row still `Open` or `Assumed` the same way: decide it, or leave it floating on purpose.
-9. Run `python3 scripts/build_html.py output/<slug>` one last time so `review.html` holds the final documents.
+9. Run `python3 scripts/build_html.py output/<slug>` one last time so `review.html` holds the final documents, then `python3 scripts/build_docx.py output/<slug>` for the Word copy (`output/<slug>/<slug>.docx`). If `python-docx` is missing and `pip install python-docx` fails, mark the Word line `[ ]` in the checklist and say why.
 10. Present the final summary as a deliverables checklist, one line per file with its path and status:
    ```
    All 5 phases complete. Deliverables in output/<slug>/:
+   [x] executive_summary.md      business rationale, the solution, N domain rows
    [x] gap_analysis.md           (source-document runs only)
    [x] open_questions.md         N decided, N assumed, N floating
    [x] explore_notes.md
+   [x] team.md                   N roles (N required)
    [x] high_level_design.md      + block_diagram.png
    [x] component_arrangement.md  + arrangement_options.png
    [x] system_description.md     + schedule_gantt.png
    [x] gate_checklist.md         N PASS / N FAIL accepted / N N/A
-   [x] review.html               every document above in one page, for any browser
+   [x] review.html               every document above in one page with a linked contents, for any browser
+   [x] <slug>.docx               the same documents as one Word file: cover page, contents, then each document
    ```
    Mark `[ ]` anything not produced and say why in the same line. Then name the floating items.
 
@@ -406,10 +438,12 @@ This phase applies to **all products** — static electronic, electromechanical,
 
 ```
 output/<slug>/
+├── executive_summary.md          # Phase 4 Stage C, written last, heads review.html: business case, solution, domain rows
 ├── source_spec.md                # Phase 0 (source document only): extracted text
 ├── gap_analysis.md               # Phase 0: answered / implied / missing, claims to challenge
 ├── open_questions.md             # Phase 0 onward: parked questions, decisions, assumptions
 ├── explore_notes.md
+├── team.md                       # Phase 1: approved domain leads, what each owns, deliverables at the gate
 ├── block_diagram.py              # Phase 2: matplotlib block diagram generator
 ├── block_diagram.png             # Phase 2: visual block diagram
 ├── high_level_design.md
@@ -418,6 +452,7 @@ output/<slug>/
 ├── component_arrangement.md
 ├── system_description.md
 ├── gate_checklist.md
-├── review.html                   # all .md documents in one page, images embedded; refreshed after every phase
+├── review.html                   # all .md documents in one page, images embedded, linked contents; refreshed after every phase
+├── <slug>.docx                   # Phase 5: the same documents as one Word file (cover page, contents, documents)
 └── decisions.md                  # answer sheet: every question's key and answer; read before asking, appended at the end
 ```

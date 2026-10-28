@@ -118,6 +118,11 @@ graph TD
 
 ## 4. Subsystem Descriptions
 
+*One subsection per domain lead on the team (`team.md`), in the team's order, so each lead can take their subsection away as the brief for their domain. 4.1–4.4 are the usual ones; 4.5–4.7 exist when the team has that lead. Every subsection ends with the same Handoff block.*
+
+> - Does every lead on the team have exactly one subsection here, and does every subsection have a lead?
+> - What does each subsection need from the others that is not yet in §5 Interfaces?
+
 ### 4.1 Hardware Subsystem
 
 > - What is the most constrained resource on this board (GPIO pins, memory, power)?
@@ -148,6 +153,11 @@ graph TD
 **PCB strategy:**
 [Single board / modular / flex-rigid. Approximate dimensions. Key placement constraints (antenna keep-out, sensor placement).]
 
+**Handoff**
+- Lead: [role from team.md]
+- Deliverables at gate: [what this domain must have produced for the gate review]
+- Needs from other domains: [e.g. PCB outline and keep-outs from mechanical; pin map from firmware]
+
 ### 4.2 Firmware Subsystem
 
 > - What processing happens on-device vs. in the cloud? Why?
@@ -176,6 +186,11 @@ graph TD
 **On-device processing:**
 [What computation happens locally: filtering, averaging, thresholds, ML inference, etc. Why is this done on-device rather than in the cloud?]
 
+**Handoff**
+- Lead: [role from team.md]
+- Deliverables at gate: [what this domain must have produced for the gate review]
+- Needs from other domains: [e.g. PCB outline and keep-outs from mechanical; pin map from firmware]
+
 ### 4.3 Mobile / Companion App Subsystem
 
 > - What can the user do without the app? What requires the app?
@@ -197,6 +212,11 @@ graph TD
 | Service | Purpose | Direction |
 |---------|---------|-----------|
 | | | |
+
+**Handoff**
+- Lead: [role from team.md]
+- Deliverables at gate: [what this domain must have produced for the gate review]
+- Needs from other domains: [e.g. PCB outline and keep-outs from mechanical; pin map from firmware]
 
 ### 4.4 Cloud / Backend Subsystem
 
@@ -223,6 +243,59 @@ graph TD
 
 **Third-party integrations:**
 [APIs, webhooks, partner services, IFTTT, etc.]
+
+**Handoff**
+- Lead: [role from team.md]
+- Deliverables at gate: [what this domain must have produced for the gate review]
+- Needs from other domains: [e.g. PCB outline and keep-outs from mechanical; pin map from firmware]
+
+### 4.5 Mechanical and Structural Subsystem *(electromechanical and hybrid products)*
+
+> - What physical work does the product do, and what is the force, flow or heat path end to end?
+> - What carries the loads, and what happens at the physical-electronic interface (drivers, feedback, interlocks)?
+
+**Actuators and drives:** [part numbers, speed/torque or flow/pressure, transmission ratios, duty cycle]
+
+**Structure:** [frame material and construction, load paths, mounting, vibration isolation]
+
+**Physical interfaces:** [seals and IP rating, fluid connectors, thermal interfaces, cable routing for moving parts]
+
+**Control loops:** [sensor feedback, control strategy, update rate, safety interlocks]
+
+**Handoff**
+- Lead: [role from team.md]
+- Deliverables at gate: [what this domain must have produced for the gate review]
+- Needs from other domains: [e.g. PCB outline and keep-outs from mechanical; pin map from firmware]
+
+### 4.6 ML / Data Subsystem *(when the product's value depends on a model or on data)*
+
+> - What does the model decide, and what happens when it is wrong?
+> - Where does it run (MCU, phone, cloud), on what data, and how is that data collected, labelled and kept?
+
+**Model:** [task, method, size, latency and accuracy targets, where it runs]
+
+**Data:** [sources, volume, labelling, retention, privacy; how training data is gathered from the fleet]
+
+**Lifecycle:** [how models are evaluated, updated and rolled back; what the product does without a model]
+
+**Handoff**
+- Lead: [role from team.md]
+- Deliverables at gate: [what this domain must have produced for the gate review]
+- Needs from other domains: [e.g. PCB outline and keep-outs from mechanical; pin map from firmware]
+
+### 4.7 UX Subsystem *(when the product has more than a button and an LED)*
+
+> - What is the one physical-plus-digital interaction the product must get right?
+> - What does the user see and feel in every state, including failure, with and without the app?
+
+**Interaction model:** [physical controls and feedback, app screens, and how they share state]
+
+**Key flows:** [first use, the daily interaction, the error cases from §2]
+
+**Handoff**
+- Lead: [role from team.md]
+- Deliverables at gate: [what this domain must have produced for the gate review]
+- Needs from other domains: [e.g. PCB outline and keep-outs from mechanical; pin map from firmware]
 
 ---
 

@@ -104,3 +104,13 @@ claude
 ```
 
 The process works best with ideas you're uncertain about — the weirder, the better. The goal isn't to produce a final spec. It's to find out what you're still assuming.
+
+## Addendum (2026-10-28): the team, the handoff split and the executive summary
+
+The example was re-run hands-free on the v0.6.0 flow, keeping every February document and taking the recommended option wherever the skill now asks. Three things were added, in the order the flow produces them:
+
+- **`team.md`** (Phase 1, before the exploration notes): five leads, four required. Product, Electrical, Firmware and Mechanical / industrial design are required; Manufacturing / NPI is recommended because the product goes to 10k units through three moulds and a manual gauge-bonding step. UX was merged into Product (two buttons, four LEDs), and compliance split between Electrical (EMC, RoHS) and Manufacturing (toy safety). App, Cloud and ML / data were left out with reasons.
+- **§4 of the System Description** now opens with the team mapping; 4.1–4.4 end with a Handoff block, and a new **4.5 Mechanical and Structural Subsystem** gathers the pivot drive, blower and duct, three-part enclosure, wet/dry seal and control loops that were spread over the notes, the arrangement and §9.
+- **`executive_summary.md`** (Phase 4, written last): the need, the competition (rotating-disk machines, giant-bubble wands, stage gear), the value proposition on the $0.80 sensor, the solution in plain words, and one row per lead with challenges and deliverables.
+
+`review.html` now opens with that summary and a linked contents; `bubbler-automated-soap-bubble-maker.docx` is the same set as one Word file. `decisions.md` holds every answer the run took, and `open_questions.md` the three it assumed. Phases 6–8 above belong to the carousel, removed in v0.5.0; the files stay as history.

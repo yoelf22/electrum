@@ -20,6 +20,7 @@ python -m playwright install chromium
 
 # Run scripts directly
 python3.11 scripts/build_html.py output/<slug>
+python3.11 scripts/build_docx.py output/<slug>     # Word export: cover, contents, documents
 python3.11 scripts/block_diagram.py
 python3.11 scripts/generate_illustration.py
 ```
@@ -32,10 +33,10 @@ There is no build system, test suite, or linter. The project is markdown templat
 
 The core of the project. Defines a 5-phase sequential workflow:
 
-1. **Explore** — Map HW/SW boundary, classify product (static electronic / electromechanical / hybrid), identify risks
+1. **Explore** — Map HW/SW boundary, classify product (static electronic / electromechanical / hybrid), identify risks; propose the domain leads for user approval (`team.md`)
 2. **High-Level Design** — Block diagram (matplotlib PNG) + one-page system overview
 3. **Component Arrangement** — Spatial layout diagrams (matplotlib PNG, 2-3 alternatives side-by-side)
-4. **System Description** — Full engineering spec (10 sections, written in two progressive stages)
+4. **System Description** — Full engineering spec (10 sections; §4 one subsection per approved lead, each with a Handoff block), written in two stages, then `executive_summary.md` written last from it and placed first in the bundle
 5. **Gate Checklist** — 103-item PASS/FAIL/N/A validation against `templates/checklist.md`
 
 Each phase writes files to `output/<slugified-idea>/` and stops for user review before advancing.
@@ -60,6 +61,7 @@ Markdown directives that define the workflow structure, not filled-in examples. 
 - `hw_sw_product_initiation.md` — Workflow overview
 - `hw_sw_high_level.md` — Phase 2 template
 - `system_description_template.md` — Phase 4 template (10 sections)
+- `executive_summary.md` — Phase 4 Stage C template (business rationale, solution, domain rows)
 - `checklist.md` — 103-item gate checklist
 - `skills_map.md` — 16 competency areas for HW/SW products
 

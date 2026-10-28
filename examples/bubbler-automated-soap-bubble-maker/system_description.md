@@ -79,6 +79,8 @@ There is no app, no cloud, no wireless. All intelligence is on-device. The firmw
 
 ## 4. Subsystem Descriptions
 
+*One subsection per subsystem lead in `team.md`: 4.1 Electrical, 4.2 Firmware, 4.5 Mechanical / industrial design. 4.3 and 4.4 are kept to record that V1 has no app and no cloud. Each subsection ends with its Handoff block.*
+
 ### 4.1 Hardware Subsystem
 
 **MCU / SoC:**
@@ -114,6 +116,11 @@ There is no app, no cloud, no wireless. All intelligence is on-device. The firmw
 - SWD debug/programming pads (Tag-Connect TC2030 footprint for production, 0.1" header for dev)
 - Board mounts inside the sealed electronics compartment in the tall side of the U-rim
 
+**Handoff**
+- Lead: Electrical / electronics lead
+- Deliverables at gate: schematic and layout released; strain-gauge signal chain measured on the bench (noise floor against the 5 mN resolution target, with the motor running); EVT power budget measured against §6; FCC Part 15B / CE EMC pre-scan plan
+- Needs from other domains: PCB outline, mounting bosses and connector exits from Mechanical (§4.5); pin map and PWM frequencies agreed with Firmware (§4.2); gauge bonding location from Mechanical (open question #1)
+
 ### 4.2 Firmware Subsystem
 
 **Architecture:**
@@ -144,15 +151,59 @@ There is no app, no cloud, no wireless. All intelligence is on-device. The firmw
 
 **Boot-to-ready:** ~500ms (power-on → clock init → peripheral init → tare strain gauge → enter IDLE state → green LED on)
 
+**Handoff**
+- Lead: Firmware lead
+- Deliverables at gate: skeletons for the nine modules above; force-curve classifier validated on recorded prototype curves (success / pop / no-film / partial); hill-climbing convergence shown within 10 cycles on the bench; firmware version struct in flash readable over SWD (gate gap #34)
+- Needs from other domains: calibrated PWM-to-angle figures and end-stop behaviour from Mechanical; HX711 wiring, pin map and battery thresholds from Electrical; production test sequence agreed with Manufacturing / NPI
+
 ### 4.3 Mobile / Companion App Subsystem
 
 **Not applicable.** Bubbler V1 is fully standalone. No app, no connectivity.
 
 Future V2 option: BLE companion app showing real-time force curves (satisfying to watch), cycle statistics, and target bubble size adjustment. Would require adding an nRF52810 (~$1.50) or ESP32-C3 (~$1.20) as a BLE co-processor, connected to the STM32 via UART. The PCBA has space reserved for this.
 
+**Handoff**
+- Lead: none in V1 (no App lead on the team)
+- Deliverables at gate: none
+- Needs from other domains: Electrical keeps the UART header and board space reserved for a V2 BLE co-processor
+
 ### 4.4 Cloud / Backend Subsystem
 
 **Not applicable.** No cloud, no accounts, no data collection.
+
+**Handoff**
+- Lead: none in V1 (no Cloud / backend lead on the team)
+- Deliverables at gate: none
+- Needs from other domains: none
+
+### 4.5 Mechanical and Structural Subsystem
+
+**Actuators and drives:**
+- Pivot: geared DC motor ~15×10×8mm, ~100:1 ratio, driving a stainless shaft spanning ~180mm on two bearings; ~175° sweep between the dip end-stop (loop horizontal, submerged) and the blow end-stop (loop vertical, facing the duct); 1–2 s per 100° with soft-start/stop; load < 50 g (arm + loop + film), so torque is not the constraint, smoothness is
+- Airflow: centrifugal blower ~40×40×10mm, PWM 0–100%, through an L-bent duct with a Ø40mm exit aimed at the vertical loop; target 0.5–2 m/s at the loop, pressure-optimised for duct losses
+- Wand: 30mm arm with a 160mm loop (spring-wire or coated wire, open question #4); the arm is the flexure element for the strain gauge
+
+**Structure:**
+- Three injection-moulded parts, ABS or PP: base (battery compartment, feet, motor mount), tapered U-rim (sealed electronics compartment on the tall side, duct and blower in the protrusion, shaft bearings), removable vat (200 × 170mm oval, 20mm deep, ~500mL, snap-on lid for transport)
+- Load paths are small (< 1 N dynamic); the design constraint is arm stiffness so flex does not corrupt the gauge signal, and a pivot with no backlash or stick-slip
+- Footprint 215 × 206mm, height ~250mm to the loop top, 350–450 g without cells; four rubber levelling feet
+- Simple draft-angle moulds, no undercuts; tooling 8 weeks, the longest item on the schedule
+
+**Physical interfaces:**
+- Wet/dry boundary at the shaft: labyrinth seal where the shaft enters the U-rim; strain gauge on the dry side near the bearing, conformal-coated
+- IPX4 electronics compartment; vat and wand fully wettable
+- Battery compartment sealed from the vat side; tool-release latch if the product is classified as a toy (open question #6)
+- Harness exits for motor, blower, end-stop switches and gauge, all JST-PH into the sealed compartment
+
+**Control loops:**
+- Position: timed open-loop PWM with two end-stop micro-switches (decision #6); calibrated at the factory
+- Film: force curve from the gauge at 10–80 Hz drives the cycle timing (dip, soak, rotate, blow) through the firmware optimiser (§4.2); mechanical requirement is a vibration path from motor to gauge below the 5 Hz firmware cutoff's noise budget
+- Safety: motor stall detection by current or end-stop timeout; fan ramp never steps, always ramps
+
+**Handoff**
+- Lead: Mechanical / industrial design lead
+- Deliverables at gate: enclosure CAD for the three parts ready for tooling quotes; wand, shaft, bearing and seal drawings; duct airflow measured at the loop (0.5–2 m/s across the 160mm opening); gauge mounting location and bonding method decided (open question #1); loop material decided (open question #4)
+- Needs from other domains: PCBA outline and connector positions from Electrical; motor velocity profile limits from Firmware; mould and bonding-step quotes from Manufacturing / NPI
 
 ---
 
