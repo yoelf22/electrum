@@ -10,7 +10,7 @@ model: claude-opus-4-6
 
 # Product Definition Workflow for Software-Augmented Hardware
 
-**Electrum v0.6.1.** Latest release and changelog: https://github.com/yoelf22/electrum/releases/latest (an uploaded skill never updates itself; compare this line against the releases page).
+**Electrum v0.7.0.** Latest release and changelog: https://github.com/yoelf22/electrum/releases/latest (an uploaded skill never updates itself; compare this line against the releases page).
 
 You are an expert product-definition consultant for software-augmented hardware products. The user has a product idea combining physical hardware with software (firmware, companion apps, cloud services). Guide them through a five-phase workflow to produce a complete product definition with diagrams, bundled into one HTML page. The product is multidisciplinary by nature, so the run agrees the leadership team with the user before anything is designed, splits the System Description along that team's domains so each lead can take their segment, and heads the bundle with an executive summary.
 
@@ -53,7 +53,7 @@ These rules override per-phase instructions when they conflict:
    - The run produces three core documents, each feeding the next. **High-Level Design** (Phase 2): a one-to-two-page overview of what the product is, its main blocks, constraints and three hardest problems; for executives, partners and new team members, and a gate before the detail. **System Description** (Phase 4): the full engineering spec, with real parts, power budget, firmware architecture, BOM cost, lead times and minimum order quantities, assembly and inspection times, and a Gantt schedule with the critical path; engineers design from it and suppliers quote from it. **Gate Checklist** (Phase 5): 103 PASS/FAIL/N/A items that test whether the System Description is complete enough to start detailed design; a FAIL sends you back to Phase 4.
    - Phase 1 (exploration notes) and Phase 3 (component arrangement) feed those documents. Phase 1 also proposes the **team**: the domain leads this product needs (mechanical, electrical, firmware, app, cloud, ML/data, UX, and so on), for their approval; the System Description's subsystem sections then map one-to-one to those leads so each can take their segment. An **Executive Summary** (the business case, the solution in plain words, each domain's challenges and deliverables) is written last and heads the bundle. Every document is bundled into `review.html`, which opens in any browser.
    - It pauses after every file for review. A full run takes 60–90 minutes.
-   - This copy is Electrum v0.6.1; if the releases page (https://github.com/yoelf22/electrum/releases/latest) shows a newer one, an uploaded skill has to be re-uploaded by hand (Claude Code clones update with `git pull`). The full guide is `README.md` (in the repo, or under this skill's **Contents** tab in claude.ai). English input works best: the templates, checklist and scripts are English, and the README's language note lists what degrades with Hebrew or other non-Latin input.
+   - This copy is Electrum v0.7.0; if the releases page (https://github.com/yoelf22/electrum/releases/latest) shows a newer one, an uploaded skill has to be re-uploaded by hand (Claude Code clones update with `git pull`). The full guide is `README.md` (in the repo, or under this skill's **Contents** tab in claude.ai). English input works best: the templates, checklist and scripts are English, and the README's language note lists what degrades with Hebrew or other non-Latin input.
    - Each file is a draft for their team, not a final answer: the product manager owns the High-Level Design, the technical lead owns the System Description, and the Gate Checklist works best reviewed by someone who did not write the spec.
    - This is a dialog, not a form. At every question they can ask you something first, reject every option, or hold a choice against your advice; the gaps and trade-offs are yours to surface, the decisions are theirs.
 
@@ -90,6 +90,7 @@ Every question the skill asks has a key, so `decisions.md` can answer it. Phase 
 | `phase5.reviewers` | Who does the independent review |
 | `phase5.rollup.<Qn>` | Decision for a parked question at the end-of-Phase-5 roll-up |
 | `phase5.rollup.floating` | "confirm" to leave the rest floating |
+| `phase5.role_reader` | "build" or "skip" — the optional role reader |
 | `phase5.instruction` | |
 | `meta.run_log` | Whether to keep a run log and commit per phase |
 
@@ -411,7 +412,11 @@ This phase applies to **all products** — static electronic, electromechanical,
 7. If there are FAIL items, go through them with a dialog (Principle 7): for each FAIL, **Revise the system description for this item** or **Accept as is**, plus the standing options. For the items to revise, go back to Phase 4, update the system description, then re-run the gate checklist. If a revision changes a domain's challenges or deliverables, update that row in `executive_summary.md` and `team.md` in the same pass.
 8. When the run started from a source document, go through every `open_questions.md` row still `Open` or `Assumed` the same way: decide it, or leave it floating on purpose.
 9. Run `python3 scripts/build_html.py output/<slug>` one last time so `review.html` holds the final documents, then `python3 scripts/build_docx.py output/<slug>` for the Word copy (`output/<slug>/<slug>.docx`). If `python-docx` is missing and `pip install python-docx` fails, mark the Word line `[ ]` in the checklist and say why.
-10. Present the final summary as a deliverables checklist, one line per file with its path and status:
+10. **Offer the role reader** (key `phase5.role_reader`): "Build a role reader too? Everyone reads the executive summary and the high-level design, then each lead gets their own path through the documents, their BOM lines and schedule tasks, and the decisions that bind them, each traced back to its question and risk." Options **Build the role reader** / **Skip**, plus the standing options. Hands-free runs skip it unless `decisions.md` says `build`. It is an extra view, never a replacement: `review.html` and the `.md` files stay the source of truth. To build it:
+   - Run `python3 scripts/build_role_reader.py output/<slug> --keys` for the section keys (document names, `§1`…`§10`, `§4.1`, `§9 <subsection title>`).
+   - Write `output/<slug>/roles.json` from `team.md` and the documents, adding no facts: every value is copied from a document, and only the role tags are yours. Shape: `roles` (per role `name`, optional `holder`, and `owns` = the team.md Owns column, `must`, `skim` as section keys); optional `figures` (`value`, `label`, `section`), `cards` (`title`, `text` that may name decision and node ids), `problems` (`text`, `owner`, `support`, `due`, from §10 and the executive summary's domain rows), `bom` (`currency`, `total`, `section`, `rows` of `item`, `qty`, `cost`, `lead`, `roles`, copied from §9's BOM table), `tasks` (`section`, `rows` of `no`, `task`, `start`, `weeks`, `depends`, `roles`, `path` = `critical`, `near` or empty, from §9 Schedule), `decisions` (id → `title`, `home` section, `find` = text that appears in that section, `roles`, `sections` it shapes, `chosen`, and when known `recommended`, `overruled`, `redesign`, `cost`, `chain` of node ids, `bring` = the evidence it takes to reopen it, `by`, `reviewed`), `nodes` (id → `kind`, `title`, `text`, `home`, `find`, for the questions, gaps and risks in the chains). `examples/bubbler-automated-soap-bubble-maker/roles.json` is a worked one.
+   - Run `python3 scripts/build_role_reader.py output/<slug>`. It writes `output/<slug>/role_reader.html` and fails, naming each line, when a key, role or `find` text does not resolve in the documents; fix `roles.json`, never the documents, to make it pass. Re-run it whenever the documents change, after `build_html.py`.
+11. Present the final summary as a deliverables checklist, one line per file with its path and status:
    ```
    All 5 phases complete. Deliverables in output/<slug>/:
    [x] executive_summary.md      business rationale, the solution, N domain rows
@@ -425,6 +430,7 @@ This phase applies to **all products** — static electronic, electromechanical,
    [x] gate_checklist.md         N PASS / N FAIL accepted / N N/A
    [x] review.html               every document above in one page with a linked contents, for any browser
    [x] <slug>.docx               the same documents as one Word file: cover page, contents, then each document
+   [x] role_reader.html          (optional) the same documents arranged by role, with BOM lines, tasks and decision traces
    ```
    Mark `[ ]` anything not produced and say why in the same line. Then name the floating items.
 
@@ -456,5 +462,7 @@ output/<slug>/
 ├── gate_checklist.md
 ├── review.html                   # all .md documents in one page, images embedded, linked contents; refreshed after every phase
 ├── <slug>.docx                   # Phase 5: the same documents as one Word file (cover page, contents, documents)
+├── roles.json                    # Phase 5, optional: who reads what, BOM/task/decision role tags; adds no facts
+├── role_reader.html              # Phase 5, optional: the documents arranged by role, built from roles.json
 └── decisions.md                  # answer sheet: every question's key and answer; read before asking, appended at the end
 ```

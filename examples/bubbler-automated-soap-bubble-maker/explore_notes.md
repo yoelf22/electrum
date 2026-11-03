@@ -71,12 +71,12 @@ Inflates large soap bubbles (~500mm diameter) by gently blowing air through a so
 
 ## Relevant Skill Areas
 
-1. **Sensors & Actuators (#10)** — Core differentiator. Strain gauge integration, signal conditioning for a small force signal in a vibrating, outdoor environment.
-2. **Embedded Software & Firmware (#5)** — The optimization loop. Analyzing the force curve in real time, classifying outcomes (success/pop/no-film), adjusting parameters adaptively.
-3. **Mechanical & Industrial Design (#4)** — The dip-rotate-blow mechanism. Smooth wand arm motion, open vat design, wet/dry zone separation, airflow duct for gentle laminar flow.
-4. **Power Management (#9)** — Two motors + MCU + strain gauge amp. Battery-powered outdoor product.
-5. **Cost & BOM Awareness (#15)** — Sub-$50 retail. The strain gauge + amp adds ~$1–2 to BOM vs. a dumb bubble machine. Must justify with clearly better performance.
-6. **Manufacturing (#14)** — Strain gauge bonding to the wand arm is a manual or semi-automated step. Calibration at factory (zero the strain gauge with no load).
+1. **Sensors & Actuators (#10)** — Core differentiator. Strain gauge integration, signal conditioning for a small force signal in a vibrating, outdoor environment. *Covered by: Electrical / electronics lead (signal chain), Mechanical / industrial design lead (gauge mounting).*
+2. **Embedded Software & Firmware (#5)** — The optimization loop. Analyzing the force curve in real time, classifying outcomes (success/pop/no-film), adjusting parameters adaptively. *Covered by: Firmware lead.*
+3. **Mechanical & Industrial Design (#4)** — The dip-rotate-blow mechanism. Smooth wand arm motion, open vat design, wet/dry zone separation, airflow duct for gentle laminar flow. *Covered by: Mechanical / industrial design lead.*
+4. **Power Management (#9)** — Two motors + MCU + strain gauge amp. Battery-powered outdoor product. *Covered by: Electrical / electronics lead.*
+5. **Cost & BOM Awareness (#15)** — Sub-$50 retail. The strain gauge + amp adds ~$1–2 to BOM vs. a dumb bubble machine. Must justify with clearly better performance. *Covered by: Manufacturing / NPI lead (BOM), Product lead (price).*
+6. **Manufacturing (#14)** — Strain gauge bonding to the wand arm is a manual or semi-automated step. Calibration at factory (zero the strain gauge with no load). *Covered by: Manufacturing / NPI lead.*
 
 ## Key Unknowns and Questions
 

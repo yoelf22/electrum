@@ -133,7 +133,7 @@
 | 76 | Target production volume stated | PASS | §9 — 10k+ units |
 | 77 | Key schedule milestones listed | PASS | §9 Schedule — EVT week 6, DVT week 20, PVT week 24, first lot week 28–30 |
 | 77a | Schedule with durations, dependencies and critical path | PASS | §9 Schedule — 14 tasks, Gantt chart; critical path runs through enclosure tooling, 30 weeks |
-| 78 | Third-party dependencies identified | PASS | Implicit — COTS motors, fans, HX711, STM32 availability. No single-source risks identified. |
+| 78 | Third-party dependencies identified | PASS | §9 Dependencies — no third-party modules, SDKs or services beyond STM32Cube LL/CMSIS; the geared motor is single-source, MCU alternate named. |
 | 78a | Long-lead and high-MOQ parts identified | PASS | §9 BOM — enclosure (10–12 wk, tooling plus first articles) sets the critical path; geared motor is next (6–8 wk, 5k MOQ). MCU has a pin-compatible alternate. |
 | 79 | [HW↔SW] App store constraints | N/A | No app |
 | 80 | [HW↔SW] Manufacturing test requirements | PASS | §4.1 — SWD programming via Tag-Connect. §4.2 — factory tare calibration of strain gauge at boot. |

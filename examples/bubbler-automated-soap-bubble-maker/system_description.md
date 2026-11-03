@@ -2,8 +2,8 @@
 
 | Field | Value |
 |-------|-------|
-| Version | 0.1 |
-| Date | 2026-02-25 |
+| Version | 0.3 |
+| Date | 2026-11-02 |
 | Author | Electrum workflow |
 | Status | Draft |
 | Related docs | explore_notes.md, high_level_design.md, component_arrangement.md |
@@ -339,6 +339,38 @@ No BLE, Wi-Fi, cellular, USB data, or any other communication interface. The pro
 - Water resistance: IPX4 for electronics compartment (splash-proof). Vat and wand arm are wet by design.
 - UV resistance: Enclosure material must be UV-stabilized (outdoor use)
 
+### Design for X (DfX)
+
+Locked by tooling: the three-part split, wall and draft geometry, screw bosses and the shaft seal seat (D7). Locked by the PCB layout: the Tag-Connect pads and the connector positions. Still open in firmware or packaging: production test sequence, LED codes, out-of-box state and the quick-start card.
+
+**Manufacturing and assembly (DFM/DFA)**
+- Target annual volume: 10k+ units (mass production, three single-cavity molds)
+- Assembly complexity: mixed. SMT PCBA at the board assembler; hand steps are the JST connectors, strain-gauge bonding, the drive and fan modules and final assembly (17 min per unit, §9 Assembly and Inspection Times)
+- Fastening and part count: screws into molded bosses for the base-to-rim joint (the electronics compartment must reach IPX4 and be serviceable), snap-fit for the battery door only if toy classification does not require a screw (open question 6); about 14 unique parts plus the PCBA and harness
+- Tooling: three injection molds (base, U-rim, vat), 6–8 weeks; wire-forming jig for the loop; strain-gauge bonding fixture; programming and test fixture with pogo pins on the Tag-Connect pads
+- Target factory yield: 97% at final functional test after PVT; strain-gauge bonding is the step most likely to miss it
+
+**Test (DFT)**
+- Board-level access: Tag-Connect TC2030 pads for SWD programming; test pads on the 3.3V rail, HX711 DOUT/SCK and both motor outputs
+- Production test: (1) flash firmware and write the version struct over SWD (gate gap #34); (2) board test with motor and fan loads on the fixture; (3) at final assembly, wand cycle against both end-stops, fan ramp, strain-gauge tare with a reference weight on the arm to check gain; (4) IPX4 spray test on one sample per lot. The production-test mode is a firmware build flag, entered by holding both buttons at power-on
+- Test time per unit: 2 min at the board stage, 3 min at final (both in §9 Assembly and Inspection Times)
+
+**Packaging and logistics**
+- Retail/shipping packaging: printed carton with a molded-pulp insert holding the vat inside the U-rim; ISTA 1A drop test (own target)
+- Shipping constraints: batteries not included (Scenario 3 has the user insert them), so no battery shipping rules apply; if a solution concentrate is included (open question 5) it ships sealed and is checked for leak in the drop test
+- Out-of-box state: factory firmware with default parameters, tare taken at each boot, quick-start card on top
+
+**Sustainability and end of life**
+- Materials: ABS or PP enclosure, UV-stabilized, resin codes molded in; RoHS on all components; REACH declaration for the EU
+- Battery: user-replaceable AA cells (D5); WEEE marking and take-back for the EU as electrical equipment
+- Product lifetime: 3 years target; no cloud, so nothing stops working when a service shuts down
+- End-of-life behavior: none needed; the product is standalone
+
+**Service and repair**
+- Field-replaceable parts: AA batteries, the removable vat; the loop if its material wears out (open question 4)
+- Diagnostics: LED states only (green power, blue running, amber low solution or battery, red error or wind pause)
+- Repair path: replace-only for the electronics and drive; the vat and loop are sold as spares if returns show they wear
+
 ### Manufactured Part Lead Times
 
 | Part | Process | Tooling (weeks) | First articles and approval (weeks) | Production run (weeks) | Total (weeks) | Basis |
@@ -384,6 +416,13 @@ Week 0 is the start of detailed design, right after the gate review. Durations a
 - Hard deadlines: holiday retail window; first lot must ship by week 30 to reach shelves for the season
 - Certification timeline: FCC Part 15B and CE EMC testing, 4 weeks including one retest
 
+### Dependencies
+- Third-party modules: none; every electronic part is on the PCBA
+- Single-source parts: the geared DC motor (5k MOQ, 6–8 weeks) has no qualified second source yet; STM32C011F6 is the pin-compatible MCU alternate; HX711 has several sources
+- SDKs: STM32Cube LL drivers and CMSIS for the bare-metal superloop; no RTOS
+- Cloud services: none
+- Partner APIs: none
+
 ---
 
 ## 10. Open Questions and Risks
@@ -409,3 +448,37 @@ Week 0 is the start of detailed design, right after the gate review. Durations a
 | 4 | Centrifugal fan doesn't produce enough pressure through L-bent duct | Low | High — inadequate airflow, no inflation | Size the duct generously (Ø40mm exit), minimize bends, use a higher-pressure blower if needed. Prototype test with different fan models. |
 | 5 | Soap solution degrades the strain gauge bond over time | Medium | Medium — sensor drift or failure after months | Conformal coat the gauge. Place it in the dry zone (inside U-rim, near bearing). Use labyrinth seal on shaft penetration. |
 | 6 | Enclosure mold cost exceeds budget — tapered protrusion adds tooling complexity | Low | Medium — higher unit cost or redesign | Tapered protrusion is a simple draft-angle surface — standard for injection molding. Three-part enclosure avoids undercuts. Get tooling quotes early. |
+
+---
+
+## Appendix
+
+### Glossary
+| Term | Definition |
+|------|-----------|
+| Strain gauge | A foil resistor bonded to the wand arm whose resistance changes as the arm bends under the bubble's pull |
+| HX711 | 24-bit ADC made for load cells; reads the strain gauge |
+| Force curve | Force on the wand arm over one blow cycle; its shape tells success, pop, no-film or partial |
+| Hill-climbing | Change one parameter a little, keep it if the result improves; how the firmware tunes the five cycle parameters |
+| Tare | Zeroing the force reading with no load, done at every boot |
+| EVT / DVT / PVT | Engineering, design and production validation builds |
+| MOQ | Minimum order quantity |
+| IPX4 | Protected against water splashed from any direction |
+| SWD / Tag-Connect | Arm debug and programming interface / the legless pogo-pin cable that connects to it |
+
+### Reference Documents
+| Document | Location | Relevance |
+|----------|----------|-----------|
+| Exploration notes | explore_notes.md | Classification, HW/SW boundary, skill areas |
+| High-level design | high_level_design.md | Block diagram, hardest problems |
+| Component arrangement | component_arrangement.md | Chosen layout and the alternatives |
+| Gate checklist | gate_checklist.md | PASS/FAIL against this document |
+| FCC Part 15 Subpart B; EN 55032 | ecfr.gov; CENELEC | EMC limits |
+| ASTM F963; EN 71-1 | ASTM; CEN | Toy safety, if classified as a toy |
+
+### Revision History
+| Version | Date | Author | Changes |
+|---------|------|--------|---------|
+| 0.1 | 2026-02-25 | Electrum workflow | Initial draft |
+| 0.2 | 2026-10-28 | Electrum workflow | §9 lead times, assembly times, schedule and Gantt; §4 Handoff block per team role |
+| 0.3 | 2026-11-02 | Electrum workflow | §9 Design for X and Dependencies; Appendix |

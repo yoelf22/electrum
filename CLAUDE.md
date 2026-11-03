@@ -21,6 +21,7 @@ python -m playwright install chromium
 # Run scripts directly
 python3.11 scripts/build_html.py output/<slug>
 python3.11 scripts/build_docx.py output/<slug>     # Word export: cover, contents, documents
+python3.11 scripts/build_role_reader.py output/<slug> [--keys]  # optional role reader from roles.json
 python3.11 scripts/block_diagram.py
 python3.11 scripts/generate_illustration.py
 ```

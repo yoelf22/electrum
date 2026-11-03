@@ -16,7 +16,7 @@ img{max-width:100%}
 pre{background:#f3f3f7;padding:.8rem;overflow:auto;white-space:pre-wrap}
 code{background:#f3f3f7;padding:0 .2em}
 @media print{nav{display:none}section{page-break-before:always}.toc ol ol{columns:1}}
-</style></head><body><nav><a href="#executive_summary">Executive Summary</a><a href="#open_questions">Open Questions</a><a href="#explore_notes">Explore Notes</a><a href="#team">Team</a><a href="#high_level_design">High Level Design</a><a href="#component_arrangement">Component Arrangement</a><a href="#system_description">System Description</a><a href="#gate_checklist">Gate Checklist</a></nav><header><h1>Bubbler</h1><p class="sub">Product definition · Electrum · 2026-10-28</p><p>Bubbler is a battery-powered outdoor machine the size of a cake tin. You fill its open tray with bubble solution, put in four AA batteries and press one button. A 160mm loop dips into the tray, lifts upright, and a slow, gentle fan inflates the film into a bubble up to half a metre across that releases on its own; then it dips again. A force sensor on the loop&#x27;s arm feels each bubble growing and the machine adjusts its own fan speed and timing from one bubble to the next, so it gets better over the first few cycles and copes with a light breeze. It runs for at least two hours on a set of batteries. V1 is standalone: no app, no Wi-Fi, no account; two buttons and four lights are the whole interface. It is a toy-grade consumer product, not stage equipment.</p><div class="toc"><strong>Contents</strong><ol><li><a href="#executive_summary">Executive Summary</a><ol><li><a href="#executive_summary-1-business-rationale">1. Business Rationale</a></li><li><a href="#executive_summary-2-the-solution">2. The Solution</a></li><li><a href="#executive_summary-3-domains-challenges-and-deliverables">3. Domains: Challenges and Deliverables</a></li></ol></li><li><a href="#open_questions">Open Questions</a></li><li><a href="#explore_notes">Explore Notes</a><ol><li><a href="#explore_notes-product-summary">Product Summary</a></li><li><a href="#explore_notes-product-classification">Product Classification</a></li><li><a href="#explore_notes-hwsw-boundary-analysis">HW/SW Boundary Analysis</a></li><li><a href="#explore_notes-physical-architecture">Physical Architecture</a></li><li><a href="#explore_notes-relevant-skill-areas">Relevant Skill Areas</a></li><li><a href="#explore_notes-key-unknowns-and-questions">Key Unknowns and Questions</a></li><li><a href="#explore_notes-initial-risk-areas">Initial Risk Areas</a></li><li><a href="#explore_notes-suggested-focus-for-high-level-design">Suggested Focus for High-Level Design</a></li></ol></li><li><a href="#team">Team</a></li><li><a href="#high_level_design">High Level Design</a></li><li><a href="#component_arrangement">Component Arrangement</a><ol><li><a href="#component_arrangement-component-inventory">Component Inventory</a></li><li><a href="#component_arrangement-selected-views">Selected Views</a></li><li><a href="#component_arrangement-arrangement-diagram">Arrangement Diagram</a></li><li><a href="#component_arrangement-arrangement-rationale">Arrangement Rationale</a></li><li><a href="#component_arrangement-spatial-constraints-identified">Spatial Constraints Identified</a></li><li><a href="#component_arrangement-key-dimensions">Key Dimensions</a></li></ol></li><li><a href="#system_description">System Description</a><ol><li><a href="#system_description-1-product-vision-and-context">1. Product Vision and Context</a></li><li><a href="#system_description-2-user-scenarios">2. User Scenarios</a></li><li><a href="#system_description-3-system-architecture">3. System Architecture</a></li><li><a href="#system_description-4-subsystem-descriptions">4. Subsystem Descriptions</a></li><li><a href="#system_description-5-interfaces">5. Interfaces</a></li><li><a href="#system_description-6-power-architecture">6. Power Architecture</a></li><li><a href="#system_description-7-connectivity">7. Connectivity</a></li><li><a href="#system_description-8-key-decisions">8. Key Decisions</a></li><li><a href="#system_description-9-constraints">9. Constraints</a></li><li><a href="#system_description-10-open-questions-and-risks">10. Open Questions and Risks</a></li></ol></li><li><a href="#gate_checklist">Gate Checklist</a><ol><li><a href="#gate_checklist-vision-and-context">Vision and Context</a></li><li><a href="#gate_checklist-user-scenarios">User Scenarios</a></li><li><a href="#gate_checklist-system-architecture">System Architecture</a></li><li><a href="#gate_checklist-subsystem-descriptions-hardware">Subsystem Descriptions — Hardware</a></li><li><a href="#gate_checklist-subsystem-descriptions-firmware">Subsystem Descriptions — Firmware</a></li><li><a href="#gate_checklist-subsystem-descriptions-companion-app">Subsystem Descriptions — Companion App</a></li><li><a href="#gate_checklist-subsystem-descriptions-cloud-backend">Subsystem Descriptions — Cloud / Backend</a></li><li><a href="#gate_checklist-interfaces">Interfaces</a></li><li><a href="#gate_checklist-power-architecture">Power Architecture</a></li><li><a href="#gate_checklist-connectivity">Connectivity</a></li><li><a href="#gate_checklist-key-decisions">Key Decisions</a></li><li><a href="#gate_checklist-constraints">Constraints</a></li><li><a href="#gate_checklist-open-questions-and-risks">Open Questions and Risks</a></li><li><a href="#gate_checklist-overall-quality">Overall Quality</a></li><li><a href="#gate_checklist-summary">Summary</a></li></ol></li></ol></div></header><section id="executive_summary"><h1>Executive Summary</h1><h1 id="executive_summary-executive-summary-bubbler">Executive Summary: Bubbler</h1>
+</style></head><body><nav><a href="#executive_summary">Executive Summary</a><a href="#open_questions">Open Questions</a><a href="#explore_notes">Explore Notes</a><a href="#team">Team</a><a href="#high_level_design">High Level Design</a><a href="#component_arrangement">Component Arrangement</a><a href="#system_description">System Description</a><a href="#gate_checklist">Gate Checklist</a></nav><header><h1>Bubbler</h1><p class="sub">Product definition · Electrum · 2026-11-02</p><p>Bubbler is a battery-powered outdoor machine the size of a cake tin. You fill its open tray with bubble solution, put in four AA batteries and press one button. A 160mm loop dips into the tray, lifts upright, and a slow, gentle fan inflates the film into a bubble up to half a metre across that releases on its own; then it dips again. A force sensor on the loop&#x27;s arm feels each bubble growing and the machine adjusts its own fan speed and timing from one bubble to the next, so it gets better over the first few cycles and copes with a light breeze. It runs for at least two hours on a set of batteries. V1 is standalone: no app, no Wi-Fi, no account; two buttons and four lights are the whole interface. It is a toy-grade consumer product, not stage equipment.</p><div class="toc"><strong>Contents</strong><ol><li><a href="#executive_summary">Executive Summary</a><ol><li><a href="#executive_summary-1-business-rationale">1. Business Rationale</a></li><li><a href="#executive_summary-2-the-solution">2. The Solution</a></li><li><a href="#executive_summary-3-domains-challenges-and-deliverables">3. Domains: Challenges and Deliverables</a></li></ol></li><li><a href="#open_questions">Open Questions</a></li><li><a href="#explore_notes">Explore Notes</a><ol><li><a href="#explore_notes-product-summary">Product Summary</a></li><li><a href="#explore_notes-product-classification">Product Classification</a></li><li><a href="#explore_notes-hwsw-boundary-analysis">HW/SW Boundary Analysis</a></li><li><a href="#explore_notes-physical-architecture">Physical Architecture</a></li><li><a href="#explore_notes-relevant-skill-areas">Relevant Skill Areas</a></li><li><a href="#explore_notes-key-unknowns-and-questions">Key Unknowns and Questions</a></li><li><a href="#explore_notes-initial-risk-areas">Initial Risk Areas</a></li><li><a href="#explore_notes-suggested-focus-for-high-level-design">Suggested Focus for High-Level Design</a></li></ol></li><li><a href="#team">Team</a></li><li><a href="#high_level_design">High Level Design</a></li><li><a href="#component_arrangement">Component Arrangement</a><ol><li><a href="#component_arrangement-component-inventory">Component Inventory</a></li><li><a href="#component_arrangement-selected-views">Selected Views</a></li><li><a href="#component_arrangement-arrangement-diagram">Arrangement Diagram</a></li><li><a href="#component_arrangement-arrangement-rationale">Arrangement Rationale</a></li><li><a href="#component_arrangement-spatial-constraints-identified">Spatial Constraints Identified</a></li><li><a href="#component_arrangement-key-dimensions">Key Dimensions</a></li></ol></li><li><a href="#system_description">System Description</a><ol><li><a href="#system_description-1-product-vision-and-context">1. Product Vision and Context</a></li><li><a href="#system_description-2-user-scenarios">2. User Scenarios</a></li><li><a href="#system_description-3-system-architecture">3. System Architecture</a></li><li><a href="#system_description-4-subsystem-descriptions">4. Subsystem Descriptions</a></li><li><a href="#system_description-5-interfaces">5. Interfaces</a></li><li><a href="#system_description-6-power-architecture">6. Power Architecture</a></li><li><a href="#system_description-7-connectivity">7. Connectivity</a></li><li><a href="#system_description-8-key-decisions">8. Key Decisions</a></li><li><a href="#system_description-9-constraints">9. Constraints</a></li><li><a href="#system_description-10-open-questions-and-risks">10. Open Questions and Risks</a></li><li><a href="#system_description-appendix">Appendix</a></li></ol></li><li><a href="#gate_checklist">Gate Checklist</a><ol><li><a href="#gate_checklist-vision-and-context">Vision and Context</a></li><li><a href="#gate_checklist-user-scenarios">User Scenarios</a></li><li><a href="#gate_checklist-system-architecture">System Architecture</a></li><li><a href="#gate_checklist-subsystem-descriptions-hardware">Subsystem Descriptions — Hardware</a></li><li><a href="#gate_checklist-subsystem-descriptions-firmware">Subsystem Descriptions — Firmware</a></li><li><a href="#gate_checklist-subsystem-descriptions-companion-app">Subsystem Descriptions — Companion App</a></li><li><a href="#gate_checklist-subsystem-descriptions-cloud-backend">Subsystem Descriptions — Cloud / Backend</a></li><li><a href="#gate_checklist-interfaces">Interfaces</a></li><li><a href="#gate_checklist-power-architecture">Power Architecture</a></li><li><a href="#gate_checklist-connectivity">Connectivity</a></li><li><a href="#gate_checklist-key-decisions">Key Decisions</a></li><li><a href="#gate_checklist-constraints">Constraints</a></li><li><a href="#gate_checklist-open-questions-and-risks">Open Questions and Risks</a></li><li><a href="#gate_checklist-overall-quality">Overall Quality</a></li><li><a href="#gate_checklist-summary">Summary</a></li></ol></li></ol></div></header><section id="executive_summary"><h1>Executive Summary</h1><h1 id="executive_summary-executive-summary-bubbler">Executive Summary: Bubbler</h1>
 <table>
 <thead>
 <tr>
@@ -215,12 +215,12 @@ code{background:#f3f3f7;padding:0 .2em}
 </ul>
 <h2 id="explore_notes-relevant-skill-areas">Relevant Skill Areas</h2>
 <ol>
-<li><strong>Sensors &amp; Actuators (#10)</strong> — Core differentiator. Strain gauge integration, signal conditioning for a small force signal in a vibrating, outdoor environment.</li>
-<li><strong>Embedded Software &amp; Firmware (#5)</strong> — The optimization loop. Analyzing the force curve in real time, classifying outcomes (success/pop/no-film), adjusting parameters adaptively.</li>
-<li><strong>Mechanical &amp; Industrial Design (#4)</strong> — The dip-rotate-blow mechanism. Smooth wand arm motion, open vat design, wet/dry zone separation, airflow duct for gentle laminar flow.</li>
-<li><strong>Power Management (#9)</strong> — Two motors + MCU + strain gauge amp. Battery-powered outdoor product.</li>
-<li><strong>Cost &amp; BOM Awareness (#15)</strong> — Sub-$50 retail. The strain gauge + amp adds ~$1–2 to BOM vs. a dumb bubble machine. Must justify with clearly better performance.</li>
-<li><strong>Manufacturing (#14)</strong> — Strain gauge bonding to the wand arm is a manual or semi-automated step. Calibration at factory (zero the strain gauge with no load).</li>
+<li><strong>Sensors &amp; Actuators (#10)</strong> — Core differentiator. Strain gauge integration, signal conditioning for a small force signal in a vibrating, outdoor environment. <em>Covered by: Electrical / electronics lead (signal chain), Mechanical / industrial design lead (gauge mounting).</em></li>
+<li><strong>Embedded Software &amp; Firmware (#5)</strong> — The optimization loop. Analyzing the force curve in real time, classifying outcomes (success/pop/no-film), adjusting parameters adaptively. <em>Covered by: Firmware lead.</em></li>
+<li><strong>Mechanical &amp; Industrial Design (#4)</strong> — The dip-rotate-blow mechanism. Smooth wand arm motion, open vat design, wet/dry zone separation, airflow duct for gentle laminar flow. <em>Covered by: Mechanical / industrial design lead.</em></li>
+<li><strong>Power Management (#9)</strong> — Two motors + MCU + strain gauge amp. Battery-powered outdoor product. <em>Covered by: Electrical / electronics lead.</em></li>
+<li><strong>Cost &amp; BOM Awareness (#15)</strong> — Sub-$50 retail. The strain gauge + amp adds ~$1–2 to BOM vs. a dumb bubble machine. Must justify with clearly better performance. <em>Covered by: Manufacturing / NPI lead (BOM), Product lead (price).</em></li>
+<li><strong>Manufacturing (#14)</strong> — Strain gauge bonding to the wand arm is a manual or semi-automated step. Calibration at factory (zero the strain gauge with no load). <em>Covered by: Manufacturing / NPI lead.</em></li>
 </ol>
 <h2 id="explore_notes-key-unknowns-and-questions">Key Unknowns and Questions</h2>
 <ol>
@@ -763,11 +763,11 @@ code{background:#f3f3f7;padding:0 .2em}
 <tbody>
 <tr>
 <td>Version</td>
-<td>0.1</td>
+<td>0.3</td>
 </tr>
 <tr>
 <td>Date</td>
-<td>2026-02-25</td>
+<td>2026-11-02</td>
 </tr>
 <tr>
 <td>Author</td>
@@ -1491,6 +1491,31 @@ Large soap bubbles captivate audiences but are difficult to produce reliably by 
 <li>Water resistance: IPX4 for electronics compartment (splash-proof). Vat and wand arm are wet by design.</li>
 <li>UV resistance: Enclosure material must be UV-stabilized (outdoor use)</li>
 </ul>
+<h3 id="system_description-design-for-x-dfx">Design for X (DfX)</h3>
+<p>Locked by tooling: the three-part split, wall and draft geometry, screw bosses and the shaft seal seat (D7). Locked by the PCB layout: the Tag-Connect pads and the connector positions. Still open in firmware or packaging: production test sequence, LED codes, out-of-box state and the quick-start card.</p>
+<p><strong>Manufacturing and assembly (DFM/DFA)</strong>
+- Target annual volume: 10k+ units (mass production, three single-cavity molds)
+- Assembly complexity: mixed. SMT PCBA at the board assembler; hand steps are the JST connectors, strain-gauge bonding, the drive and fan modules and final assembly (17 min per unit, §9 Assembly and Inspection Times)
+- Fastening and part count: screws into molded bosses for the base-to-rim joint (the electronics compartment must reach IPX4 and be serviceable), snap-fit for the battery door only if toy classification does not require a screw (open question 6); about 14 unique parts plus the PCBA and harness
+- Tooling: three injection molds (base, U-rim, vat), 6–8 weeks; wire-forming jig for the loop; strain-gauge bonding fixture; programming and test fixture with pogo pins on the Tag-Connect pads
+- Target factory yield: 97% at final functional test after PVT; strain-gauge bonding is the step most likely to miss it</p>
+<p><strong>Test (DFT)</strong>
+- Board-level access: Tag-Connect TC2030 pads for SWD programming; test pads on the 3.3V rail, HX711 DOUT/SCK and both motor outputs
+- Production test: (1) flash firmware and write the version struct over SWD (gate gap #34); (2) board test with motor and fan loads on the fixture; (3) at final assembly, wand cycle against both end-stops, fan ramp, strain-gauge tare with a reference weight on the arm to check gain; (4) IPX4 spray test on one sample per lot. The production-test mode is a firmware build flag, entered by holding both buttons at power-on
+- Test time per unit: 2 min at the board stage, 3 min at final (both in §9 Assembly and Inspection Times)</p>
+<p><strong>Packaging and logistics</strong>
+- Retail/shipping packaging: printed carton with a molded-pulp insert holding the vat inside the U-rim; ISTA 1A drop test (own target)
+- Shipping constraints: batteries not included (Scenario 3 has the user insert them), so no battery shipping rules apply; if a solution concentrate is included (open question 5) it ships sealed and is checked for leak in the drop test
+- Out-of-box state: factory firmware with default parameters, tare taken at each boot, quick-start card on top</p>
+<p><strong>Sustainability and end of life</strong>
+- Materials: ABS or PP enclosure, UV-stabilized, resin codes molded in; RoHS on all components; REACH declaration for the EU
+- Battery: user-replaceable AA cells (D5); WEEE marking and take-back for the EU as electrical equipment
+- Product lifetime: 3 years target; no cloud, so nothing stops working when a service shuts down
+- End-of-life behavior: none needed; the product is standalone</p>
+<p><strong>Service and repair</strong>
+- Field-replaceable parts: AA batteries, the removable vat; the loop if its material wears out (open question 4)
+- Diagnostics: LED states only (green power, blue running, amber low solution or battery, red error or wind pause)
+- Repair path: replace-only for the electronics and drive; the vat and loop are sold as spares if returns show they wear</p>
 <h3 id="system_description-manufactured-part-lead-times">Manufactured Part Lead Times</h3>
 <table>
 <thead>
@@ -1717,6 +1742,14 @@ Large soap bubbles captivate audiences but are difficult to produce reliably by 
 <li>Hard deadlines: holiday retail window; first lot must ship by week 30 to reach shelves for the season</li>
 <li>Certification timeline: FCC Part 15B and CE EMC testing, 4 weeks including one retest</li>
 </ul>
+<h3 id="system_description-dependencies">Dependencies</h3>
+<ul>
+<li>Third-party modules: none; every electronic part is on the PCBA</li>
+<li>Single-source parts: the geared DC motor (5k MOQ, 6–8 weeks) has no qualified second source yet; STM32C011F6 is the pin-compatible MCU alternate; HX711 has several sources</li>
+<li>SDKs: STM32Cube LL drivers and CMSIS for the bare-metal superloop; no RTOS</li>
+<li>Cloud services: none</li>
+<li>Partner APIs: none</li>
+</ul>
 <hr />
 <h2 id="system_description-10-open-questions-and-risks">10. Open Questions and Risks</h2>
 <h3 id="system_description-open-questions">Open Questions</h3>
@@ -1821,6 +1854,128 @@ Large soap bubbles captivate audiences but are difficult to produce reliably by 
 <td>Low</td>
 <td>Medium — higher unit cost or redesign</td>
 <td>Tapered protrusion is a simple draft-angle surface — standard for injection molding. Three-part enclosure avoids undercuts. Get tooling quotes early.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="system_description-appendix">Appendix</h2>
+<h3 id="system_description-glossary">Glossary</h3>
+<table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Definition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Strain gauge</td>
+<td>A foil resistor bonded to the wand arm whose resistance changes as the arm bends under the bubble's pull</td>
+</tr>
+<tr>
+<td>HX711</td>
+<td>24-bit ADC made for load cells; reads the strain gauge</td>
+</tr>
+<tr>
+<td>Force curve</td>
+<td>Force on the wand arm over one blow cycle; its shape tells success, pop, no-film or partial</td>
+</tr>
+<tr>
+<td>Hill-climbing</td>
+<td>Change one parameter a little, keep it if the result improves; how the firmware tunes the five cycle parameters</td>
+</tr>
+<tr>
+<td>Tare</td>
+<td>Zeroing the force reading with no load, done at every boot</td>
+</tr>
+<tr>
+<td>EVT / DVT / PVT</td>
+<td>Engineering, design and production validation builds</td>
+</tr>
+<tr>
+<td>MOQ</td>
+<td>Minimum order quantity</td>
+</tr>
+<tr>
+<td>IPX4</td>
+<td>Protected against water splashed from any direction</td>
+</tr>
+<tr>
+<td>SWD / Tag-Connect</td>
+<td>Arm debug and programming interface / the legless pogo-pin cable that connects to it</td>
+</tr>
+</tbody>
+</table>
+<h3 id="system_description-reference-documents">Reference Documents</h3>
+<table>
+<thead>
+<tr>
+<th>Document</th>
+<th>Location</th>
+<th>Relevance</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Exploration notes</td>
+<td>explore_notes.md</td>
+<td>Classification, HW/SW boundary, skill areas</td>
+</tr>
+<tr>
+<td>High-level design</td>
+<td>high_level_design.md</td>
+<td>Block diagram, hardest problems</td>
+</tr>
+<tr>
+<td>Component arrangement</td>
+<td>component_arrangement.md</td>
+<td>Chosen layout and the alternatives</td>
+</tr>
+<tr>
+<td>Gate checklist</td>
+<td>gate_checklist.md</td>
+<td>PASS/FAIL against this document</td>
+</tr>
+<tr>
+<td>FCC Part 15 Subpart B; EN 55032</td>
+<td>ecfr.gov; CENELEC</td>
+<td>EMC limits</td>
+</tr>
+<tr>
+<td>ASTM F963; EN 71-1</td>
+<td>ASTM; CEN</td>
+<td>Toy safety, if classified as a toy</td>
+</tr>
+</tbody>
+</table>
+<h3 id="system_description-revision-history">Revision History</h3>
+<table>
+<thead>
+<tr>
+<th>Version</th>
+<th>Date</th>
+<th>Author</th>
+<th>Changes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0.1</td>
+<td>2026-02-25</td>
+<td>Electrum workflow</td>
+<td>Initial draft</td>
+</tr>
+<tr>
+<td>0.2</td>
+<td>2026-10-28</td>
+<td>Electrum workflow</td>
+<td>§9 lead times, assembly times, schedule and Gantt; §4 Handoff block per team role</td>
+</tr>
+<tr>
+<td>0.3</td>
+<td>2026-11-02</td>
+<td>Electrum workflow</td>
+<td>§9 Design for X and Dependencies; Appendix</td>
 </tr>
 </tbody>
 </table></section><section id="gate_checklist"><h1>Gate Checklist</h1><h1 id="gate_checklist-gate-checklist-validation-bubbler">Gate Checklist Validation: Bubbler</h1>
@@ -2399,7 +2554,7 @@ Large soap bubbles captivate audiences but are difficult to produce reliably by 
 <td>78</td>
 <td>Third-party dependencies identified</td>
 <td>PASS</td>
-<td>Implicit — COTS motors, fans, HX711, STM32 availability. No single-source risks identified.</td>
+<td>§9 Dependencies — no third-party modules, SDKs or services beyond STM32Cube LL/CMSIS; the geared motor is single-source, MCU alternate named.</td>
 </tr>
 <tr>
 <td>78a</td>

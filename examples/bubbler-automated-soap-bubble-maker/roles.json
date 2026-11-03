@@ -1,0 +1,105 @@
+{
+  "roles": {
+    "prod": {"name": "Product lead", "owns": ["§1", "§2", "§8", "high_level_design", "open_questions"],
+             "must": ["§10", "§9 Schedule"],
+             "skim": ["§3", "§4.5", "§9 BOM Cost", "team", "gate_checklist"]},
+    "ee": {"name": "Electrical / electronics lead", "owns": ["§4.1", "§5", "§6", "§9 Regulatory"],
+           "must": ["§3", "§8"],
+           "skim": ["§4.2", "§4.5", "§9 BOM Cost", "§9 Design for X (DfX)", "§9 Schedule", "§9 Dependencies", "§10"]},
+    "fw": {"name": "Firmware lead", "owns": ["§4.2"],
+           "must": ["§3", "§4.1", "§5", "§8"],
+           "skim": ["§2", "§4.5", "§6", "§9 Schedule", "§9 Dependencies", "§10"]},
+    "me": {"name": "Mechanical / industrial design lead",
+           "owns": ["§4.5", "§9 Mechanical", "§9 Environmental", "§9 Manufactured Part Lead Times"],
+           "must": ["§3", "component_arrangement", "§8", "§9 Design for X (DfX)"],
+           "skim": ["§2", "§4.1", "§5", "§9 BOM Cost", "§9 Schedule", "§10"]},
+    "npi": {"name": "Manufacturing / NPI lead",
+            "owns": ["§9 BOM Cost", "§9 Design for X (DfX)", "§9 Assembly and Inspection Times", "§9 Schedule"],
+            "must": ["§8", "§10", "§9 Manufactured Part Lead Times", "§9 Dependencies"],
+            "skim": ["component_arrangement", "§4.1", "§4.5", "§9 Regulatory"]}
+  },
+  "figures": [
+    {"value": "~$12.80", "label": "BOM at 10k units, target under $15", "section": "§9 BOM Cost"},
+    {"value": "30 weeks", "label": "gate review to first production lot", "section": "§9 Schedule"},
+    {"value": "8 weeks", "label": "of them are enclosure tooling", "section": "§9 Schedule"},
+    {"value": "under $50", "label": "retail price", "section": "§1"}
+  ],
+  "cards": [
+    {"title": "The product is one sensor and its firmware",
+     "text": "The strain gauge on the wand arm (D1) and the hill-climbing loop (D8) are the whole difference from a $15–40 disk machine. If the force signal is too noisy (R2), the adaptation has nothing to work with."},
+    {"title": "Enclosure tooling sets the date",
+     "text": "The critical path runs schematic, EVT, enclosure tooling and first articles, DVT, FCC/CE testing, first lot: 30 weeks, 8 of them tooling (D7, R6)."}
+  ],
+  "problems": [
+    {"text": "Exact strain gauge placement: bonded to shaft or to arm near pivot", "owner": "me", "support": ["ee"], "due": "Before mechanical prototype"},
+    {"text": "End-stop switch type: micro-switch or Hall sensor + magnet", "owner": "ee", "support": ["me"], "due": "Before schematic"},
+    {"text": "Capacitive solution level sensor in V1 or not", "owner": "ee", "support": ["prod", "fw"], "due": "Before schematic"},
+    {"text": "Loop material: spring steel, nylon-coated wire or silicone tube", "owner": "me", "support": ["prod"], "due": "Before mechanical prototype"},
+    {"text": "Soap solution: premixed concentrate or a recipe", "owner": "prod", "support": ["npi"], "due": "Before production"},
+    {"text": "Toy safety classification (ASTM F963 / EN 71) or general consumer product", "owner": "prod", "support": ["npi", "me"], "due": "Before industrial design freeze"}
+  ],
+  "bom": {
+    "currency": "USD", "total": 12.80, "section": "§9 BOM Cost",
+    "rows": [
+      {"item": "MCU + passives", "qty": "1 set", "cost": 1.50, "lead": "8–12 wk", "roles": ["ee"]},
+      {"item": "HX711 + strain gauge", "qty": "1 set", "cost": 0.80, "lead": "2–4 wk", "roles": ["ee", "me"]},
+      {"item": "Motor + H-bridge", "qty": "1 set", "cost": 1.80, "lead": "6–8 wk", "roles": ["ee", "me"]},
+      {"item": "Fan + MOSFET", "qty": "1 set", "cost": 1.10, "lead": "4–6 wk", "roles": ["ee", "me"]},
+      {"item": "LDO + power", "qty": "1 set", "cost": 0.40, "lead": "2–4 wk", "roles": ["ee"]},
+      {"item": "PCB (2-layer, panelized)", "qty": "1", "cost": 0.60, "lead": "4–5 wk", "roles": ["ee", "npi"]},
+      {"item": "Connectors + passives", "qty": "1 set", "cost": 0.80, "lead": "2–4 wk", "roles": ["ee"]},
+      {"item": "Enclosure (3-part injection mold)", "qty": "1 set", "cost": 3.50, "lead": "10–12 wk", "roles": ["me", "npi"]},
+      {"item": "Wand arm + loop + shaft", "qty": "1 set", "cost": 1.50, "lead": "4 wk", "roles": ["me"]},
+      {"item": "Buttons + LEDs", "qty": "1 set", "cost": 0.30, "lead": "1–2 wk", "roles": ["ee", "prod"]},
+      {"item": "Misc (rubber feet, labels, screws)", "qty": "1 set", "cost": 0.50, "lead": "1–2 wk", "roles": ["npi"]}
+    ]
+  },
+  "tasks": {
+    "section": "§9 Schedule",
+    "rows": [
+      {"no": 1, "task": "Schematic and PCB layout", "start": 0, "weeks": 4, "depends": "", "roles": ["ee"], "path": "critical"},
+      {"no": 2, "task": "Enclosure CAD, ready for tooling", "start": 0, "weeks": 5, "depends": "", "roles": ["me"]},
+      {"no": 3, "task": "Firmware: control loop and force sensing", "start": 0, "weeks": 10, "depends": "", "roles": ["fw"]},
+      {"no": 4, "task": "EVT PCB fab and assembly", "start": 4, "weeks": 2, "depends": "1", "roles": ["ee"], "path": "critical"},
+      {"no": 5, "task": "EVT build and test (3D-printed enclosure)", "start": 6, "weeks": 4, "depends": "2, 4", "roles": ["prod", "ee", "fw", "me", "npi"], "path": "critical"},
+      {"no": 6, "task": "Enclosure tooling", "start": 10, "weeks": 8, "depends": "5", "roles": ["me"], "path": "critical"},
+      {"no": 7, "task": "Enclosure first articles (T1) and approval", "start": 18, "weeks": 2, "depends": "6", "roles": ["me"], "path": "critical"},
+      {"no": 8, "task": "Geared motor order (purchased)", "start": 10, "weeks": 8, "depends": "5", "roles": ["npi"]},
+      {"no": 9, "task": "DVT PCBA run", "start": 10, "weeks": 5, "depends": "5", "roles": ["ee"]},
+      {"no": 10, "task": "Wand assembly jig and samples", "start": 10, "weeks": 2, "depends": "5", "roles": ["me"]},
+      {"no": 11, "task": "DVT build and test", "start": 20, "weeks": 4, "depends": "3, 7, 9, 10", "roles": ["prod", "ee", "fw", "me", "npi"], "path": "critical"},
+      {"no": 12, "task": "FCC / CE testing", "start": 24, "weeks": 4, "depends": "11", "roles": ["ee"], "path": "critical"},
+      {"no": 13, "task": "PVT pilot run", "start": 24, "weeks": 3, "depends": "8, 11", "roles": ["npi"]},
+      {"no": 14, "task": "Mass production, first lot", "start": 28, "weeks": 2, "depends": "12, 13", "roles": ["npi"], "path": "critical"}
+    ]
+  },
+  "decisions": {
+    "D1": {"title": "Force sensing method", "home": "§8", "find": "Force sensing method", "roles": ["ee", "fw", "me"],
+           "sections": ["§4.1", "§4.2", "§4.5", "high_level_design"], "chosen": "Strain gauge on the wand arm", "redesign": true,
+           "chain": ["Q1", "R2", "R5"], "bring": "Bench data showing the gauge cannot resolve 5 mN with the motor running (R2)."},
+    "D2": {"title": "MCU selection", "home": "§8", "find": "MCU selection", "roles": ["ee", "fw"],
+           "sections": ["§4.1", "§4.2"], "chosen": "STM32C011 Cortex-M0+"},
+    "D3": {"title": "Pivot actuator", "home": "§8", "find": "Pivot actuator", "roles": ["me", "ee", "fw"],
+           "sections": ["§4.5", "§4.1"], "chosen": "Geared DC motor + H-bridge", "chain": ["R1"]},
+    "D4": {"title": "Fan type", "home": "§8", "find": "Fan type", "roles": ["me"],
+           "sections": ["§4.5"], "chosen": "Centrifugal blower 40×40mm", "chain": ["R4"]},
+    "D5": {"title": "Battery type", "home": "§8", "find": "Battery type", "roles": ["ee", "prod"],
+           "sections": ["§6"], "chosen": "4×AA user-replaceable", "bring": "Runtime or form factor that 4×AA cannot meet (the decision row names LiPo for V2)."},
+    "D6": {"title": "Wand position sensing", "home": "§8", "find": "Wand position sensing", "roles": ["fw", "me"],
+           "sections": ["§4.2", "§4.5"], "chosen": "Timed open-loop + end-stops", "chain": ["Q2"]},
+    "D7": {"title": "Enclosure construction", "home": "§8", "find": "Enclosure construction", "roles": ["me", "npi"],
+           "sections": ["§4.5", "§9 BOM Cost", "component_arrangement"], "chosen": "Base + U-rim + removable vat (3-part)", "redesign": true, "chain": ["R6"]},
+    "D8": {"title": "Adaptation algorithm", "home": "§8", "find": "Adaptation algorithm", "roles": ["fw"],
+           "sections": ["§4.2", "high_level_design"], "chosen": "Lookup table + hill-climbing", "chain": ["R3"]}
+  },
+  "nodes": {
+    "Q1": {"kind": "Open question", "title": "Strain gauge placement", "home": "§10", "find": "Exact strain gauge placement"},
+    "Q2": {"kind": "Open question", "title": "End-stop switch type", "home": "§10", "find": "End-stop switch type"},
+    "R1": {"kind": "Risk · Medium / High", "title": "Film breaks during rotation", "home": "§10", "find": "Film breaks during rotation"},
+    "R2": {"kind": "Risk · Medium / High", "title": "Force signal too noisy for reliable classification", "home": "§10", "find": "Force signal too noisy"},
+    "R3": {"kind": "Risk · Low / Medium", "title": "Hill-climbing gets stuck in a local optimum", "home": "§10", "find": "Hill-climbing gets stuck"},
+    "R4": {"kind": "Risk · Low / High", "title": "Fan pressure too low through the L-bent duct", "home": "§10", "find": "Centrifugal fan doesn"},
+    "R5": {"kind": "Risk · Medium / Medium", "title": "Soap degrades the strain gauge bond", "home": "§10", "find": "Soap solution degrades the strain gauge bond"},
+    "R6": {"kind": "Risk · Low / Medium", "title": "Enclosure mold cost exceeds budget", "home": "§10", "find": "Enclosure mold cost exceeds budget"}
+  }
+}

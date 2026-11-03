@@ -16,7 +16,7 @@ what differs is what you install and where the files live.
 
 | Route | For | Needs | What you give up |
 |-------|-----|-------|------------------|
-| **1. Skill in Claude chat** | Trying it out, no installs | A claude.ai plan with code execution on | Files are downloads; you re-upload them to resume. A full run may need two conversations |
+| **1. Skill in Claude chat** | Trying it out, no installs | A paid claude.ai plan (Pro or higher; the Free plan cannot upload skills) with **Create and edit files** on | Files are downloads; you re-upload them to resume. A full run may need two conversations |
 | **2. Claude Cowork** | Real work without a terminal | A paid plan and the Claude Desktop app | Nothing in the workflow; outputs persist in a folder you pick |
 | **3. Claude Code** | Teams, git, long runs, extending the scripts | Claude Code, Python 3.11, this repo | Nothing |
 
@@ -30,7 +30,7 @@ the skill resumes from the first missing phase.
    (about 100 KB: the skill, templates, reference documents and scripts; no examples).
 2. In claude.ai or the Claude Desktop app, open **Settings**, then **Customize**, then **Skills**.
    Click **Add** and choose **Upload skill**. Pick the ZIP.
-3. Under **Settings**, **Capabilities**, make sure **Code execution and file creation** is on. The
+3. Under **Settings**, **Capabilities**, make sure **Create and edit files** is on. The
    skill needs it to draw the diagrams and build the HTML page.
 4. Start a new chat and type `/electrum <describe your product in one sentence>`.
 

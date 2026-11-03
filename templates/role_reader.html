@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>__TITLE__ · read by role</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap">
+<style>
+/* Layout: a PRD reader. Left rail = reading path (everyone: summary + system design; then the role's sections by tier); centre = the page being read, full bundle text; right rail = the trace behind a decision and what it takes to reopen it. */
+:root{
+  --bg:#f5f6f4; --surface:#ffffff; --fg:#1d2427; --muted:#5d686b; --line:#d8ddd8; --accent:#2f5d62; --accent-fg:#ffffff;
+  --accent-soft:#e2ebe9; --must:#2f5d62; --should:#8a6a1e; --should-bg:#f5ecd6; --ref:#6b7477; --ref-bg:#eceeec;
+  --warn:#a8322a; --warn-bg:#f8e4e1; --ok:#3d6b3a; --ok-bg:#e2eedf; --hl:#fff3c4;
+  --display:"Source Serif 4", Georgia, "Times New Roman", serif;
+  --body:"IBM Plex Sans", -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#131a1c; --surface:#1a2225; --fg:#e3e8e6; --muted:#9aa5a7; --line:#2e393c; --accent:#8cc1c4; --accent-fg:#0f1719;
+  --accent-soft:#1f3134; --must:#8cc1c4; --should:#e2bf6e; --should-bg:#342b16; --ref:#a3acae; --ref-bg:#242d30;
+  --warn:#f09a90; --warn-bg:#3a2321; --ok:#a5d29f; --ok-bg:#1f3020; --hl:#4a3f12; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#131a1c; --surface:#1a2225; --fg:#e3e8e6; --muted:#9aa5a7; --line:#2e393c; --accent:#8cc1c4; --accent-fg:#0f1719;
+  --accent-soft:#1f3134; --must:#8cc1c4; --should:#e2bf6e; --should-bg:#342b16; --ref:#a3acae; --ref-bg:#242d30;
+  --warn:#f09a90; --warn-bg:#3a2321; --ok:#a5d29f; --ok-bg:#1f3020; --hl:#4a3f12; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:15px/1.55 var(--body);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3,h4{font-family:var(--display);text-wrap:balance;line-height:1.25;margin:0}
+p{margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1320px;margin:0 auto;padding-block:28px 56px;display:flex;flex-direction:column;gap:18px}
+
+.mast{display:flex;flex-wrap:wrap;gap:12px 24px;align-items:flex-end;justify-content:space-between}
+.mast h1{font-size:clamp(24px,3.4vw,32px)}
+.eyebrow{font:500 11px/1.3 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.steps{display:flex;gap:6px;flex-wrap:wrap;list-style:none;margin:0;padding:0}
+.steps li{font:500 12px/1 var(--mono);padding:8px 10px;border:1px solid var(--line);background:var(--surface);color:var(--muted)}
+.steps li.on{border-color:var(--accent);color:var(--accent)}
+.steps li.done{color:var(--ok)}
+.how{font-size:14px;color:var(--muted);max-width:95ch}
+
+.reader{display:grid;grid-template-columns:260px minmax(0,1fr) 300px;gap:16px;align-items:start}
+.rail,.trace{background:var(--surface);border:1px solid var(--line);padding:16px;display:flex;flex-direction:column;gap:12px;min-width:0;position:sticky;top:max(12px,env(safe-area-inset-top,0px));max-height:calc(100vh - 24px);overflow-y:auto}
+.main{background:var(--surface);border:1px solid var(--line);padding:24px 30px;min-width:0;display:flex;flex-direction:column;gap:18px}
+.label{font:500 11px/1.2 var(--mono);letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+
+.roles{display:flex;flex-direction:column;gap:4px}
+.role{display:flex;justify-content:space-between;gap:8px;align-items:center;text-align:left;border:1px solid var(--line);background:transparent;padding:7px 10px;font-size:14px}
+.role[aria-pressed="true"]{background:var(--accent);color:var(--accent-fg);border-color:var(--accent)}
+.role:disabled{opacity:.45;cursor:not-allowed}
+.role small{font:400 11px var(--mono);opacity:.8}
+.lock{font-size:13px;color:var(--warn);background:var(--warn-bg);padding:8px 10px}
+
+.navlist{display:flex;flex-direction:column;gap:1px}
+.nav{display:flex;gap:8px;align-items:baseline;text-align:left;border:0;background:transparent;padding:4px 6px;font-size:13.5px}
+.nav:hover{background:var(--accent-soft)}
+.nav[aria-current="true"]{background:var(--accent-soft);font-weight:600}
+.nav .sid{font:500 11px var(--mono);color:var(--muted);min-width:38px;flex:none}
+.nav .seen{margin-left:auto;font:500 11px var(--mono);color:var(--ok)}
+.tier{display:inline-block;font:500 10px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;padding:4px 6px;white-space:nowrap}
+.tier.must{background:var(--must);color:var(--accent-fg)}
+.tier.should{background:var(--should-bg);color:var(--should)}
+.tier.ref{background:var(--ref-bg);color:var(--ref)}
+.tier.warn{background:var(--warn-bg);color:var(--warn)}
+.tier.ok{background:var(--ok-bg);color:var(--ok)}
+
+.crumbs{display:flex;flex-wrap:wrap;gap:4px;align-items:center;font:500 12px var(--mono);color:var(--muted)}
+.crumbs button{border:0;background:none;padding:2px 0;color:var(--accent);text-decoration:underline;text-underline-offset:3px}
+.crumbs .sep{opacity:.5}
+.head{display:flex;flex-direction:column;gap:8px}
+.head h2{font-size:27px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.lede{font-size:16px;max-width:70ch}
+.block{display:flex;flex-direction:column;gap:10px;min-width:0}
+.block > h3{font-size:18px}
+.tbl{overflow-x:auto;border:1px solid var(--line);max-width:100%}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th,td{text-align:left;vertical-align:top;padding:7px 10px;border-bottom:1px solid var(--line)}
+th{font:500 11px/1.3 var(--mono);text-transform:uppercase;letter-spacing:.05em;color:var(--muted);background:var(--bg)}
+tr:last-child td{border-bottom:0}
+td.n,td.r{font-variant-numeric:tabular-nums;white-space:nowrap}
+td.n{font:500 12px var(--mono);color:var(--muted)}
+td.r{text-align:right}
+tfoot td{font-weight:600;border-top:1px solid var(--line)}
+.link{border:0;background:none;padding:0;color:var(--accent);text-decoration:underline;text-underline-offset:3px;text-align:left}
+.primary{border:0;background:var(--accent);color:var(--accent-fg);padding:10px 16px;font-weight:600}
+.gatebar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;background:var(--accent-soft);padding:14px 16px}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.card{border:1px solid var(--line);padding:12px 14px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.card h4{font-size:15.5px}
+.card p{font-size:13.5px;color:var(--muted)}
+.dec{border:1px solid var(--line);padding:10px 14px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 12px;align-items:start}
+.dec .meta{font-size:13px;color:var(--muted);grid-column:1 / -1}
+.declist{display:flex;flex-direction:column;gap:8px}
+.figs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.fig{border:1px solid var(--line);padding:10px 12px;display:flex;flex-direction:column;gap:2px}
+.fig b{font:600 19px/1.2 var(--display)}
+.fig span{font-size:12.5px;color:var(--muted)}
+.nextbar{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:14px}
+
+/* bundle text */
+.doc{display:flex;flex-direction:column;gap:12px;max-width:100%;min-width:0}
+.doc h1{font-size:22px;margin-top:10px}
+.doc h2{font-size:20px;margin-top:14px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+.doc h3{font-size:17px;margin-top:10px}
+.doc h4{font-size:15px}
+.doc p,.doc li{max-width:75ch}
+.doc ul,.doc ol{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:4px}
+.doc img{max-width:100%;height:auto;border:1px solid var(--line);background:#fff}
+.doc figure{margin:0;display:flex;flex-direction:column;gap:6px}
+.doc figcaption{font-size:13px;color:var(--muted)}
+.doc code{font-family:var(--mono);font-size:.88em;background:var(--bg);padding:1px 4px}
+.doc pre{overflow-x:auto;background:var(--bg);padding:12px;font-size:13px}
+.doc hr{border:0;border-top:1px solid var(--line);margin:4px 0;width:100%}
+.doc blockquote{margin:0;padding:8px 14px;border-left:3px solid var(--line);color:var(--muted)}
+.doc a{color:var(--accent)}
+.hl{background:var(--hl) !important;outline:2px solid var(--should)}
+
+.trace .empty{font-size:13.5px;color:var(--muted)}
+.chain{display:flex;flex-direction:column;list-style:none;margin:0;padding:0}
+.chain li{position:relative;padding:0 0 12px 18px;border-left:2px solid var(--line);margin-left:5px;display:flex;flex-direction:column;gap:2px}
+.chain li:last-child{border-left-color:transparent;padding-bottom:0}
+.chain li::before{content:"";position:absolute;left:-7px;top:3px;width:12px;height:12px;border-radius:50%;background:var(--surface);border:2px solid var(--accent)}
+.chain .k{font:500 11px var(--mono);color:var(--accent)}
+.chain .t{font-weight:600;font-size:13.5px}
+.chain .x{font-size:13px;color:var(--muted)}
+.dispute{border:1px dashed var(--warn);padding:12px;display:flex;flex-direction:column;gap:6px;font-size:13.5px}
+.dispute .label{color:var(--warn)}
+
+@media (max-width:1100px){.reader{grid-template-columns:230px minmax(0,1fr)}.trace{grid-column:1 / -1;position:static;max-height:none}.figs{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:740px){.reader{grid-template-columns:1fr}.rail{position:static;max-height:none}.main{padding:18px 16px}.grid2{grid-template-columns:1fr}}
+.src{font-size:13.5px;color:var(--muted);margin:-6px 0 14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="mast">
+    <div style="display:flex;flex-direction:column;gap:8px;min-width:0">
+      <div class="eyebrow" id="eyebrow"></div>
+      <h1 id="title"></h1>
+    </div>
+    <ol class="steps" id="steps" aria-label="Reading progress"></ol>
+  </header>
+  <p class="how" id="how"></p>
+  <p class="src" id="src"></p>
+
+  <div class="reader">
+    <nav class="rail" aria-label="Reading path">
+      <div class="label">1 · Everyone reads</div>
+      <div class="navlist" id="core"></div>
+      <div class="label">2 · Your role</div>
+      <div id="lock" class="lock">Read both pages above to choose your role.</div>
+      <div class="roles" id="roles"></div>
+      <div id="path" class="navlist"></div>
+    </nav>
+    <main class="main" id="main" aria-live="polite"></main>
+    <aside class="trace" id="trace" aria-label="Trace and dispute"></aside>
+  </div>
+</div>
+
+<script type="application/json" id="prd">__PRD_DATA__</script>
+<script>
+// Reading view over the Electrum documents. Text, tables and figures come from the
+// .md files (the same ones review.html bundles); roles.json only arranges them.
+const PRD = JSON.parse(document.getElementById("prd").textContent);
+const S = PRD.sections, ORDER = PRD.order, C = PRD.cfg;
+const ROLES = C.roles, DEC = C.decisions || {}, NODES = C.nodes || {};
+const PROBLEMS = C.problems || [], BOM = C.bom, TASKS = C.tasks;
+const CORE = ["executive_summary", "high_level_design"].filter(k => S[k]);
+const ABBR = {executive_summary:"ES", high_level_design:"HLD", gap_analysis:"GA", open_questions:"OQ", explore_notes:"EN",
+  team:"TM", component_arrangement:"CA", gate_checklist:"GC"};
+
+let state = {seen:new Set(), read:CORE.length < 2, role:null, view:CORE[0] || ORDER[0], trail:[CORE[0] || ORDER[0]], dec:null};
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const words = k => S[k].html.replace(/<[^>]+>/g, " ").split(/\s+/).filter(Boolean).length;
+const mins = k => Math.max(1, Math.round(words(k) / 220));
+const sid = k => ABBR[k] || k.split(" ")[0];
+const label = k => k === "home" ? "My brief" : `${sid(k)} ${S[k].title}`;
+const owner = k => Object.keys(ROLES).find(r => (ROLES[r].owns || []).includes(k));
+const mustOf = r => [...new Set([...(ROLES[r].owns || []), ...(ROLES[r].must || [])])].filter(k => !CORE.includes(k));
+const skimOf = r => (ROLES[r].skim || []).filter(k => !CORE.includes(k) && !mustOf(r).includes(k));
+const tierOf = (r, k) => CORE.includes(k) ? "must" : !r ? null : mustOf(r).includes(k) ? "must" : skimOf(r).includes(k) ? "should" : "ref";
+const TL = {must:"Must", should:"Skim", ref:"Lookup"};
+const num = n => typeof n === "number" ? n.toLocaleString("en-US") : esc(n);
+const roleNames = rs => rs.filter(r => ROLES[r]).map(r => ROLES[r].name).join(", ");
+const decsIn = k => Object.keys(DEC).filter(d => (DEC[d].sections || []).includes(k));
+const sum = (ks, f) => ks.reduce((a, k) => a + f(k), 0);
+
+// Decision and node ids in free text (figures, cards) become links.
+const IDS = [...Object.keys(DEC), ...Object.keys(NODES)].sort((a, b) => b.length - a.length);
+const IDRE = IDS.length ? new RegExp(`\\b(${IDS.map(i => i.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|")})\\b`, "g") : null;
+const linked = t => IDRE ? esc(t).replace(IDRE, id => DEC[id] ? `<button class="link" data-dec="${id}">${id}</button>`
+  : `<button class="link" data-go="${NODES[id].home}" data-focus="${esc(NODES[id].find)}">${id}</button>`) : esc(t);
+
+function pathOrder(){
+  return state.role ? [...CORE, "home", ...mustOf(state.role), ...skimOf(state.role)] : CORE;
+}
+
+function go(view, {fresh = false, focus = null} = {}){
+  if (fresh) state.trail = state.role && !CORE.includes(view) ? [CORE[0], "home"].filter(Boolean) : [CORE[0] || view];
+  const i = state.trail.indexOf(view);
+  state.trail = i >= 0 ? state.trail.slice(0, i + 1) : [...state.trail, view];
+  state.view = view;
+  if (view !== "home") state.seen.add(view);
+  render();
+  if (focus) focusTarget(focus); else $("main").scrollIntoView({block:"start"});
+}
+
+function steps(){
+  const [es, hld] = CORE;
+  const s = [["Summary", state.seen.has(es)], ["System design", state.seen.has(hld)], ["Your path", !!state.role], ["Drill down", !!state.dec || state.trail.length > 3]];
+  const cur = !state.seen.has(es) ? 0 : !state.read ? 1 : !state.role ? 2 : 3;
+  $("steps").innerHTML = s.map((x, i) => `<li class="${x[1] ? "done" : ""} ${i === cur ? "on" : ""}">${x[1] ? "✓" : i + 1} ${x[0]}</li>`).join("");
+}
+
+function navBtn(k){
+  const seen = state.seen.has(k) ? '<span class="seen">✓</span>' : "";
+  return `<button class="nav" data-go="${esc(k)}" aria-current="${state.view === k}"><span class="sid">${esc(sid(k))}</span><span>${esc(S[k].title)}</span>${seen}</button>`;
+}
+
+function rail(){
+  $("core").innerHTML = CORE.map(navBtn).join("");
+  $("lock").hidden = state.read;
+  $("roles").innerHTML = Object.entries(ROLES).map(([k, r]) =>
+    `<button class="role" data-role="${k}" aria-pressed="${state.role === k}" ${state.read ? "" : "disabled"}><span>${esc(r.name)}</span><small>${esc(r.holder || "")}</small></button>`).join("");
+  if (!state.role){ $("path").innerHTML = ""; return; }
+  const m = mustOf(state.role), s = skimOf(state.role);
+  const rest = ORDER.filter(k => !CORE.includes(k) && !m.includes(k) && !s.includes(k));
+  const grp = (ids, t) => ids.length ? `<div class="label" style="margin-top:8px"><span class="tier ${t}">${TL[t]}</span> ${sum(ids, mins)} min</div>` + ids.map(navBtn).join("") : "";
+  $("path").innerHTML = `<button class="nav" data-go="home" aria-current="${state.view === "home"}"><span class="sid">→</span><strong>My brief</strong></button>` +
+    grp(m, "must") + grp(s, "should") + grp(rest, "ref");
+}
+
+function crumbs(){
+  return `<div class="crumbs">${state.trail.map((k, i) => i === state.trail.length - 1
+    ? `<span>${esc(label(k))}</span>` : `<button data-go="${esc(k)}">${esc(label(k))}</button><span class="sep">›</span>`).join("")}</div>`;
+}
+
+function decRow(id){
+  const d = DEC[id];
+  return `<div class="dec"><div><button class="link" data-dec="${id}"><strong>${id}</strong> ${esc(d.title)}</button></div>
+    <div class="chips" style="justify-content:flex-end">${d.overruled ? '<span class="tier warn">Overruled advice</span>' : ""}${d.redesign ? '<span class="tier should">Redesign if reversed</span>' : ""}</div>
+    <div class="meta">Chosen: ${esc(d.chosen)}${d.overruled && d.recommended ? ` · Recommended: ${esc(d.recommended)}` : ""}${d.cost ? ` · Cost: ${esc(d.cost)}` : ""}</div></div>`;
+}
+
+function head(k, extra = ""){
+  const t = tierOf(state.role, k), o = owner(k);
+  return `${crumbs()}<div class="head"><div class="chips"><span class="eyebrow">${esc(sid(k))}${o ? ` · owned by ${esc(ROLES[o].name)}` : ""} · ${mins(k)} min</span>${t ? `<span class="tier ${t}">${CORE.includes(k) ? "Everyone" : TL[t] + " for you"}</span>` : ""}</div>
+  <h2>${esc(S[k].title)}</h2>${extra}</div>`;
+}
+
+function nextBar(){
+  const order = pathOrder(), i = order.indexOf(state.view);
+  const next = i >= 0 && i < order.length - 1 ? order[i + 1] : null;
+  if (state.view === CORE[1] && !state.read) return "";
+  return next ? `<div class="nextbar"><span class="label">Next in your path</span><button class="link" data-go="${esc(next)}" data-fresh="1">${esc(label(next))} →</button></div>` : "";
+}
+
+function doc(k){ return `<div class="doc">${S[k].html}</div>`; }
+function decBlock(k){ const d = decsIn(k); return d.length ? `<div class="block"><h3>Decisions behind this section</h3><div class="declist">${d.map(decRow).join("")}</div></div>` : ""; }
+const goLink = k => S[k] ? `<button class="link" data-go="${esc(k)}">${esc(label(k))}</button>` : "";
+
+function viewES(){
+  const k = CORE[0], figs = C.figures || [], cards = C.cards || [];
+  return head(k, `<p class="lede">Everyone reads this page and the high-level system design before choosing a role. Together they take about ${sum(CORE, mins)} minutes.</p>`) +
+  (figs.length ? `<div class="figs">${figs.map(f => `<button class="fig link" style="text-decoration:none;color:inherit" ${f.section ? `data-go="${esc(f.section)}"` : ""}><b>${esc(f.value)}</b><span>${esc(f.label)}</span></button>`).join("")}</div>` : "") +
+  doc(k) +
+  (cards.length ? `<div class="block"><h3>What every role must know</h3><div class="grid2">${cards.map(c => `<div class="card"><h4>${esc(c.title)}</h4><p>${linked(c.text)}</p></div>`).join("")}</div></div>` : "") +
+  (CORE[1] ? `<div class="nextbar"><span class="label">Everyone reads next</span><button class="primary" data-go="${CORE[1]}">High-level system design →</button></div>` : "");
+}
+
+function viewHLD(){
+  const k = CORE[1];
+  const more = ["§3", "component_arrangement", "§5", "§6", BOM && BOM.section].filter(x => x && S[x]).map(goLink);
+  return head(k, `<p class="lede">How the product is built: the block diagram, its subsystems and interfaces, the hardest problems and the component choices.${more.length ? ` Detail lives in ${more.join(", ")}.` : ""}</p>`) +
+  doc(k) + decBlock(k) +
+  `<div class="gatebar"><span>${state.read ? "Both pages read. Choose or change your role in the left rail." : "Read the summary and this page? Your role's path opens next."}</span>
+  ${state.read ? "" : `<button class="primary" id="ack" ${state.seen.has(CORE[0]) ? "" : "disabled"}>I have read both pages</button>`}</div>` + nextBar();
+}
+
+function viewHome(){
+  const r = state.role, m = mustOf(r);
+  const own = PROBLEMS.filter(x => x.owner === r), sup = PROBLEMS.filter(x => (x.support || []).includes(r));
+  const decs = Object.keys(DEC).filter(k => (DEC[k].roles || []).includes(r));
+  const bom = BOM ? BOM.rows.filter(b => b.roles.includes(r)) : [], bomSum = bom.reduce((a, b) => a + (+b.cost || 0), 0);
+  const tasks = TASKS ? TASKS.rows.filter(t => t.roles.includes(r)) : [];
+  const partners = {};
+  const meet = rs => rs.forEach(k => { if (k !== r && ROLES[k]) partners[k] = (partners[k] || 0) + 1; });
+  own.forEach(x => meet(x.support || [])); sup.forEach(x => meet([x.owner]));
+  bom.forEach(b => meet(b.roles)); tasks.forEach(t => meet(t.roles)); decs.forEach(d => meet(DEC[d].roles));
+  const cur = BOM && BOM.currency ? ` (${esc(BOM.currency)})` : "";
+  const ptbl = (rows, w) => `<div class="tbl"><table><thead><tr><th>#</th><th>Problem</th><th>${w}</th><th>Due</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+  return `${crumbs()}<div class="head"><div class="eyebrow">Your brief · ${esc(ROLES[r].name)}${ROLES[r].holder ? ` · ${esc(ROLES[r].holder)}` : ""}</div>
+  <h2>What you own and what binds you</h2>
+  <p class="lede">${PROBLEMS.length ? `You own ${own.length} problems and support ${sup.length}. ` : ""}Read your ${m.length} Must sections (about ${sum(m, mins)} minutes) before the kickoff${PROBLEMS.length ? ", then answer each problem you own with a yes or a challenge" : ""}.</p></div>
+  <div class="block"><h3>Your Must sections, in reading order</h3><div class="grid2">
+  ${m.map(k => `<div class="card"><h4><button class="link" data-go="${esc(k)}">${esc(label(k))}</button></h4><p>${mins(k)} min${owner(k) ? ` · owned by ${esc(ROLES[owner(k)].name)}` : ""}${state.seen.has(k) ? " · read ✓" : ""}</p></div>`).join("")}
+  </div></div>` +
+  (PROBLEMS.length ? `<div class="block"><h3>Problems you own</h3>${own.length ? ptbl(own.map(x => `<tr><td class="n">${PROBLEMS.indexOf(x) + 1}</td><td>${linked(x.text)}</td><td>${esc(roleNames(x.support || [])) || "—"}</td><td class="n">${esc(x.due)}</td></tr>`).join(""), "Support") : "<p>None.</p>"}</div>
+  <div class="block"><h3>Problems you support</h3>${sup.length ? ptbl(sup.map(x => `<tr><td class="n">${PROBLEMS.indexOf(x) + 1}</td><td>${linked(x.text)}</td><td>${esc(roleNames([x.owner]))}</td><td class="n">${esc(x.due)}</td></tr>`).join(""), "Owner") : "<p>None.</p>"}</div>` : "") +
+  (BOM ? `<div class="block"><h3>Your lines in the BOM</h3>
+  ${bom.length ? `<div class="tbl"><table><thead><tr><th>#</th><th>Item</th><th>Qty</th><th style="text-align:right">Cost${cur}</th><th>Lead time</th><th>Shared with</th></tr></thead><tbody>
+  ${bom.map(b => `<tr><td class="n">${BOM.rows.indexOf(b) + 1}</td><td>${esc(b.item)}</td><td class="n">${esc(b.qty)}</td><td class="r">${num(b.cost)}</td><td class="n">${esc(b.lead)}</td><td>${esc(roleNames(b.roles.filter(x => x !== r))) || "—"}</td></tr>`).join("")}
+  </tbody><tfoot><tr><td></td><td>Your lines</td><td></td><td class="r">${num(bomSum)}</td><td colspan="2">${BOM.total ? `${Math.round(bomSum / BOM.total * 100)} % of ${num(BOM.total)}` : ""}</td></tr></tfoot></table></div>`
+  : `<p>You own no BOM lines.${BOM.total ? ` The unit BOM is ${num(BOM.total)}${cur}.` : ""}</p>`}
+  ${BOM.section && S[BOM.section] ? `<p style="font-size:13.5px;color:var(--muted)">Full BOM: ${goLink(BOM.section)}.</p>` : ""}</div>` : "") +
+  (TASKS ? `<div class="block"><h3>Your schedule tasks</h3>
+  ${tasks.length ? `<div class="tbl"><table><thead><tr><th>#</th><th>Task</th><th>Start wk</th><th>Weeks</th><th>Depends on</th><th>Path</th></tr></thead><tbody>
+  ${tasks.map(t => `<tr><td class="n">${esc(t.no ?? TASKS.rows.indexOf(t) + 1)}</td><td>${esc(t.task)}</td><td class="r">${esc(t.start)}</td><td class="r">${esc(t.weeks)}</td><td class="n">${esc(t.depends || "—")}</td><td>${t.path === "critical" ? '<span class="tier warn">Critical</span>' : t.path === "near" ? '<span class="tier should">Near-critical</span>' : ""}</td></tr>`).join("")}
+  </tbody></table></div>` : "<p>None.</p>"}
+  ${TASKS.section && S[TASKS.section] ? `<p style="font-size:13.5px;color:var(--muted)">Gantt and critical path: ${goLink(TASKS.section)}.</p>` : ""}</div>` : "") +
+  (decs.length ? `<div class="block"><h3>Decisions that bind you</h3><p style="color:var(--muted);font-size:13.5px">Open one to see its trace in the right rail and what it takes to reopen it.</p><div class="declist">${decs.map(decRow).join("")}</div></div>` : "") +
+  (Object.keys(partners).length ? `<div class="block"><h3>Your counterparts</h3><div class="grid2">
+  ${Object.entries(partners).sort((a, b) => b[1] - a[1]).map(([k, n]) => `<div class="card"><h4>${esc(ROLES[k].name)}</h4><p>${ROLES[k].holder ? esc(ROLES[k].holder) + " · " : ""}${n} shared item${n > 1 ? "s" : ""}</p></div>`).join("")}
+  </div></div>` : "") + nextBar();
+}
+
+function viewSection(k){ return head(k) + decBlock(k) + doc(k) + nextBar(); }
+
+function trace(){
+  if (!state.dec){
+    $("trace").innerHTML = `<div class="label">3 · Trace and dispute</div><p class="empty">${Object.keys(DEC).length
+      ? "Open any decision to see the chain behind it: the question it answered, the gap it closed, the risk it carries, and what evidence it takes to reopen it. Each link opens the row in the full text."
+      : "No decisions are mapped for this run."}</p>`;
+    return;
+  }
+  const id = state.dec, d = DEC[id];
+  $("trace").innerHTML = `<div class="label">3 · Trace · ${id}</div>
+  <h3 style="font-size:17px">${esc(d.title)}</h3>
+  <div class="chips">${d.overruled ? '<span class="tier warn">Overruled advice</span>' : d.recommended ? '<span class="tier ok">Matches advice</span>' : ""}${d.redesign ? '<span class="tier should">Redesign if reversed</span>' : ""}</div>
+  <div style="font-size:13.5px;display:flex;flex-direction:column;gap:6px">
+    <div><span class="label">Chosen</span><br>${esc(d.chosen)}</div>
+    ${d.overruled && d.recommended ? `<div><span class="label">Recommended</span><br>${esc(d.recommended)}</div>` : ""}
+    ${d.cost ? `<div><span class="label">Cost</span><br>${esc(d.cost)}</div>` : ""}
+    <div><button class="link" data-go="${esc(d.home)}" data-focus="${esc(d.find)}">Read ${id} in ${esc(label(d.home))} →</button></div>
+  </div>
+  ${(d.chain || []).length ? `<ol class="chain">${d.chain.map(n => { const x = NODES[n]; return `<li><div class="k">${n} · ${esc(x.kind)}</div><div class="t">${esc(x.title)}</div>${x.text ? `<div class="x">${esc(x.text)}</div>` : ""}<button class="link" style="font-size:12.5px" data-go="${esc(x.home)}" data-focus="${esc(x.find)}">Open ${n} in ${esc(label(x.home))}</button></li>`; }).join("")}</ol>` : ""}
+  ${d.bring ? `<div class="dispute"><div class="label">To reopen this decision</div><div>Bring: ${esc(d.bring)}</div>${d.by ? `<div>Decided by ${esc(d.by)}.${d.reviewed ? ` Reviewed by ${esc(d.reviewed)}.` : ""}</div>` : ""}<div style="color:var(--muted)">Preference alone does not reopen a decision.</div></div>` : ""}
+  <button class="link" id="close-trace">Close trace</button>`;
+}
+
+// Scroll to the first row, heading or paragraph in the open section that contains the text.
+function focusTarget(f){
+  const main = $("main");
+  const el = f.startsWith("#") ? main.querySelector(`[id="${CSS.escape(f.slice(1))}"]`)
+    : [...main.querySelectorAll(".doc tr, .doc h2, .doc h3, .doc h4, .doc li, .doc p")].find(e => e.textContent.includes(f));
+  if (!el){ main.scrollIntoView({block:"start"}); return; }
+  el.classList.add("hl");
+  el.scrollIntoView({block:"center"});
+}
+
+function render(){
+  steps(); rail();
+  const v = state.view;
+  $("main").innerHTML = v === CORE[0] ? viewES() : v === CORE[1] ? viewHLD() : v === "home" ? viewHome() : viewSection(v);
+  $("main").querySelectorAll(".doc img[data-img]").forEach(img => { img.src = PRD.imgs[img.dataset.img]; img.loading = "lazy"; });
+  $("main").querySelectorAll(".doc table").forEach(t => { if (!t.parentElement.classList.contains("tbl")){ const w = document.createElement("div"); w.className = "tbl"; t.replaceWith(w); w.appendChild(t); } });
+  trace();
+}
+
+document.addEventListener("click", e => {
+  const a = e.target.closest('.doc a[href^="#"]');
+  if (a){ e.preventDefault(); const k = PRD.anchors[a.getAttribute("href").slice(1)]; if (k) go(k, {focus:a.getAttribute("href")}); return; }
+  const b = e.target.closest("button"); if (!b) return;
+  if (b.id === "ack"){ state.read = true; render(); return; }
+  if (b.id === "close-trace"){ state.dec = null; render(); return; }
+  if (b.dataset.role){ state.role = b.dataset.role; go("home", {fresh:true}); return; }
+  if (b.dataset.dec){ state.dec = b.dataset.dec; steps(); trace(); if (innerWidth <= 1100) $("trace").scrollIntoView({block:"start"}); return; }
+  const g = b.dataset.go; if (!g) return;
+  if (CORE.includes(g)) return go(g, {fresh:true});
+  go(g, {fresh: !!b.dataset.fresh || b.classList.contains("nav"), focus: b.dataset.focus || null});
+});
+
+document.title = `${PRD.product} · read by role`;
+$("eyebrow").textContent = `Product definition · ${PRD.product} · Electrum · ${PRD.date}`;
+$("title").textContent = `${PRD.product}, read by role`;
+$("how").innerHTML = `Everyone reads two pages first: the executive summary and the high-level system design. Then a role lays out its path: <span class="tier must">Must</span> sections are the reader's own, <span class="tier should">Skim</span> sections touch their work, <span class="tier ref">Lookup</span> sections are there when needed. Every decision opens a trace back to the question and risk behind it, and says what evidence it takes to reopen it. All ${ORDER.length} sections hold the full text of the documents (about ${num(Math.round(sum(ORDER, words) / 100) * 100)} words); nothing is cut, only arranged.`;
+$("src").innerHTML = `The documents are the source of truth. This view is built from the same files as <a href="review.html">review.html</a>; where the two differ, review.html wins and this view is rebuilt.`;
+state.seen.add(state.view);
+render();
+</script>
+</body>
+</html>

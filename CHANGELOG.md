@@ -2,6 +2,12 @@
 
 All notable changes to Electrum are documented here.
 
+## v0.7.0 — 2026-11-03
+
+- **Role reader (optional output)** — at the end of Phase 5 the skill offers `role_reader.html`: everyone reads the executive summary and the high-level design, then picks a role and gets a Must / Skim / Lookup path through the documents, their BOM lines and schedule tasks, the decisions that bind them, and a trace from each decision to the questions and risks behind it, with what evidence it takes to reopen it. Built by `scripts/build_role_reader.py` from the same `.md` files as `review.html` plus `roles.json`, which only says who reads what; the build fails on any key, role or reference that does not resolve in the documents. `review.html` and the `.md` files stay the source of truth. New question key `phase5.role_reader`; template `templates/role_reader.html`.
+- **Bubbler example brought up to the current templates** — §9 Design for X and Dependencies, the Appendix (glossary, references, revision history), skill areas mapped to team roles, gate item 78 now cites §9 Dependencies; `roles.json` and `role_reader.html` added as the worked example.
+- **Install notes** — Route 1 needs a paid claude.ai plan (Free cannot upload skills); the capability is now labelled **Create and edit files** in claude.ai.
+
 ## v0.6.1 — 2026-10-28
 
 - **The skill states its version** — SKILL.md opens with `Electrum vX.Y.Z` and the releases link, and the orientation repeats it at the start of every run, so a user of an uploaded copy can see it is stale. README gains "Which version do I have?". Release step: bump the two version strings in SKILL.md and the CHANGELOG before tagging.
