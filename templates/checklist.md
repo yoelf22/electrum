@@ -140,3 +140,13 @@ This checklist is for products where physical hardware and software (firmware, c
 - [ ] **[HW↔SW]** Cross-domain consistency check: power budget matches connectivity choice, firmware features match MCU capabilities, app features match firmware API, cloud data model matches device telemetry
 - [ ] **[HW↔SW]** A reviewer from hardware/EE has reviewed software assumptions; a reviewer from software has reviewed hardware assumptions
 - [ ] Open questions are either resolved or explicitly carried into PRD as TBDs
+
+## Use and Handling *(handheld, wearable or body-contact products; N/A otherwise)*
+- [ ] The use posture is stated for every scenario step that involves handling (standing, seated, lying, squatting; which hand is free), and what the user can see from that posture
+- [ ] Every handling step has a hands-and-eyes row: what each hand does, which part must be held still, where the eyes are, and what confirms the step (click, sound, light, screen)
+- [ ] Every "one-hand", "hands-free" or "like a [familiar object]" claim is checked step by step against that table, and any step that needs a second hand or a regrip is listed
+- [ ] Forces and torques on the hand have targets (push, pull, twist, hold time), and the parts that must not move relative to the body during each step are named
+- [ ] The user range is stated: hand size, left- and right-handed use, reduced grip or dexterity, eyesight, wet, gloved or lubricated hands
+- [ ] **[HW↔SW]** Feedback during the critical step reaches the user in the use posture: a screen they can see from there, or sound, touch or light on the device itself
+- [ ] Mass, centre of gravity and lever arms of held parts (handle, battery, cable) are stated, with their effect on the part that touches the body
+- [ ] For regulated or body-contact products: the use specification and critical tasks for formative usability testing are listed (IEC 62366-1), with the first test planned

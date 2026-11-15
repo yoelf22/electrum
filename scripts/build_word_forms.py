@@ -345,7 +345,7 @@ ABOUT = {
         "Engineers design from it; suppliers and contract manufacturers quote from it. Keep it current "
         "through the first engineering prototype build (EVT). Next: check it against the Gate Checklist.",
     "gate-checklist":
-        "The Gate Checklist has 103 items that test whether the System Description is complete enough to "
+        "The Gate Checklist has 111 items that test whether the System Description is complete enough to "
         "start detailed design. Mark each item PASS, FAIL or N/A and note where the System Description "
         "covers it. Items tagged [HW↔SW] target the line between hardware and software, where most "
         "integration surprises start. Run it when you believe the System Description is ready, preferably "

@@ -2,6 +2,10 @@
 
 All notable changes to Electrum are documented here.
 
+## v0.8.0 — 2026-11-15
+
+- **Use and Handling** — the gate checklist gains a final section for handheld, wearable and body-contact products (N/A for the rest), items 104–111: the use posture for every handling step and what the user can see from it; a hands-and-eyes row per step (each hand, the part held still, where the eyes are, what confirms the step); every "one-hand", "hands-free" or "like a [familiar object]" claim checked step by step, with any step that needs a second hand or a regrip listed; force and torque targets and the parts that must not move against the body; the user range (hand size, handedness, grip, eyesight, wet or gloved hands); feedback that reaches the user in the use posture; mass and lever arms of held parts; and for regulated products the IEC 62366-1 use specification and first formative test. The System Description template's §4.7 UX gains the matching "Use and handling" table. Items 1–103 keep their numbers. Found on a self-inserted medical device whose "one-hand" claim passed the gate while the sampling step needed both hands.
+
 ## v0.7.0 — 2026-11-03
 
 - **Role reader (optional output)** — at the end of Phase 5 the skill offers `role_reader.html`: everyone reads the executive summary and the high-level design, then picks a role and gets a Must / Skim / Lookup path through the documents, their BOM lines and schedule tasks, the decisions that bind them, and a trace from each decision to the questions and risks behind it, with what evidence it takes to reopen it. Built by `scripts/build_role_reader.py` from the same `.md` files as `review.html` plus `roles.json`, which only says who reads what; the build fails on any key, role or reference that does not resolve in the documents. `review.html` and the `.md` files stay the source of truth. New question key `phase5.role_reader`; template `templates/role_reader.html`.

@@ -292,6 +292,14 @@ graph TD
 
 **Key flows:** [first use, the daily interaction, the error cases from §2]
 
+**Use and handling** *(handheld, wearable or body-contact products)*: [the use posture, and one row per handling step of the §2 scenarios]
+
+| Step | Posture | Left hand | Right hand | Held still | Eyes on | Confirmation | Force / torque |
+|---|---|---|---|---|---|---|---|
+| [e.g. open the device] | [lying, knees raised] | [—] | [two fingers on flange, thumb on collar] | [flange, outer tube] | [screen on stand] | [click] | [10–20 N push] |
+
+[User range covered: hand size, handedness, grip strength, eyesight. Mass and centre of gravity of held parts. Any step that needs a second hand or a regrip, and whether that is accepted or a design change.]
+
 **Handoff**
 - Lead: [role from team.md]
 - Deliverables at gate: [what this domain must have produced for the gate review]
